@@ -1,4 +1,3 @@
-import { elements } from "chart.js";
 import Route from "./Route.js";
 import { allRoutes, websitename } from "./allRoutes.js";
 
@@ -40,8 +39,8 @@ const LoadContentPage = async () => {
     if(actualRoute.pathJS != ""){
         // On crée une balise script
         var scriptTag = document.createElement("script");
-        scriptTag.setAttribute("type","text/javascript");
-        scriptTag.setAttribute("src",actualRoute.pathJS);
+        scriptTag.type = "module";
+        scriptTag.src = actualRoute.pathJS;
 
         // On ajoute cette balise dans le body:
         document.querySelector("body").appendChild(scriptTag);
