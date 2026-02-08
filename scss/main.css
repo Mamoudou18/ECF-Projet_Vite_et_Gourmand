@@ -11979,4 +11979,36 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important;
   }
+}
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  background-color: #F0EFEA;
+}
+
+/* styles header */
+.header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+}
+
+.container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+  margin: 0px 67.5px;
+  padding: 24px;
+}
+
+.navbar-brand {
+  color: #6B5847 !important;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 1.25rem;
+}
+
+.nav-link {
+  color: #6B5847 !important;
 }/*# sourceMappingURL=main.css.map */
