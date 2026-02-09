@@ -29,3 +29,17 @@ body{
 .nav-link{
     color: $primary !important;
 }
+
+/* Footer */
+footer.footer{
+    padding: 10px;
+    position: absolute;
+    bottom: 0;
+    width:100%;
+    p{
+        color: $white-secondary;
+        a.link-underline-primary{
+            color: $white-secondary;
+    }
+}
+}

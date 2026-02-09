@@ -12011,4 +12011,18 @@ body {
 
 .nav-link {
   color: #6B5847 !important;
+}
+
+/* Footer */
+footer.footer {
+  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+footer.footer p {
+  color: #F0EFEA;
+}
+footer.footer p a.link-underline-primary {
+  color: #F0EFEA;
 }/*# sourceMappingURL=main.css.map */
