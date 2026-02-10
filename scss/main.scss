@@ -9,6 +9,16 @@ body{
     background-color: $white-secondary;
 }
 
+main{
+    margin-bottom: 275px;
+}
+
+.btn-accent{
+    background-color: $accent;
+    border-color: white !important;
+    color: white;
+}
+
 /* styles header */
 .header-sticky {
   position: sticky;
@@ -42,4 +52,113 @@ footer.footer{
             color: $white-secondary;
     }
 }
+}
+
+/* Hero scene */
+.hero-scene {
+  position: relative;
+  margin-bottom: 15px;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url(../images/bigtitle.jpg);
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.4);
+    z-index: 0;
+  }
+
+  // Tous les éléments au-dessus de l'image
+  * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-scene-content {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch; // permet breadcrumb à gauche
+    gap: .75rem;          
+  }
+
+  h1 {
+    margin: 0;
+    text-align: center;   // titre centré
+  }
+
+  /* Breadcrumb dans le hero 
+  .breadcrumb {
+    position: absolute;
+    display: flex;
+    right: 1rem;
+    left: 0rem;
+    top: -6rem;
+    justify-content: flex-start;
+    width: 100%;
+    font-size: 0.85rem;
+    ol {
+      display: flex;
+      justify-content: flex-start;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+
+      + li::before {
+        content: ">>";
+        margin: 0 .4rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      &[aria-current="page"] {
+        font-weight: 600;
+        color: #fff;
+      }
+    }
+*/
+    a {
+      color: #fff;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: none;
+        border-color: $accent !important;
+      }
+    }
+  }
+
+  li{
+    color: $primary;
+    list-style: none;
+  }
+
+  /* Animation card */
+  .card {
+    height: 250px;
+    width: 100%;
+    align-content: normal;
+    opacity: 85%;
+    border-radius: 15px;
+    
+
+  }
+  .card:hover{
+    transform: scale(1.1);
+  }
+
+
+  /* Avis */
+.avis{
+    height: 210px !important;
+}
+.start-color{
+    color: $accent;
 }
