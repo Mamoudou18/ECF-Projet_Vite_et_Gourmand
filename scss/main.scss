@@ -65,10 +65,11 @@ body{
 }
 .nav-link{
     color: $primary !important;
-    //display: inline-block;
+    display: inline-block;
     font-weight: 500;
-    transition: all 0.3;
+    transition: all 0.3s;
     padding: .5rem 1rem;
+    border-radius: .35rem;
 }
 
 .navbar-nav .nav-link.active, .navbar-nav .nav-link.show {

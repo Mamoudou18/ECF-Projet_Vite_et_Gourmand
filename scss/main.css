@@ -12045,9 +12045,11 @@ body {
 
 .nav-link {
   color: #6B5847 !important;
+  display: inline-block;
   font-weight: 500;
-  transition: all 0.3;
+  transition: all 0.3s;
   padding: 0.5rem 1rem;
+  border-radius: 0.35rem;
 }
 
 .navbar-nav .nav-link.active, .navbar-nav .nav-link.show {
