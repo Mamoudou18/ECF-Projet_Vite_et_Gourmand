@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="./scss/main.css">
 
     <title>Vite & Gourmand</title>
-    <script type="module" src="./Router/router.js"></script>
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <header class="header-sticky" role="banner">
@@ -28,16 +26,16 @@
                             <a class="nav-link active" aria-current="page" href="/">Accueil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Nos menus</a>
+                            <a class="nav-link" href="/menu">Nos menus</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Galerie</a>
+                            <a class="nav-link" href="/galerie">Galerie</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
+                            <a class="nav-link" href="/contac">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Mon compte</a>
+                            <a class="nav-link" href="/compte">Mon compte</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,10 +43,10 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="#">Connexion</a>
+                                    <a class="dropdown-item" href="/signin">Connexion</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">Déconnxion</a>
+                                    <a class="dropdown-item" href="/signout">Déconnxion</a>
                                 </li>
                             </ul>
                         </li>
@@ -102,6 +100,8 @@
             </div>
         </div>
     </footer>
-    
+
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./Router/router.js"></script>
 </body>
 </html>

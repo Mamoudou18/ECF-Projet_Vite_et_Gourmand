@@ -1,10 +1,9 @@
 import Route from "./Route.js";
 
-
-// ici sera défini. toutes les routes nécessaires à cette application
-
+// définition de toutes les routes nécessaires à cette application
 export const allRoutes = [
-    new Route("/", "Accueil","/pages/home.html"),
+    new Route("/", "Accueil", "/pages/home.html"),
+    new Route("/menu", "Menu", "/pages/menus/menu.html","js/menus/menu.js"),
 
 ];
 
