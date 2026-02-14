@@ -62,26 +62,43 @@
         <!---- Ici sera injecté le contenu des différentes pages de l'application -->
     </main>
 
-    <footer class="bg-primary text-white-secondary text-center footer">
-        <div class="row align-items-center">
-            <div class="col-6 col-lg-6">
-                <h2 class="text-white">Nos horaires</h2>
-                <p>Du lundi au dimanche 11:30 - 14:00 18:30 - 23:30</p>
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+
+                <div class="col-lg-6 col-md-6">
+                    <h5><i class="bi bi-clock"></i> Horaires</h5>
+                    <p class="mb-1">Lundi - Vendredi : 9h - 19h</p>
+                    <p class="mb-1">Samedi : 9h - 18h</p>
+                    <p class="mb-0">Dimanche : Fermé</p>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h5><i class="bi bi-geo-alt"></i> Contact</h5>
+                    <p class="mb-1">
+                        <i class="bi bi-envelope"></i> contact@vite-gourmand.fr
+                    </p>
+                    <p class="mb-1">
+                        <i class="bi bi-telephone"></i> 03 88 40 00 00
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-map"></i> 1 Place de la république, 33000 Bordeaux - France
+                    </p>
+                </div>
             </div>
-            <div class="col-6 col-lg-6">
-                <h2 class="text-white">Coordonnées</h2>
-                <p>
-                    Vite & Gourmand <br>
-                    15 rue de Babila 00000 Kankan <br>
-                        03 10 10 10 10
-                </p>
-            </div>
-            <div class="col-12 col-lg-12 mt-3">
-                <p>
-                    <span>© 2026 Vite &amp; Gourmand — Tous droits réservés  |   </span>
-                    <a class="link-underline-primary" href="#">mentions légales | </a>
-                    <a class="link-underline-primary text-center" href="#">conditions générales de vente</a>
-                </p>
+
+            <hr class="footer-divider">
+
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-muted small">
+                        © 2026 Vite &amp; Gourmand - Tous droits réservés
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="mentions_legales.html" class="me-3 small">Mentions légales</a>
+                    <a href="cgv.html" class="small">CGV</a>
+                </div>
             </div>
         </div>
     </footer>

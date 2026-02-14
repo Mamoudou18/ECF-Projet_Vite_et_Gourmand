@@ -1,16 +1,20 @@
 @import url(/node_modules/bootstrap-icons/font/bootstrap-icons.css);
 @import 'custom';
 
+* {
+  margin: 0;
+  padding:  0;
+  box-sizing: border-box;
+}
+
 html{
     position: relative;
     min-height: 100%;
 }
 body{
-    background-color: $white-secondary;
-}
-
-main{
-    margin-bottom: 275px;
+  font-family: $font-family-sans-serif;
+  background-color: $white-secondary;
+  color: $primary;
 }
 
  // custom btn
@@ -50,13 +54,10 @@ main{
 .header-sticky {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1020;
   background: $white-primary;
 }
-.container-fluid{
-    margin: 0px 67.5px;
-    padding: 24px;
-}
+
 .navbar-brand{
     color: $primary !important;
     font-weight:700; 
@@ -64,11 +65,10 @@ main{
 }
 .nav-link{
     color: $primary !important;
-    display: inline-block;
+    //display: inline-block;
     font-weight: 500;
     transition: all 0.3;
-    padding: .55rem .75rem;
-    border-radius: .35rem;
+    padding: .5rem 1rem;
 }
 
 .navbar-nav .nav-link.active, .navbar-nav .nav-link.show {
@@ -78,16 +78,27 @@ main{
 
 /* Footer */
 footer.footer{
-    padding: 10px;
-    position: absolute;
-    bottom: 0;
-    width:100%;
-    p{
-        color: $white-secondary;
-        a.link-underline-primary{
-            color: $white-secondary;
+    padding: 3rem 0 1rem;
+    background: $primary;
+    color: $white-secondary;
+    text-align: center;
+    margin-top: 3rem;
+
+    h5{
+      color: $white-primary;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
     }
-}
+
+    a{
+      color: $white-secondary;
+      text-decoration: none;
+      transition: color 0.3s;
+
+    }
+    a:hover{
+      text-decoration: underline;
+    }
 }
 
 /* Hero scene */
@@ -180,6 +191,24 @@ footer.footer{
       }
     }
   }
+
+  // Responsive 
+@media (max-width: 768px) {
+  .hero-scene h1 {
+    font-size: 2rem;
+    margin-left: 3rem;
+    }
+    .hero-scene p {
+      font-size: 1rem;
+      margin-left: 3rem;
+    }
+    .btn-primary,
+    .btn-accent,
+    .btn-home-menu {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+    }
+}
 
   li{
     color: $primary;
