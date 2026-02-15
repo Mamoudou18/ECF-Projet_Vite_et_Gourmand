@@ -1,52 +1,42 @@
-    // ========== DONNÉES DES MENUS ==========
-    const menus = [
-    { id: 1,  title: "Féérie de Noël",            theme: "noel",                 description: "Un menu festif aux saveurs traditionnelles pour célébrer Noël avec élégance.",                      price: 299.00, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-alexanderafan-28446157.jpg" },
-    { id: 2,  title: "Hiver Gourmand",            theme: "noel",                 description: "Recettes chaleureuses et épicées, adaptées aux régimes halal.",                                     price: 325.00, minPersons: 10, regime: "hallal",       stock: 18, image: "images/pexels-boryslav-19870149.jpg" },
-    { id: 3,  title: "Noël Végétal",              theme: "noel",                 description: "Une composition végétale raffinée pour un Noël léger.",                                             price: 223.20, minPersons: 8,  regime: "vegetarien",  stock: 25, image: "images/pexels-bemistermister-3490368.jpg" },
-    { id: 4,  title: "Étoile Vegan",              theme: "noel",                 description: "Un Noël 100% végétal aux parfums doux‑épicés.",                                                     price: 228.00, minPersons: 8,  regime: "vegan",       stock: 22, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
-    { id: 5,  title: "Réveillon Prestige",        theme: "noel",                 description: "Un menu festif et raffiné pour un réveillon d’exception.",                                          price: 478.80, minPersons: 12, regime: "classique",   stock: 15, image: "images/pexels-collab-media-173741945-15059689.jpg" },
-    { id: 6,  title: "Pâques Tradition",          theme: "paques",               description: "Un menu printanier aux saveurs emblématiques de Pâques.",                                           price: 289.00, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
-    { id: 7,  title: "Primeurs de Printemps",     theme: "paques",               description: "Un menu végétal mettant en avant les légumes de printemps.",                                        price: 212.00, minPersons: 8,  regime: "vegetarien",  stock: 22, image: "images/pexels-fox-58267-1320917.jpg" },
-    { id: 8,  title: "Pâques Halal",              theme: "paques",               description: "Un menu savoureux respectant les exigences halal.",                                                 price: 279.00, minPersons: 10, regime: "hallal",       stock: 18, image: "images/pexels-alexanderafan-28446157.jpg" },
-    { id: 9,  title: "Pâques Vegan",              theme: "paques",               description: "Un menu végétal frais et coloré pour Pâques.",                                                      price: 204.00, minPersons: 8,  regime: "vegan",       stock: 20, image: "images/pexels-boryslav-19870149.jpg" },
-    { id: 10, title: "Printemps Chic",            theme: "paques",               description: "Un menu élégant mêlant poisson, agrumes et douceur fruitée.",                                       price: 309.00, minPersons: 10, regime: "classique",   stock: 18, image: "images/pexels-bemistermister-3490368.jpg" },
-
-    { id: 11, title: "Brasserie Chic",            theme: "classique",            description: "Des recettes françaises revisitées dans un style raffiné.",                                         price: 220.00, minPersons: 8,  regime: "classique",   stock: 25, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
-    { id: 12, title: "Saveurs du Marché",         theme: "classique",            description: "Un menu authentique basé sur la fraîcheur du marché.",                                              price: 143.40, minPersons: 6,  regime: "classique",   stock: 32, image: "images/pexels-collab-media-173741945-15059689.jpg" },
-    { id: 13, title: "Terre & Mer",               theme: "classique",            description: "Une alliance élégante entre la fraîcheur marine et une viande tendre.",                             price: 295.00, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
-    { id: 14, title: "Végétarien Gourmet",        theme: "classique",            description: "Un menu végétarien raffiné mettant en valeur le goût naturel des légumes.",                         price: 155.40, minPersons: 6,  regime: "vegetarien",  stock: 28, image: "images/pexels-fox-58267-1320917.jpg" },
-    { id: 15, title: "Vegan Essentiel",           theme: "classique",            description: "Un menu 100% végétal, gourmand et équilibré.",                                                      price: 143.40, minPersons: 6,  regime: "vegan",       stock: 30, image: "images/pexels-alexanderafan-28446157.jpg" },
-    { id: 16, title: "Halal Tradition",           theme: "classique",            description: "Des recettes savoureuses respectant scrupuleusement le régime halal.",                              price: 199.20, minPersons: 8,  regime: "hallal",       stock: 24, image: "images/pexels-boryslav-19870149.jpg" },
-    { id: 17, title: "Sans-Gluten Délice",        theme: "classique",            description: "Un menu gourmand conçu pour éviter le gluten sans compromis sur le goût.",                          price: 161.40, minPersons: 6,  regime: "sans-gluten", stock: 26, image: "images/pexels-bemistermister-3490368.jpg" },
-    { id: 18, title: "Sans-Porc Élégance",        theme: "classique",            description: "Un menu soigné et savoureux garanti sans aucune présence de porc.",                                 price: 204.00, minPersons: 8,  regime: "sans-gluten",   stock: 22, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
-    { id: 19, title: "Business Premium",          theme: "evenement",            description: "Un menu élégant et rapide à servir, conçu pour les événements d'entreprise.",                       price: 289.00, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-collab-media-173741945-15059689.jpg" },
-    { id: 20, title: "Business Vegan",            theme: "evenement",            description: "Un menu professionnel 100% végétal, équilibré et moderne.",                                         price: 249.00, minPersons: 10, regime: "vegan",       stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
-
-    { id: 21, title: "Mariage Signature",         theme: "evenement",            description: "Un menu de mariage raffiné offrant une expérience culinaire mémorable.",                            price: 858.00, minPersons: 20, regime: "classique",   stock: 10, image: "images/pexels-fox-58267-1320917.jpg" },
-    { id: 22, title: "Mariage Prestige Poisson",  theme: "evenement",            description: "Un menu marin noble pensé pour les grandes réceptions de mariage.",                                 price: 918.00, minPersons: 20, regime: "classique",   stock: 12, image: "images/pexels-alexanderafan-28446157.jpg" },
-    { id: 23, title: "Mariage Vegan Élégance",    theme: "evenement",            description: "Un menu de mariage 100% végétal parfaitement équilibré.",                                           price: 790.00, minPersons: 20, regime: "vegan",       stock: 14, image: "images/pexels-boryslav-19870149.jpg" },
-    { id: 24, title: "Baptême Douceur",           theme: "evenement",            description: "Un menu tendre et gourmand pour célébrer un baptême en douceur.",                                   price: 249.00, minPersons: 10, regime: "classique",   stock: 18, image: "images/pexels-bemistermister-3490368.jpg" },
-    { id: 25, title: "Baptême Tradition",         theme: "evenement",            description: "Une cuisine familiale inspirée des repas traditionnels de célébration.",                            price: 235.00, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
-    { id: 26, title: "Cocktail Classique",        theme: "evenement",            description: "Un assortiment varié, élégant et pratique pour vos cocktails et réceptions.",                       price: 343.50, minPersons: 15, regime: "classique",   stock: 25, image: "images/pexels-collab-media-173741945-15059689.jpg" },
-    { id: 27, title: "Cocktail Vegan",            theme: "evenement",            description: "Un assortiment entièrement vegan, frais, coloré et moderne pour vos réceptions.",                   price: 322.50, minPersons: 15, regime: "vegan",       stock: 26, image: "images/pexels-cottonbro-7243891.jpg" },
-    { id: 28, title: "Événement Entreprise",      theme: "evenement",            description: "Un menu construit pour les événements d’entreprise : efficace, gourmand et rapide à servir.",       price: 275.00, minPersons: 10, regime: "classique",   stock: 24, image: "images/pexels-fox-58267-1320917.jpg" },
-    { id: 29, title: "Banquet Tradition",         theme: "evenement",            description: "Un menu généreux idéal pour les grandes tablées et repas familiaux.",                               price: 310.80, minPersons: 12, regime: "classique",   stock: 18, image: "images/pexels-alexanderafan-28446157.jpg" },
-    { id: 30, title: "Gala Prestige",             theme: "evenement",            description: "Un menu haut de gamme conçu pour les soirées prestigieuses et réceptions de gala.",                 price: 978.00, minPersons: 20, regime: "classique",   stock: 14, image: "images/pexels-boryslav-19870149.jpg" }
-    ];
-
     // ========== VARIABLES GLOBALES ==========
-    let filteredMenus = [...menus];
+    let menus = []
+    let filteredMenus = [];
     let currentPage = 1;
     const itemsPerPage = 6;
 
     // ========== INITIALISATION ==========
+    async function init() {
+        await loadMenus();
         displayMenus();
         updateResultsCount();
+    }
 
-        // Update slider display
-        document.getElementById("maxPrice").addEventListener('input', function() {
-            document.getElementById("maxPriceDisplay").textContent = this.value + ' €';
-        });
+    init();
+
+    //chargement des menus depuis le json
+    async function loadMenus() {
+        try {
+            const response = await fetch('data/menus.json');
+            const data = await response.json();
+            menus = data.menus;
+            filteredMenus = [...menus];
+            console.log('Menus chargés:', filteredMenus.length);
+        } catch (error) {
+            console.error('Erreur de chargment des menus:', error);
+            document.getElementById("menusGrid").innerHTML=`
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        Erreur lors du chargement des menus. Veillez réessayer.
+                    </div>
+                </div>
+            `;   
+        }
+    }
+
+    // Update slider display
+    document.getElementById("maxPrice").addEventListener('input', function() {
+        document.getElementById("maxPriceDisplay").textContent = this.value + ' €';
+    });
 
     // ========== AFFICHAGE DES MENUS ==========
     function displayMenus() {
@@ -91,7 +81,7 @@
                 <div class="col-xl-4 col-lg-6 col-md-6">
                     <div class="menu-card">
                         <div class="menu-image">
-                            <img src="${menu.image}" alt="${menu.title}">
+                            <img src="${menu.image_principale}" alt="${menu.titre}">
                             <div class="menu-badge">${menu.theme.charAt(0).toUpperCase() + menu.theme.slice(1)}</div>
                             <div class="menu-stock ${stockClass}">
                                 <i class="bi bi-${stockIcon}"></i>
@@ -99,19 +89,19 @@
                             </div>
                         </div>
                         <div class="menu-body">
-                            <h3 class="menu-title">${menu.title}</h3>
+                            <h3 class="menu-title">${menu.titre}</h3>
                             <span class="menu-theme">${menu.regime.charAt(0).toUpperCase() + menu.regime.slice(1)}</span>
                             <p class="menu-description">${menu.description}</p>
                             <div class="menu-details">
                                 <div class="menu-detail-item">
                                     <i class="bi bi-people-fill"></i>
-                                    <span>Min. ${menu.minPersons} pers.</span>
+                                    <span>Min. ${menu.nb_personnes_min} pers.</span>
                                 </div>
                             </div>
                             <div class="menu-footer">
                                 <div class="menu-price">
                                     <span class="menu-price-label">À partir de</span>
-                                    <span class="menu-price-value">${menu.price} €</span>
+                                    <span class="menu-price-value">${menu.prix} €</span>
                                 </div>
                                 <a href="/detail?id=${menu.id}" class="btn btn-detail">
                                     Voir détail <i class="bi bi-arrow-right"></i>
@@ -169,6 +159,7 @@
     });
 
     function applyFilters() {
+
         filteredMenus = [...menus];
 
         // Prix
@@ -177,9 +168,9 @@
         const maxPriceInput = parseFloat(document.getElementById("maxPriceInput").value) || 999999;
 
         filteredMenus = filteredMenus.filter(m => 
-            m.price <= maxPrice && 
-            m.price >= minPriceInput && 
-            m.price <= maxPriceInput
+            m.prix <= maxPrice && 
+            m.prix >= minPriceInput && 
+            m.prix <= maxPriceInput
         );
 
         // Thèmes
@@ -197,7 +188,7 @@
         // Nombre de personnes
         const minPersonsFilter = document.getElementById('minPersonsFilter').value;
         if (minPersonsFilter) {
-            filteredMenus = filteredMenus.filter(m => m.minPersons >= parseInt(minPersonsFilter));
+            filteredMenus = filteredMenus.filter(m => m.nb_personnes_min >= parseInt(minPersonsFilter));
         }
 
         currentPage = 1;
@@ -218,7 +209,9 @@
 
         filteredMenus = [...menus];
         currentPage = 1;
+        
         displayMenus();
+        updateResultsCount();
     }
 
     // ========== TRI ========== 
@@ -230,16 +223,16 @@
         const sortValue = document.getElementById("sortSelect").value;
         switch(sortValue) {
             case 'price-asc':
-                filteredMenus.sort((a, b) => a.price - b.price);
+                filteredMenus.sort((a, b) => a.prix - b.prix);
                 break;
             case 'price-desc':
-                filteredMenus.sort((a, b) => b.price - a.price);
+                filteredMenus.sort((a, b) => b.prix - a.prix);
                 break;
             case 'persons-asc':
-                filteredMenus.sort((a, b) => a.minPersons - b.minPersons);
+                filteredMenus.sort((a, b) => a.nb_personnes_min - b.nb_personnes_min);
                 break;
             case 'persons-desc':
-                filteredMenus.sort((a, b) => b.minPersons - a.minPersons);
+                filteredMenus.sort((a, b) => b.nb_personnes_min - a.nb_personnes_min);
                 break;
             default:
                 // Retour à l'ordre original
