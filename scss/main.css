@@ -11997,6 +11997,10 @@ body {
   color: #6B5847;
 }
 
+main {
+  margin-bottom: 20rem;
+}
+
 .btn-accent {
   background-color: #d4af37;
   border-color: #fff !important;
@@ -12396,6 +12400,7 @@ li {
 .btn-reset {
   background: linear-gradient(135deg, #E5DFCE 0%, #F0EFEA 100%);
   color: #6B5847;
+  transition: all 0.3s;
   border: none;
 }
 

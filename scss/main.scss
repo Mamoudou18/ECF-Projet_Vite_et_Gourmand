@@ -17,6 +17,10 @@ body{
   color: $primary;
 }
 
+main{
+    margin-bottom: 20rem; //320px
+}
+
  // custom btn
 .btn-accent{
     background-color: $accent;
@@ -429,6 +433,7 @@ footer.footer{
         .btn-reset {
             background: linear-gradient(135deg, $secondary 0%, $white-secondary 100%);
             color: $primary;
+            transition: all 0.3s;
             border: none;
         }
 
