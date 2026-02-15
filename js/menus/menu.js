@@ -1,269 +1,37 @@
     // ========== DONNÉES DES MENUS ==========
     const menus = [
-        {
-            id: 1,
-            title: "Menu Festif de Noël",
-            theme: "noel",
-            description: "Un menu traditionnel pour célébrer Noël en famille avec foie gras, dinde et bûche glacée.",
-            price: 350,
-            minPersons: 6,
-            regime: "classique",
-            stock: 15,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Menu+Noel"
-        },
-        {
-            id: 2,
-            title: "Brunch de Pâques",
-            theme: "paques",
-            description: "Un brunch gourmand avec agneau rôti, légumes de printemps et desserts aux chocolats.",
-            price: 280,
-            minPersons: 4,
-            regime: "classique",
-            stock: 8,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Menu+Paques"
-        },
-        {
-            id: 3,
-            title: "Menu Végétarien Raffiné",
-            theme: "classique",
-            description: "Un menu 100% végétarien avec légumes bio, quinoa, tartare d'algues et dessert vegan.",
-            price: 200,
-            minPersons: 4,
-            regime: "vegetarien",
-            stock: 12,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Menu+Vegetarien"
-        },
-        {
-            id: 4,
-            title: "Buffet Cocktail Entreprise",
-            theme: "evenement",
-            description: "Parfait pour vos événements professionnels avec verrines, canapés et petits fours salés.",
-            price: 450,
-            minPersons: 15,
-            regime: "classique",
-            stock: 20,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Buffet+Pro"
-        },
-        {
-            id: 5,
-            title: "Menu Gastronomique",
-            theme: "classique",
-            description: "Expérience culinaire d'exception avec homard, tournedos Rossini et soufflé au Grand Marnier.",
-            price: 480,
-            minPersons: 4,
-            regime: "classique",
-            stock: 5,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Gastronomique"
-        },
-        {
-            id: 6,
-            title: "Menu Vegan Découverte",
-            theme: "classique",
-            description: "Cuisine végétale créative et savoureuse, sans produits d'origine animale.",
-            price: 220,
-            minPersons: 4,
-            regime: "vegan",
-            stock: 10,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Menu+Vegan"
-        },
-        {
-            id: 7,
-            title: "Réveillon du Nouvel An",
-            theme: "evenement",
-            description: "Menu prestige avec champagne, caviar, homard et dessert flambé pour célébrer l'année.",
-            price: 500,
-            minPersons: 6,
-            regime: "classique",
-            stock: 3,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Nouvel+An"
-        },
-        {
-            id: 8,
-            title: "Menu Terroir du Sud-Ouest",
-            theme: "classique",
-            description: "Spécialités régionales : confit de canard, cassoulet, fromages et cannelés.",
-            price: 320,
-            minPersons: 8,
-            regime: "classique",
-            stock: 18,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Terroir"
-        },
-        {
-            id: 9,
-            title: "Brunch du Dimanche",
-            theme: "classique",
-            description: "Formule brunch complète avec viennoiseries, œufs, charcuterie et jus frais.",
-            price: 180,
-            minPersons: 4,
-            regime: "classique",
-            stock: 25,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Brunch"
-        },
-        {
-            id: 10,
-            title: "Menu Poissons & Fruits de mer",
-            theme: "classique",
-            description: "Plateau de fruits de mer, bar en croûte de sel et tarte citron meringuée.",
-            price: 380,
-            minPersons: 6,
-            regime: "classique",
-            stock: 7,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Fruits+Mer"
-        },
-        {
-            id: 11,
-            title: "Menu Sans Gluten",
-            theme: "classique",
-            description: "Menu complet adapté aux intolérances au gluten sans compromis sur le goût.",
-            price: 240,
-            minPersons: 4,
-            regime: "sans-gluten",
-            stock: 14,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Sans+Gluten"
-        },
-        {
-            id: 12,
-            title: "Barbecue Estival",
-            theme: "evenement",
-            description: "Grillade de viandes marinées, brochettes, salades composées et desserts glacés.",
-            price: 300,
-            minPersons: 10,
-            regime: "classique",
-            stock: 22,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Barbecue"
-        },
-        {
-            id: 13,
-            title: "Menu Enfant Anniversaire",
-            theme: "evenement",
-            description: "Menu ludique pour enfants avec nuggets maison, frites, jus et gâteau personnalisé.",
-            price: 150,
-            minPersons: 8,
-            regime: "classique",
-            stock: 30,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Anniversaire"
-        },
-        {
-            id: 14,
-            title: "Menu Dégustation 7 Services",
-            theme: "evenement",
-            description: "Parcours gastronomique en 7 services avec accords mets et vins.",
-            price: 420,
-            minPersons: 4,
-            regime: "classique",
-            stock: 6,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Degustation"
-        },
-        {
-            id: 15,
-            title: "Pique-nique Champêtre",
-            theme: "classique",
-            description: "Panier repas avec terrines, salades, fromages, pain frais et desserts.",
-            price: 160,
-            minPersons: 4,
-            regime: "classique",
-            stock: 20,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Pique-nique"
-        },
-        {
-            id: 16,
-            title: "Menu Saint-Valentin",
-            theme: "evenement",
-            description: "Dîner romantique pour deux avec champagne, homard et dessert au chocolat.",
-            price: 200,
-            minPersons: 4,
-            regime: "classique",
-            stock: 4,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Saint-Valentin"
-        },
-        {
-            id: 17,
-            title: "Plateau Apéritif Dinatoire",
-            theme: "evenement",
-            description: "Assortiment de 40 pièces salées variées pour vos soirées apéritives.",
-            price: 280,
-            minPersons: 10,
-            regime: "classique",
-            stock: 16,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Aperitif"
-        },
-        {
-            id: 18,
-            title: "Menu Asiatique Fusion",
-            theme: "classique",
-            description: "Cuisine fusion franco-asiatique avec sushis, wok de légumes et dessert yuzu.",
-            price: 260,
-            minPersons: 6,
-            regime: "classique",
-            stock: 11,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Asiatique"
-        },
-        {
-            id: 19,
-            title: "Brunch Végétarien Bio",
-            theme: "classique",
-            description: "Brunch 100% bio et végétarien avec produits locaux et de saison.",
-            price: 190,
-            minPersons: 4,
-            regime: "vegetarien",
-            stock: 13,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Brunch+Bio"
-        },
-        {
-            id: 20,
-            title: "Menu Indien Épicé",
-            theme: "classique",
-            description: "Voyage culinaire avec curry, tandoori, naans et desserts aux épices douces.",
-            price: 230,
-            minPersons: 6,
-            regime: "classique",
-            stock: 9,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Menu+Indien"
-        },
-        {
-            id: 21,
-            title: "Soirée Raclette Montagnarde",
-            theme: "classique",
-            description: "Charcuterie, fromages à raclette, pommes de terre et accompagnements.",
-            price: 210,
-            minPersons: 8,
-            regime: "classique",
-            stock: 17,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Raclette"
-        },
-        {
-            id: 22,
-            title: "Menu Halloween Terrifiant",
-            theme: "evenement",
-            description: "Menu thématique avec présentation effrayante et saveurs surprenantes.",
-            price: 240,
-            minPersons: 6,
-            regime: "classique",
-            stock: 8,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Halloween"
-        },
-        {
-            id: 23,
-            title: "Formule Déjeuner Express",
-            theme: "classique",
-            description: "Menu rapide et équilibré pour déjeuner d'affaires : entrée, plat, dessert.",
-            price: 140,
-            minPersons: 4,
-            regime: "classique",
-            stock: 28,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Dejeuner+Express"
-        },
-        {
-            id: 24,
-            title: "Menu Fête des Mères",
-            theme: "evenement",
-            description: "Menu délicat et raffiné pour célébrer les mamans avec champagne et douceurs.",
-            price: 270,
-            minPersons: 4,
-            regime: "classique",
-            stock: 12,
-            image: "https://placehold.co/400x250/34495e/d4af37?text=Fete+Meres"
-        }
+    { id: 1,  title: "Féérie de Noël",            theme: "noel",                 description: "Un menu festif aux saveurs traditionnelles pour célébrer Noël avec élégance.",                      price: 29.90, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-alexanderafan-28446157.jpg" },
+    { id: 2,  title: "Hiver Gourmand",            theme: "noel",                 description: "Recettes chaleureuses et épicées, adaptées aux régimes halal.",                                     price: 32.50, minPersons: 10, regime: "hallal",       stock: 18, image: "images/pexels-boryslav-19870149.jpg" },
+    { id: 3,  title: "Noël Végétal",              theme: "noel",                 description: "Une composition végétale raffinée pour un Noël léger.",                                             price: 27.90, minPersons: 8,  regime: "vegetarien",  stock: 25, image: "images/pexels-bemistermister-3490368.jpg" },
+    { id: 4,  title: "Étoile Vegan",              theme: "noel",                 description: "Un Noël 100% végétal aux parfums doux‑épicés.",                                                     price: 28.50, minPersons: 8,  regime: "vegan",       stock: 22, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
+    { id: 5,  title: "Réveillon Prestige",        theme: "noel",                 description: "Un menu festif et raffiné pour un réveillon d’exception.",                                          price: 39.90, minPersons: 12, regime: "classique",   stock: 15, image: "images/pexels-collab-media-173741945-15059689.jpg" },
+    { id: 6,  title: "Pâques Tradition",          theme: "paques",               description: "Un menu printanier aux saveurs emblématiques de Pâques.",                                           price: 28.90, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
+    { id: 7,  title: "Primeurs de Printemps",     theme: "paques",               description: "Un menu végétal mettant en avant les légumes de printemps.",                                        price: 26.50, minPersons: 8,  regime: "vegetarien",  stock: 22, image: "images/pexels-fox-58267-1320917.jpg" },
+    { id: 8,  title: "Pâques Halal",              theme: "paques",               description: "Un menu savoureux respectant les exigences halal.",                                                 price: 27.90, minPersons: 10, regime: "hallal",       stock: 18, image: "images/pexels-alexanderafan-28446157.jpg" },
+    { id: 9,  title: "Pâques Vegan",              theme: "paques",               description: "Un menu végétal frais et coloré pour Pâques.",                                                      price: 25.50, minPersons: 8,  regime: "vegan",       stock: 20, image: "images/pexels-boryslav-19870149.jpg" },
+    { id: 10, title: "Printemps Chic",            theme: "paques",               description: "Un menu élégant mêlant poisson, agrumes et douceur fruitée.",                                       price: 30.90, minPersons: 10, regime: "classique",   stock: 18, image: "images/pexels-bemistermister-3490368.jpg" },
+
+    { id: 11, title: "Brasserie Chic",            theme: "classique",            description: "Des recettes françaises revisitées dans un style raffiné.",                                         price: 27.50, minPersons: 8,  regime: "classique",   stock: 25, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
+    { id: 12, title: "Saveurs du Marché",         theme: "classique",            description: "Un menu authentique basé sur la fraîcheur du marché.",                                              price: 23.90, minPersons: 6,  regime: "classique",   stock: 32, image: "images/pexels-collab-media-173741945-15059689.jpg" },
+    { id: 13, title: "Terre & Mer",               theme: "classique",            description: "Une alliance élégante entre la fraîcheur marine et une viande tendre.",                             price: 29.50, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
+    { id: 14, title: "Végétarien Gourmet",        theme: "classique",            description: "Un menu végétarien raffiné mettant en valeur le goût naturel des légumes.",                         price: 25.90, minPersons: 6,  regime: "vegetarien",  stock: 28, image: "images/pexels-fox-58267-1320917.jpg" },
+    { id: 15, title: "Vegan Essentiel",           theme: "classique",            description: "Un menu 100% végétal, gourmand et équilibré.",                                                      price: 23.50, minPersons: 6,  regime: "vegan",       stock: 30, image: "images/pexels-alexanderafan-28446157.jpg" },
+    { id: 16, title: "Halal Tradition",           theme: "classique",            description: "Des recettes savoureuses respectant scrupuleusement le régime halal.",                              price: 24.90, minPersons: 8,  regime: "hallal",       stock: 24, image: "images/pexels-boryslav-19870149.jpg" },
+    { id: 17, title: "Sans-Gluten Délice",        theme: "classique",            description: "Un menu gourmand conçu pour éviter le gluten sans compromis sur le goût.",                          price: 26.90, minPersons: 6,  regime: "sans-gluten", stock: 26, image: "images/pexels-bemistermister-3490368.jpg" },
+    { id: 18, title: "Sans-Porc Élégance",        theme: "classique",            description: "Un menu soigné et savoureux garanti sans aucune présence de porc.",                                 price: 25.50, minPersons: 8,  regime: "sans-gluten",   stock: 22, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
+    { id: 19, title: "Business Premium",          theme: "evenement",            description: "Un menu élégant et rapide à servir, conçu pour les événements d'entreprise.",                       price: 28.90, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-collab-media-173741945-15059689.jpg" },
+    { id: 20, title: "Business Vegan",            theme: "evenement",            description: "Un menu professionnel 100% végétal, équilibré et moderne.",                                         price: 24.90, minPersons: 10, regime: "vegan",       stock: 20, image: "images/pexels-cottonbro-7243891.jpg" },
+
+    { id: 21, title: "Mariage Signature",         theme: "evenement",            description: "Un menu de mariage raffiné offrant une expérience culinaire mémorable.",                            price: 42.90, minPersons: 20, regime: "classique",   stock: 10, image: "images/pexels-fox-58267-1320917.jpg" },
+    { id: 22, title: "Mariage Prestige Poisson",  theme: "evenement",            description: "Un menu marin noble pensé pour les grandes réceptions de mariage.",                                 price: 45.90, minPersons: 20, regime: "classique",   stock: 12, image: "images/pexels-alexanderafan-28446157.jpg" },
+    { id: 23, title: "Mariage Vegan Élégance",    theme: "evenement",            description: "Un menu de mariage 100% végétal parfaitement équilibré.",                                           price: 39.50, minPersons: 20, regime: "vegan",       stock: 14, image: "images/pexels-boryslav-19870149.jpg" },
+    { id: 24, title: "Baptême Douceur",           theme: "evenement",            description: "Un menu tendre et gourmand pour célébrer un baptême en douceur.",                                   price: 24.90, minPersons: 10, regime: "classique",   stock: 18, image: "images/pexels-bemistermister-3490368.jpg" },
+    { id: 25, title: "Baptême Tradition",         theme: "evenement",            description: "Une cuisine familiale inspirée des repas traditionnels de célébration.",                            price: 23.50, minPersons: 10, regime: "classique",   stock: 20, image: "images/pexels-christopher-welsch-leveroni-2150186467-31987728.jpg" },
+    { id: 26, title: "Cocktail Classique",        theme: "evenement",            description: "Un assortiment varié, élégant et pratique pour vos cocktails et réceptions.",                       price: 22.90, minPersons: 15, regime: "classique",   stock: 25, image: "images/pexels-collab-media-173741945-15059689.jpg" },
+    { id: 27, title: "Cocktail Vegan",            theme: "evenement",            description: "Un assortiment entièrement vegan, frais, coloré et moderne pour vos réceptions.",                   price: 21.50, minPersons: 15, regime: "vegan",       stock: 26, image: "images/pexels-cottonbro-7243891.jpg" },
+    { id: 28, title: "Événement Entreprise",      theme: "evenement",            description: "Un menu construit pour les événements d’entreprise : efficace, gourmand et rapide à servir.",       price: 27.50, minPersons: 10, regime: "classique",   stock: 24, image: "images/pexels-fox-58267-1320917.jpg" },
+    { id: 29, title: "Banquet Tradition",         theme: "evenement",            description: "Un menu généreux idéal pour les grandes tablées et repas familiaux.",                               price: 25.90, minPersons: 12, regime: "classique",   stock: 18, image: "images/pexels-alexanderafan-28446157.jpg" },
+    { id: 30, title: "Gala Prestige",             theme: "evenement",            description: "Un menu haut de gamme conçu pour les soirées prestigieuses et réceptions de gala.",                 price: 48.90, minPersons: 20, regime: "classique",   stock: 14, image: "images/pexels-boryslav-19870149.jpg" }
     ];
 
     // ========== VARIABLES GLOBALES ==========
@@ -283,6 +51,9 @@
     // ========== AFFICHAGE DES MENUS ==========
     function displayMenus() {
         const container = document.getElementById("menusGrid");
+        //mise à jour du compteur
+        updateResultsCount();
+
         container.innerHTML = '';
         if (filteredMenus.length === 0) {
             container.innerHTML = `
@@ -291,13 +62,20 @@
                         <i class="bi bi-search"></i>
                         <h4>Aucun menu trouvé</h4>
                         <p>Essayez de modifier vos filtres de recherche</p>
-                        <button class="btn btn-primary mt-3" onclick="resetFilters()">
+                        <button id="resetFiltersBtn" class="btn btn-primary mt-3">
                             Réinitialiser les filtres
                         </button>
                     </div>
                 </div>
             `;
             document.getElementById("pagination").innerHTML = '';
+            document.getElementById("resetFiltersBtn").addEventListener("click", function(e){
+                if(e.target.id ==="resetFiltersBtn"){
+                    e.preventDefault();
+                    resetFilters();
+                }
+            });
+
             return;
         }
 
@@ -390,7 +168,6 @@
     });
 
     function applyFilters() {
-        console.log("On est ici : function applyFilters")
         filteredMenus = [...menus];
 
         // Prix
@@ -448,6 +225,10 @@
     // ========== TRI ========== 
     const sortSelect = document.getElementById("sortSelect");
     sortSelect.addEventListener("change", function sortMenus(){
+
+        //mise à jour du compteur 
+        updateResultsCount();
+        
         const sortValue = document.getElementById("sortSelect").value;
         switch(sortValue) {
             case 'price-asc':
