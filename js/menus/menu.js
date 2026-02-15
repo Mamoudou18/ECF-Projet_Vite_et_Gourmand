@@ -68,7 +68,7 @@
                     </div>
                 </div>
             `;
-            document.getElementById("pagination").innerHTML = '';
+            document.getElementById("pagination-container").style.display="none";
             document.getElementById("resetFiltersBtn").addEventListener("click", function(e){
                 if(e.target.id ==="resetFiltersBtn"){
                     e.preventDefault();
@@ -122,14 +122,15 @@
                 </div>
             `;
         });
-        updatePagination()
+        document.getElementById("pagination-container").style.display = "block";
+        updatePagination();
     }
 
     // -----------------------
     // Pagination
     // -----------------------
     function updatePagination() {
-        const totalPages = Math.ceil(filteredMenus.length / itemsPerPage);
+        const totalPages = Math.max(1,Math.ceil(filteredMenus.length / itemsPerPage));
         console.log(currentPage);
         document.getElementById("page-info").textContent =
             `Page ${currentPage} sur ${totalPages}`;
@@ -201,7 +202,6 @@
 
         currentPage = 1;
         displayMenus();
-        updateResultsCount();
     }
 
     function resetFilters() {
@@ -219,7 +219,6 @@
         filteredMenus = [...menus];
         currentPage = 1;
         displayMenus();
-        updateResultsCount();
     }
 
     // ========== TRI ========== 
@@ -227,8 +226,7 @@
     sortSelect.addEventListener("change", function sortMenus(){
 
         //mise à jour du compteur 
-        updateResultsCount();
-        
+
         const sortValue = document.getElementById("sortSelect").value;
         switch(sortValue) {
             case 'price-asc':
