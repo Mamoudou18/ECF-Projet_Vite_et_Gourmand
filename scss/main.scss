@@ -84,6 +84,9 @@ footer.footer{
     color: $white-secondary;
     text-align: center;
     margin-top: 3rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 
     h5{
       color: $white-primary;

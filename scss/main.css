@@ -12064,6 +12064,9 @@ footer.footer {
   color: #F0EFEA;
   text-align: center;
   margin-top: 3rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 footer.footer h5, footer.footer .h5 {
   color: #fff;
