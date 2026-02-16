@@ -11997,6 +11997,10 @@ body {
   color: #6B5847;
 }
 
+main {
+  margin-bottom: 20rem;
+}
+
 .btn-accent {
   background-color: #d4af37;
   border-color: #fff !important;
@@ -12683,4 +12687,122 @@ li {
 
 .form-range {
   accent-color: #6B5847;
+}
+
+.menu-header {
+  background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
+  color: white;
+  padding: 3rem 0;
+}
+
+.badge-custom {
+  background: #fff;
+  color: #6B5847;
+  font-weight: 600;
+}
+
+.card-detail {
+  background: #fff;
+  height: 300px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.gallery-img {
+  height: 400px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.gallery-img:hover {
+  transform: scale(1.05);
+}
+
+.thumbnail {
+  height: 80px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+  border-color: #6B5847;
+}
+
+.card-composition {
+  height: auto;
+  transition: all 0.3s;
+  border-radius: 35px 35px 0 0;
+  padding: 0;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
+  padding: 1.45rem 1rem;
+  border-top-right-radius: 30px !important;
+  border-top-left-radius: 30px !important;
+  height: 75px;
+  color: #fff;
+}
+
+.plat-card {
+  background: #E5DFCE;
+  transition: all 0.3s;
+}
+
+.plat-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.allergene {
+  color: #6B5847;
+  padding: 0.25rem 0.1rem;
+  font-size: 0.75rem;
+  margin: 0.25rem;
+}
+
+.conditions-box {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 1.5rem;
+  border-radius: 5px;
+}
+
+.price-box {
+  background: #fff;
+  color: #6B5847;
+  padding: 2rem;
+  border-radius: 10px;
+  top: 80px;
+}
+
+.btn-commander {
+  background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  transition: all 0.3s;
+}
+
+.btn-commander:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px #6B5847;
+}
+
+.card-descriptionLong {
+  background: #fff;
 }/*# sourceMappingURL=main.css.map */
