@@ -725,3 +725,113 @@ footer.footer{
         .form-range {
             accent-color: $primary;
         }
+
+               // Mise en page :  Détail Menu
+        .menu-header {
+            background: linear-gradient(135deg, $primary 0%, $accent 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .badge-custom {
+            background: $white-primary;
+            color: $primary;
+            font-weight: 600;
+        }
+
+        .card-detail{
+            background: $white-primary;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery-img {
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        .thumbnail {
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: $primary;
+        }
+
+        .card-composition{
+            height: auto;
+            transition: all 0.3s;
+            border-radius: 35px 35px 0 0;
+            padding: 0;
+        }
+        .card-header{
+            background: linear-gradient(135deg, $primary 0%, $accent 100%);
+            padding: 1.45rem 1rem;
+            border-top-right-radius: 30px !important;
+            border-top-left-radius: 30px !important;
+            height: 75px;
+            color: $white-primary
+        }
+
+        .plat-card {
+            background: $secondary;
+            transition: all 0.3s;
+        }
+
+        .plat-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .allergene {
+            color: $primary;
+            padding: 0.25rem 0.1rem;
+            font-size: 0.75rem;
+            margin: 0.25rem;
+        }
+
+        .conditions-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 5px;
+        }
+
+        .price-box {
+            background: $white-primary;
+            color: $primary;
+            padding: 2rem;
+            border-radius: 10px;
+            top: 80px;
+        }
+
+        .btn-commander {
+            background: linear-gradient(135deg, $primary 0%, $accent 100%);
+            color: $white-primary;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-commander:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px $primary;
+        }

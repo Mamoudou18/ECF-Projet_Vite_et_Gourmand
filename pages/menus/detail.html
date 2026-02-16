@@ -1,0 +1,215 @@
+<!-- Header detail menu -->
+<div class="menu-header position-relative">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Menu de Noël Traditionnel</h1>
+                <p class="lead mb-4">Un repas festif pour célébrer les fêtes de fin d'année en famille</p>
+                
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge badge-custom">
+                        <i class="bi bi-calendar-event"></i> Noël
+                    </span>
+                    <span class="badge badge-custom">
+                        <i class="bi bi-people"></i> 6 personnes min.
+                    </span>
+                    <span class="badge badge-custom">
+                        <i class="bi bi-egg"></i> Classique
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="container my-5">
+    <div class="row g-4">
+        
+        <!-- Colonne gauche : Images et détails -->
+        <div class="col-lg-8">
+            
+            <!-- Galerie d'images -->
+            <div class="card-detail shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3"><i class="bi bi-images"></i> Galerie</h4>
+            
+                    <!-- Image principale -->
+                    <img id="mainImage" src=" " class="img-fluid gallery-img w-100 mb-3" alt="Menu principal">
+                    
+                    <!-- Miniatures -->
+                    <div class="d-flex gap-2 overflow-auto">
+                        <img src=" " class="thumbnail active" onclick="changeImage(this.src)">
+                        <img src=" " class="thumbnail" onclick="changeImage(this.src)">
+                        <img src=" " class="thumbnail" onclick="changeImage(this.src)">
+                        <img src=" " class="thumbnail" onclick="changeImage(this.src)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="card-descriptionLong shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3"><i class="bi bi-card-text"></i> Description</h4>
+                    <p class="text-muted">
+                        Plongez dans la magie de Noël avec notre menu traditionnel qui ravira petits et grands. 
+                        Préparé avec des produits frais et locaux, ce repas festif est conçu pour créer des 
+                        moments inoubliables autour de la table. Chaque plat est élaboré avec soin par nos chefs 
+                        pour garantir une expérience culinaire exceptionnelle.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Composition du menu -->
+            <div class="card card-composition shadow-sm mb-4">
+                <div class="card-header">
+                    <h4><i class="bi bi-list-ul"></i> Composition du menu</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Entrées -->
+                    <h5 class="text-primary mb-3 text-start"><i class="bi bi-1-circle"></i> Entrée(s)</h5>
+                    <div class="row g-3 mb-4 text-start">
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Foie gras de canard mi-cuit</h6>
+                                <p class="small text-muted mb-2">Servi avec confiture de figues et pain toasté</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Gluten</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Fruits à coque</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Salade de homard</h6>
+                                <p class="small text-muted mb-2">Accompagnée de sa vinaigrette aux agrumes</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Crustacés</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Moutarde</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plats -->
+                    <h5 class="text-primary mb-3 text-start"><i class="bi bi-2-circle"></i> Plat(s)</h5>
+                    <div class="row g-3 mb-4 text-start">
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Dinde fermière farcie aux marrons</h6>
+                                <p class="small text-muted mb-2">Sauce au porto, gratin dauphinois et légumes de saison</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Lait</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Fruits à coque</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Chapon rôti aux épices</h6>
+                                <p class="small text-muted mb-2">Purée de céleri et jus corsé</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Céleri</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Lait</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desserts -->
+                    <h5 class="text-primary mb-3 text-start"><i class="bi bi-3-circle"></i> Dessert(s)</h5>
+                    <div class="row g-3 text-start">
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Bûche de Noël chocolat-praliné</h6>
+                                <p class="small text-muted mb-2">Croustillant noisette et ganache montée</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Gluten</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Œufs</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Fruits à coque</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Lait</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="plat-card p-3 h-100">
+                                <h6 class="fw-bold">Assortiment de 13 desserts provençaux</h6>
+                                <p class="small text-muted mb-2">Selon la tradition du Sud</p>
+                                <div>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Fruits à coque</span>
+                                    <span class="allergene"><i class="bi bi-exclamation-triangle"></i> Gluten</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite : Prix et commande -->
+        <div class="col-lg-4 position-sticky">
+            <div class="price-box mb-3">
+                <div class="text-center mb-3">
+                    <div class="display-4 fw-bold" style="color: var(--primary);">189€</div>
+                    <div class="text-muted">Pour 6 personnes</div>
+                    <div class="small mt-2">(31,50€ / personne)</div>
+                </div>
+
+                <div class="alert alert-warning mb-3">
+                    <small>
+                        <i class="bi bi-gift"></i> 
+                        <strong>Réduction de 10%</strong> à partir de 11 personnes 
+                        (soit 6 + 5 personnes supplémentaires)
+                    </small>
+                </div>
+
+                <button class="btn btn-commander w-100 mb-3" id="btn-commander">
+                    <i class="bi bi-cart-plus"></i> Commander ce menu
+                </button>
+
+                <a href="/menu" class="btn btn-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Retour aux menus
+                </a>
+
+                <div class="mt-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2);">
+                    <h6 class="mb-2"><i class="bi bi-info-circle"></i> Informations</h6>
+                    <div class="small">
+                        <div class="mb-2">
+                            <i class="bi bi-clock"></i> Préparation : 7 jours min.
+                        </div>
+                        <div>
+                            <i class="bi bi-box-seam"></i> Stock limité : 5 restants
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Conditions importantes -->
+            <div class="conditions-box">
+                <h5 class="mb-3">
+                    <i class="bi bi-exclamation-circle-fill"></i> 
+                    <strong>Conditions importantes</strong>
+                </h5>
+                <ul class="mb-0">
+                    <li class="mb-2">
+                        <strong>Délai de commande :</strong> Ce menu doit être commandé au minimum 
+                        <strong>7 jours ouvrés</strong> avant la date de prestation.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Conservation :</strong> Les plats doivent être conservés au réfrigérateur 
+                        entre 0°C et 4°C jusqu'au moment du service.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Réchauffage :</strong> Instructions détaillées fournies lors de la livraison.
+                    </li>
+                    <li>
+                        <strong>Matériel :</strong> Nous pouvons prêter de la vaisselle et du matériel 
+                        (caution de 600€ si non restitué sous 10 jours).
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
