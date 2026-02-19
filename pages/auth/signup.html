@@ -9,16 +9,9 @@
                 <p class="mb-0">Rejoignez-nous en quelques clics</p>
             </div>
 
-            <!-- Body -->
             <div class="register-body">
-                
-                <!-- Messages -->
-                <div id="errorMessage" class="alert alert-danger" style="display: none;">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <span id="errorText"></span>
-                </div>
 
-                <form id="registerForm" onsubmit="handleRegister(event)">
+                <form id="registerForm">
                     
                     <!-- Nom et Prénom -->
                     <div class="row g-3 mb-3">
@@ -47,6 +40,9 @@
                             </span>
                             <input type="email" class="form-control" id="email" placeholder="votre.email@exemple.com" required>
                         </div>
+                        <small id="emailMessage" class="text-danger" style="display: none;">
+                            Votre adresse mail ne respecte pas le format!
+                        </small>
                     </div>
 
                     <!-- Téléphone -->
@@ -58,9 +54,8 @@
                             <span class="input-group-text">
                                 <i class="bi bi-phone"></i>
                             </span>
-                            <input type="tel" class="form-control" id="telephone" placeholder="06 12 34 56 78" required pattern="[0-9]{10}" title="Format : 0612345678 (10 chiffres)">
+                            <input type="tel" class="form-control" id="telephone" placeholder="06 12 34 56 78" required>
                         </div>
-                        <small class="text-muted">Format : 10 chiffres sans espaces</small>
                     </div>
 
                     <!-- Adresse postale -->
@@ -83,9 +78,9 @@
                                 <i class="bi bi-key-fill"></i>
                             </span>
                             <input 
-                                type="password" class="form-control" id="password" placeholder="••••••••••" required minlength="10" oninput="checkPasswordStrength()">
-                            <span class="password-toggle" onclick="togglePassword('password', 'toggleIcon1')">
-                                <i class="bi bi-eye-fill" id="toggleIcon1"></i>
+                                type="password" class="form-control" id="password" placeholder="••••••••••" required minlength="10">
+                            <span class="password-toggle" type="button" id="togglePassword">
+                                <i class="bi bi-eye-fill"></i>
                             </span>
                         </div>
                         
@@ -129,9 +124,9 @@
                                 <i class="bi bi-key-fill"></i>
                             </span>
                             <input 
-                                type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required oninput="checkPasswordMatch()">
-                            <span class="password-toggle" onclick="togglePassword('passwordConfirm', 'toggleIcon2')">
-                                <i class="bi bi-eye-fill" id="toggleIcon2"></i>
+                                type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                            <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                <i class="bi bi-eye-fill"></i>
                             </span>
                         </div>
                         <small id="passwordMatchMessage" class="text-danger" style="display: none;">
@@ -142,12 +137,7 @@
                     <!-- RGPD -->
                     <div class="mb-3">
                         <div class="form-check">
-                            <input 
-                                class="form-check-input" 
-                                type="checkbox" 
-                                id="rgpd" 
-                                required
-                            >
+                            <input class="form-check-input" type="checkbox" id="rgpd" required>
                             <label class="form-check-label" for="rgpd">
                                 J'accepte la <a href="mentions_legales.html" target="_blank" class="link-primary-custom">politique de confidentialité</a> 
                                 et les <a href="cgv.html" target="_blank" class="link-primary-custom">CGV</a> *
@@ -161,6 +151,11 @@
                     </button>
 
                 </form>
+                <!-- Messages -->
+                <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span id="errorText"></span>
+                </div>
 
                 <!-- Divider -->
                 <div class="divider">
