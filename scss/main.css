@@ -12940,7 +12940,8 @@ li {
   color: #dc3545;
 }
 
-.btn-register {
+.btn-register,
+.btn-login {
   background: linear-gradient(135deg, #6B5847, #d4af37);
   color: #fff;
   border: none;
@@ -12952,13 +12953,15 @@ li {
   width: 100%;
 }
 
-.btn-register:hover:not(:disabled) {
+.btn-register:hover:not(:disabled),
+.btn-login:hover:not(:disabled) {
   background: #E5DFCE;
   transform: translateY(-2px);
   box-shadow: 0 5px 20px #6B5847;
 }
 
-.btn-register:disabled {
+.btn-register:disabled,
+.btn-login:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

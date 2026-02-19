@@ -841,7 +841,7 @@ footer.footer{
         }
 
 
-// style page signup
+// style page signup et signin
 .register-container {
     margin-top: 100px;
     max-width: 700px;
@@ -975,7 +975,8 @@ overflow: hidden;
     color: #dc3545;
 }
 
-.btn-register {
+.btn-register,
+.btn-login {
     background: linear-gradient(135deg, $primary, $accent);;
     color: $white-primary;
     border: none;
@@ -987,13 +988,15 @@ overflow: hidden;
     width: 100%;
 }
 
-.btn-register:hover:not(:disabled) {
+.btn-register:hover:not(:disabled),
+.btn-login:hover:not(:disabled) {
     background: $secondary;
     transform: translateY(-2px);
     box-shadow: 0 5px 20px $primary;
 }
 
-.btn-register:disabled {
+.btn-register:disabled,
+.btn-login:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
