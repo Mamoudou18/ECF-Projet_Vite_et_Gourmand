@@ -13019,4 +13019,7 @@ li {
   .register-header {
     padding: 2rem 1.5rem;
   }
+}
+.modal-header {
+  background: linear-gradient(135deg, #6B5847, #d4af37);
 }/*# sourceMappingURL=main.css.map */

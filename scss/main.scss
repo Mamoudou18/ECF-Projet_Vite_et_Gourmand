@@ -977,7 +977,7 @@ overflow: hidden;
 
 .btn-register,
 .btn-login {
-    background: linear-gradient(135deg, $primary, $accent);;
+    background: linear-gradient(135deg, $primary, $accent);
     color: $white-primary;
     border: none;
     padding: 0.875rem;
@@ -1054,4 +1054,8 @@ overflow: hidden;
     .register-header {
         padding: 2rem 1.5rem;
     }
+}
+
+.modal-header{
+    background: linear-gradient(135deg, $primary, $accent);
 }

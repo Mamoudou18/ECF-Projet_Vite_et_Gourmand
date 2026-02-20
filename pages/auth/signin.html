@@ -46,8 +46,14 @@
                         </div>
                     </diV>
 
+                    <!--- Lien initialisation mot de passe -->
+                    <div class="text-end mb-3">
+                        <a href="#" class="link-signin" data-bs-toggle="modal" data-bs-target="#initPasswordModal">
+                            <i class="bi bi-question-circle"></i> Mot de passe oublié ?
+                        </a>
+                    </div>
                     <!-- Bouton inscription -->
-                    <button type="submit" class="btn btn-login" id="loginBtn">
+                    <button type="submit" class="btn btn-login mb-3" id="loginBtn">
                         <i class="bi bi-person-plus-fill"></i> Se connecter
                     </button>
 
@@ -71,5 +77,33 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!-- Modal Mot de passe oublié -->
+<div class="modal fade" id="initPasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px;">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-key"></i> Réinitialiser votre mot de passe
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-3">
+                    Entrez votre adresse email. Vous recevrez un lien pour réinitialiser votre mot de passe.
+                </p>
+                <form id="forgotPasswordForm">
+                    <div class="mb-3">
+                        <label for="forgotEmail" class="form-label fw-bold">Adresse email</label>
+                        <input type="email" class="form-control" id="initEmail" placeholder="votre.email@exemple.com"required>
+                    </div>
+                    <button type="submit" class="btn btn-login">
+                        <i class="bi bi-send-fill"></i> Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
