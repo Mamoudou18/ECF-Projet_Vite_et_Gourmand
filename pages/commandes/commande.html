@@ -1,0 +1,352 @@
+<div class="commande-container" style="margin-top: 80px;">
+    <div class="commande-card">
+        <!-- Header -->
+        <div class="commande-header">
+            <h2><i class="bi bi-cart-check-fill"></i> Finaliser ma commande</h2>
+            <p>Vérifiez les détails de votre menu et complétez les informations de livraison</p>
+        </div>
+
+        <div class="commande-body">
+            <!-- RÉCAPITULATIF COMPLET DU MENU -->
+            <div class="menu-recap" id="menuRecap">
+                <h3 id="menuTitre">
+                    <i class="bi bi-card-checklist"></i> 
+                    <span id="menuTitreText"></span>
+                </h3>
+                <p id="menuDescription" style="font-size: 1.1rem; opacity: 0.95; margin-bottom: 0;"></p>
+
+                <!-- Informations principales -->
+                <div class="menu-info-grid">
+                    <div class="info-badge">
+                        <i class="bi bi-cash-coin"></i>
+                        <strong id="menuPrixDisplay"></strong>
+                        <small>par personne</small>
+                    </div>
+                    <div class="info-badge">
+                        <i class="bi bi-people-fill"></i>
+                        <strong id="menuMinPersDisplay"></strong>
+                        <small>minimum</small>
+                    </div>
+                    <div class="info-badge">
+                        <i class="bi bi-calendar-event"></i>
+                        <strong id="menuThemeDisplay"></strong>
+                        <small>thème</small>
+                    </div>
+                    <div class="info-badge">
+                        <i class="bi bi-leaf"></i>
+                        <strong id="menuRegimeDisplay"></strong>
+                        <small>régime</small>
+                    </div>
+                </div>
+
+                <!-- Composition du menu -->
+                <div class="menu-recap-content">
+                    <div class="menu-section">
+                        <h5><i class="bi bi-egg"></i> Entrées</h5>
+                        <ul id="menuEntrees"></ul>
+                    </div>
+                    <div class="menu-section">
+                        <h5><i class="bi bi-basket"></i> Plats principaux</h5>
+                        <ul id="menuPlats"></ul>
+                    </div>
+                    <div class="menu-section">
+                        <h5><i class="bi bi-cup-straw"></i> Desserts</h5>
+                        <ul id="menuDesserts"></ul>
+                    </div>
+                    <div class="menu-section">
+                        <h5><i class="bi bi-exclamation-triangle-fill"></i> Allergènes</h5>
+                        <div class="allergenes-list" id="menuAllergenes"></div>
+                    </div>
+                </div>
+
+                <!-- Conditions importantes -->
+                <div class="conditions-important">
+                    <h5><i class="bi bi-info-circle-fill"></i> Conditions importantes de ce menu</h5>
+                    <ul id="menuConditionsListe"></ul>
+                </div>
+            </div>
+
+            <form id="commandeForm">
+                <!-- INFORMATIONS CLIENT (AUTO-REMPLIES) -->
+                <div class="section-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-person-fill"></i> Vos informations
+                    </h3>
+
+                    <div class="alert-auto-fill">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Vos informations ont été automatiquement remplies</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="nom" readonly required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="prenom" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-envelope"></i> Email <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email" readonly required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-telephone"></i> Téléphone <span class="text-danger">*</span>
+                            </label>
+                            <input type="tel" class="form-control" id="telephone" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="adressePostale" readonly required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal</label>
+                            <input type="text" class="form-control" id="codePostalClient" readonly required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="villeClient" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                            Pour modifier vos informations, rendez-vous dans 
+                        <a href="espace_utilisateur.html" class="edit-address-link">votre espace personnel</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- COLONNE GAUCHE: Formulaire -->
+                    <div class="col-lg-7">                       
+                        <!-- INFORMATIONS DE PRESTATION -->
+                        <div class="section-card">
+                            <h3 class="section-title">
+                                <i class="bi bi-geo-alt-fill"></i> Informations de livraison
+                            </h3>
+
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                <strong>Délai de commande :</strong> Ce menu doit être commandé au minimum 
+                                <strong id="delaiCommande">7 jours</strong> avant la date de prestation.
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt"></i> Adresse de livraison <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="adresseLivraison" placeholder="12 Rue de la République, 33000 Bordeaux" required>
+                                <small class="text-muted">
+                                    Si différente de votre adresse postale. 
+                                    <a href="#" class="edit-address-link" onclick="copyPostalAddress(event)">
+                                        Utiliser mon adresse postale
+                                    </a>
+                                </small>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-calendar3"></i> Date de prestation <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control" id="datePrestation" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="bi bi-clock"></i> Heure de prestation <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="time" class="form-control" id="heurePrestation" required>
+                                </div>
+                            </div>
+
+                            <!-- NOMBRE DE PERSONNES -->
+                            <label class="form-label">
+                                <i class="bi bi-people-fill"></i> Nombre de personnes <span class="text-danger">*</span>
+                                <br>
+                                <small class="text-muted">
+                                    Indiquez le nombre de convives (minimum: <strong id="minPersonsInfo"></strong> personnes)
+                                </small>
+                                </label>
+
+                            <div class="counter-group">
+                                <button type="button" class="counter-btn" id="btnDecrement" onclick="decrementPersons()">
+                                    <i class="bi bi-dash-lg"></i>
+                                </button>
+                                <div class="counter-value">
+                                    <span id="personCount">10</span>
+                                </div>
+                                <button type="button" class="counter-btn" onclick="incrementPersons()">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-gift"></i> 
+                                <strong>Bon à savoir :</strong> Réduction de <strong>-10% si 5 nombre personnes</strong> de plus que le nombre de personnes minimum !
+                            </div>
+
+                            <h5 class="section-title">
+                                <i class="bi bi-plus-circle"></i> Options supplémentaires
+                            </h5>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="locationMateriel" onchange="calculatePrice()">
+                                <label class="form-check-label" for="locationMateriel">
+                                    <strong>Location de matériel</strong> (+50,00 €)
+                                    <br>
+                                    <small class="text-muted">Vaisselle, couverts, nappes, etc.</small>
+                                </label>
+                            </div>
+
+                            <div id="deliveryInfo" class="delivery-info" style="display: none;">
+                                <strong><i class="bi bi-truck"></i> Frais de livraison : <span id="deliveryPrice">0,00 €</span></strong>
+                                <p class="mb-0 mt-2" id="deliveryDetails"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Affichage carte google map-->
+                    <div class="col-lg-5">
+                        <div id="googleMap">
+                            <p>la carte google Map sera chargée ici</p>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- OPTIONS SUPPLÉMENTAIRES -->
+                <div class="section-card">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-chat-left-text"></i> Commentaire (optionnel)
+                        </label>
+                        <textarea class="form-control" id="commentaire" rows="4" 
+                            placeholder="Informations particulières, allergies non mentionnées, demandes spéciales..."></textarea>
+                    </div>
+                </div>
+
+                <!-- COLONNE DROITE: Récapitulatif prix -->
+                <div class="price-card">
+                    <h3 class="section-title">
+                        <i class="bi bi-receipt"></i> Récapitulatif
+                    </h3>
+
+                    <div class="price-line">
+                        <span><i class="bi bi-card-list"></i> Menu (<span id="recapNbPersons">0</span> pers.)</span>
+                        <strong id="recapPriceMenu">0,00 €</strong>
+                    </div>
+
+                    <div class="price-line" id="recapMaterielLine" style="display: none;">
+                        <span><i class="bi bi-box"></i> Location matériel</span>
+                        <strong>50,00 €</strong>
+                    </div>
+
+                    <div class="price-line discount" id="recapDiscountLine" style="display: none;">
+                        <span><i class="bi bi-tag-fill"></i> Réduction -10%</span>
+                        <strong id="recapDiscount">0,00 €</strong>
+                    </div>
+
+                    <div class="price-line">
+                        <span><i class="bi bi-truck"></i> Frais de livraison</span>
+                        <strong id="recapDelivery">0,00 €</strong>
+                    </div>
+
+                    <div class="price-line">
+                        <span>TOTAL TTC</span>
+                        <strong id="recapTotal">0,00 €</strong>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- CGV -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="acceptCGV" required>
+                        <label class="form-check-label" for="acceptCGV">
+                            J'accepte les <a href="cgv.html" target="_blank">conditions générales de vente</a> <span class="text-danger">*</span>
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <!-- Bouton validation -->
+                            <button type="submit" class="btn-submit">
+                                <i class="bi bi-check-circle-fill"></i> Valider
+                            </button>
+                        </div>
+
+                        <div class="col">
+                            <!-- Bouton annulation -->
+                            <button type="button" class="btn btn-danger">
+                                <i class="bi bi-x-circle-fill"></i> Annuler
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0">
+                        <small>
+                            <i class="bi bi-info-circle-fill"></i>
+                            Un email de confirmation vous sera envoyé immédiatement.
+                        </small>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill"></i> Commande confirmée !
+                </h5>
+            </div>
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 6rem;"></i>
+                </div>
+                <h3 class="mb-4">Merci pour votre commande !</h3>
+                <div class="alert alert-success">
+                    <h5>Numéro de commande : <strong id="orderNumber"></strong></h5>
+                </div>
+                <p class="mb-3">Un email de confirmation a été envoyé à :</p>
+                <p class="fs-5"><strong id="confirmEmail"></strong></p>
+                
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Prochaines étapes :</strong>
+                    <ul class="text-start mt-2 mb-0">
+                        <li>Vous recevrez un email de confirmation dans quelques instants</li>
+                        <li>Notre équipe vous contactera sous 24h pour valider les détails</li>
+                        <li>Vous pouvez suivre votre commande depuis votre espace client</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='menus.html'">
+                    <i class="bi bi-arrow-left"></i> Retour aux menus
+                </button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='espace_utilisateur.html'">
+                    <i class="bi bi-person-circle"></i> Mon espace
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
