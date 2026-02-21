@@ -13427,4 +13427,9 @@ li {
     height: 40px;
     font-size: 1.25rem;
   }
+}
+#googleMap {
+  height: 880px;
+  width: 100%;
+  margin-bottom: 1.5rem;
 }/*# sourceMappingURL=main.css.map */
