@@ -10,6 +10,17 @@
             </div>
 
             <div class="register-body">
+                <!-- Message d'erreur (masqué par défaut) -->
+                <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <!-- Message de succès (masqué par défaut) -->
+                <div id="successMessage" class="alert alert-success" style="display: none;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span id="successText"></span>
+                </div>
 
                 <form id="loginForm">
 
@@ -44,11 +55,11 @@
                                 <i class="bi bi-eye-fill"></i>
                             </span>
                         </div>
-                    </diV>
+                    </div>
 
                     <!--- Lien initialisation mot de passe -->
                     <div class="text-end mb-3">
-                        <a href="#" class="link-signin" data-bs-toggle="modal" data-bs-target="#initPasswordModal">
+                        <a href="#" class="link-signin" data-bs-toggle="modal" data-bs-target="#forgotPassword">
                             <i class="bi bi-question-circle"></i> Mot de passe oublié ?
                         </a>
                     </div>
@@ -81,7 +92,7 @@
 </div>
 
 <!-- Modal Mot de passe oublié -->
-<div class="modal fade" id="initPasswordModal" tabindex="-1">
+<div class="modal fade" id="forgotPassword" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 15px;">
             <div class="modal-header">
@@ -97,7 +108,7 @@
                 <form id="forgotPasswordForm">
                     <div class="mb-3">
                         <label for="forgotEmail" class="form-label fw-bold">Adresse email</label>
-                        <input type="email" class="form-control" id="initEmail" placeholder="votre.email@exemple.com"required>
+                        <input type="email" class="form-control" id="forgotEmail" placeholder="votre.email@exemple.com"required>
                     </div>
                     <button type="submit" class="btn btn-login">
                         <i class="bi bi-send-fill"></i> Envoyer
