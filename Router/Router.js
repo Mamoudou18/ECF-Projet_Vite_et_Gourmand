@@ -12,6 +12,11 @@ const LoadContentPage = async () => {
     const path = window.location.pathname;
     const actualRoute = getRouteByUrl(path);
 
+    // Module de néttoyage
+    if(window.currentModule?.cleanup){
+        window.currentModule.cleanup();
+    }
+
     // Charger HTML
     const html = await fetch(actualRoute.pathHtml).then(res => res.text());
     document.getElementById("main-page").innerHTML = html;
@@ -21,6 +26,8 @@ const LoadContentPage = async () => {
     // Charger JS proprement (module dynamique)
     if (actualRoute.pathJS) {
         const module = await import(actualRoute.pathJS);
+
+        window.currentModule = module;
 
         if (module.init) {
             setTimeout(() => {

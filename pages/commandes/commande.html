@@ -1,3 +1,10 @@
+<!---- Spinner -->
+<div id="loadingSpinner" class="text-center my-5" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+    </div>
+</div>
+
 <div class="commande-container" style="margin-top: 80px;">
     <div class="commande-card">
         <!-- Header -->
@@ -184,13 +191,13 @@
                                 </label>
 
                             <div class="counter-group">
-                                <button type="button" class="counter-btn" id="btnDecrement" onclick="decrementPersons()">
+                                <button type="button" class="counter-btn" id="btnDecrement">
                                     <i class="bi bi-dash-lg"></i>
                                 </button>
                                 <div class="counter-value">
                                     <span id="personCount">10</span>
                                 </div>
-                                <button type="button" class="counter-btn" onclick="incrementPersons()">
+                                <button type="button" class="counter-btn" id="btnIncrement">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
@@ -204,7 +211,7 @@
                             </h5>
 
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="locationMateriel" onchange="calculatePrice()">
+                                <input class="form-check-input" type="checkbox" id="locationMateriel">
                                 <label class="form-check-label" for="locationMateriel">
                                     <strong>Location de matériel</strong> (+50,00 €)
                                     <br>

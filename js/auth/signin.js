@@ -59,7 +59,7 @@
             } else if (email.includes('@') && password.length >= 6) {
                 showSuccess('Connexion réussie ! Redirection...');
                 setTimeout(() => {
-                    window.location.href = '/menu';
+                    window.location.href = `/commande?menu=${menuId}`;
                 }, 1500);
             } else {
                 showError('Email ou mot de passe incorrect');

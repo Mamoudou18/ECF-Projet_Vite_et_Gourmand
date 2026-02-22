@@ -303,12 +303,20 @@ function displayMenuDetail(menu) {
     `;
 
     // Récupération du bouton commander
-    const btnCommander = document.getElementById("btn-commander");
-    console.log(btnCommander.length);
 
-    if (btnCommander) {
-    btnCommander.addEventListener("click", () => orderMenu(menu.id));
+    const btnCommander = document.getElementById("btn-commander");
+
+    if (btnCommander && menu) {
+        btnCommander.addEventListener("click", () => {
+            window.history.pushState({},"", `/commande?menu=${menu.id}`);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        });
     }
+    //const btnCommander = document.getElementById("btn-commander");
+
+    //if (btnCommander) {
+    //btnCommander.addEventListener("click", () => orderMenu(menu.id));
+    //}
 
 }
 
@@ -324,15 +332,15 @@ function goToSlide(index) {
 // 5. FONCTION DE COMMANDE
 // ============================================
 
-function orderMenu(menuId) {
+//function orderMenu(menuId) {
     // Vérification si l'utilisateur est connecté
-    const isLoggedIn = sessionStorage.getItem('user') || localStorage.getItem('user');
+    //const isLoggedIn = sessionStorage.getItem('user') || localStorage.getItem('user');
     
-    if (!isLoggedIn) {
-        alert('Veuillez vous connecter pour commander ce menu.');
-        window.location.href = `login.html?redirect=commande.html?menu=${menuId}`;
-    } else {
-        window.location.href = `commande.html?menu=${menuId}`;
-    }
-}
+    //if (!isLoggedIn) {
+        //alert('Veuillez vous connecter pour commander ce menu.');
+        //window.location.href = `/signin?redirect=/commande?menu=${menuId}`;
+    //} else {
+        //window.location.href = `/commande?menu=${menuId}`;
+    //}
+//}
 
