@@ -1,128 +1,208 @@
-    //inputs
+// ============================================
+// IMPORTS & CONSTANTES
+// ============================================
+const USERS_FILE = '/data/users.json';
+
+// ============================================
+// INITIALISATION
+// ============================================
+export async function init() {
+    console.log('Initialisation page connexion');
+    
+    // Vérifier si déjà connecté
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        console.log('Déjà connecté, redirection...');
+        window.location.href = '/';
+        return;
+    }
+    
+    // Initialiser les éléments
+    initElements();
+    
+    // Vérifier paramètre redirect
+    checkRedirectParam();
+}
+
+export function cleanup() {
+    console.log('Nettoyage page connexion');
+}
+
+// ============================================
+// ÉLÉMENTS DOM
+// ============================================
+function initElements() {
+    // Inputs
     const inputPassword = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
-    const inputEmail = document.getElementById('email')
-    const loginBtn = document.getElementById('loginBtn');
     const loginForm = document.getElementById('loginForm');
     const forgotPasswordForm = document.getElementById("forgotPasswordForm");
 
-    // Affichager et masques le mot de passe
-    togglePassword.addEventListener("click",showPassword);
-    const eyeOpen = togglePassword.innerHTML;
-    const eyeClosed = `<i class="bi bi-eye-slash-fill"></i>`;
-
-    function showPassword() {
+    // Toggle password
+    togglePassword.addEventListener("click", () => {
         const type = inputPassword.type === 'password' ? 'text' : 'password';
         inputPassword.type = type;
+        togglePassword.innerHTML = type === 'password' 
+            ? '<i class="bi bi-eye-fill"></i>' 
+            : '<i class="bi bi-eye-slash-fill"></i>';
+    });
 
-        if(type === 'password'){
-            togglePassword.innerHTML = eyeOpen;
-        }
-        else{
-            togglePassword.innerHTML = eyeClosed;
-        }
+    // Connexion
+    loginForm.addEventListener("submit", handleLogin);
+
+    // Mot de passe oublié
+    forgotPasswordForm.addEventListener("submit", handleForgotPassword);
+}
+
+// ============================================
+// GESTION CONNEXION
+// ============================================
+async function handleLogin(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Validation
+    if (!email || !password) {
+        showError('Veuillez remplir tous les champs');
+        return;
     }
 
+    // Désactiver bouton
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion...';
 
-    // Gestion et simulation de la connexion
-    loginForm.addEventListener("submit",checkConnexion);
+    try {
+        // Charger les utilisateurs depuis users.json
+        const response = await fetch(USERS_FILE);
+        if (!response.ok) throw new Error('Erreur chargement utilisateurs');
+        
+        const users = await response.json();
+        
+        // Chercher l'utilisateur
+        const user = users.find(u => 
+            u.email === email && 
+            u.mot_de_passe === password && 
+            u.actif === true
+        );
 
-    function checkConnexion(event) {
-        event.preventDefault();
+        if (user) {
+            // CONNEXION RÉUSSIE
+            console.log('Connexion réussie:', user.email);
             
-        const email = inputEmail.value;
-        const password = inputPassword.value;
+            // Stocker dans localStorage (SANS le mot de passe)
+            const userSession = {
+                id: user.id,
+                nom: user.nom,
+                prenom: user.prenom,
+                email: user.email,
+                role: user.role,
+                telephone: user.telephone,
+                adresse_rue: user.adresse_rue,
+                adresse_code_postal: user.adresse_code_postal,
+                adresse_ville: user.adresse_ville
+            };
+            localStorage.setItem('currentUser', JSON.stringify(userSession));
+            
+            // Message succès
+            showSuccess('Connexion réussie ! Redirection...');
+            
+            // Redirection selon paramètre ou page d'accueil
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/';
+                window.location.href = redirect;
+            }, 1500);
 
-        // Validation basique
-        if (!email || !password) {
-            showError('Veuillez remplir tous les champs');
-            return;
+        } else {
+            // ÉCHEC
+            showError('Email ou mot de passe incorrect');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
         }
 
-        // Désactiver le bouton pendant le traitement
-        loginBtn.disabled = true;
-        loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion...';
+    } catch (error) {
+        console.error('Erreur connexion:', error);
+        showError('Erreur lors de la connexion. Veuillez réessayer.');
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
+    }
+}
 
-        // Simulation de la connexion (à remplacer par la vraie API)
-        setTimeout(() => {
-            // Exemple de validation
-            if (email === 'admin@vite-gourmand.fr' && password === 'Aligator123$') {
-                showSuccess('Connexion réussie ! Redirection...');
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 1500);
-            } else if (email === 'employe@vite-gourmand.fr' && password === 'Aligator123$') {
-                showSuccess('Connexion réussie ! Redirection...');
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 1500);
-            } else if (email.includes('@') && password.length >= 6) {
-                showSuccess('Connexion réussie ! Redirection...');
-                setTimeout(() => {
-                    window.location.href = `/commande?menu=${menuId}`;
-                }, 1500);
-            } else {
-                showError('Email ou mot de passe incorrect');
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
-            }
-        }, 1000);
+// ============================================
+// MOT DE PASSE OUBLIÉ
+// ============================================
+async function handleForgotPassword(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('forgotEmail').value.trim();
+
+    if (!email) {
+        alert('Veuillez entrer votre adresse email');
+        return;
     }
 
-    // Gestion mot de passe oublié
-    forgotPasswordForm.addEventListener("submit",initForgotPassword)
-    function initForgotPassword(event) {
-        event.preventDefault();
-        
-        const email = document.getElementById('forgotEmail').value;
-        
-        if (!email) {
-            alert('Veuillez entrer votre adresse email');
-            return;
+    try {
+        // Vérifier si l'email existe
+        const response = await fetch(USERS_FILE);
+        const users = await response.json();
+        const userExists = users.some(u => u.email === email);
+
+        if (userExists) {
+            alert(`Un email de réinitialisation a été envoyé à ${email}`);
+        } else {
+            alert('Cette adresse email n\'est pas enregistrée');
         }
 
-        // Simulation envoi email (à remplacer par la vraie API)
-        alert(`Un email de réinitialisation a été envoyé à ${email}`);
-        
-        // Fermer le modal
-        const modalElement = document.getElementById("forgotPassword")
-        const modal = new bootstrap.Modal(modalElement);
+        // Fermer modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPassword"));
         modal.hide();
-        
-        // Réinitialiser le formulaire
+
+        // Reset formulaire
         document.getElementById('forgotPasswordForm').reset();
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'envoi. Veuillez réessayer.');
     }
+}
 
+// ============================================
+// MESSAGES
+// ============================================
+function showError(message) {
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const successMessage = document.getElementById('successMessage');
 
-    // Afficher erreur
-    function showError(message) {
-        const errorMessage = document.getElementById('errorMessage');
-        const errorText = document.getElementById('errorText');
-        const successMessage = document.getElementById('successMessage');
-            
-        successMessage.style.display = 'none';
-        errorText.textContent = message;
-        errorMessage.style.display = 'block';
-            
-        setTimeout(() => {
-            errorMessage.style.display = 'none';
-        }, 5000);
-    }
+    successMessage.style.display = 'none';
+    errorText.textContent = message;
+    errorMessage.style.display = 'block';
 
-    // Afficher succès
-    function showSuccess(message) {
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const successText = document.getElementById('successText');
-            
+    setTimeout(() => {
         errorMessage.style.display = 'none';
-        successText.textContent = message;
-        successMessage.style.display = 'block';
-    }
+    }, 5000);
+}
 
-    // Vérifier si redirection après connexion
+function showSuccess(message) {
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const successText = document.getElementById('successText');
+
+    errorMessage.style.display = 'none';
+    successText.textContent = message;
+    successMessage.style.display = 'block';
+}
+
+// ============================================
+// VÉRIFIER REDIRECT
+// ============================================
+function checkRedirectParam() {
     const urlParams = new URLSearchParams(window.location.search);
     const redirect = urlParams.get('redirect');
     if (redirect) {
         showError('Vous devez être connecté pour accéder à cette page');
     }
+}

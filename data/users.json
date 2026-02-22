@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "nom": "Dupont",
+    "prenom": "Jean",
+    "email": "jean@test.fr",
+    "telephone": "0612345678",
+    "mot_de_passe": "test123",
+    "role": "utilisateur",
+    "adresse_rue": "15 Rue Victor Hugo",
+    "adresse_code_postal": "33000",
+    "adresse_ville": "Bordeaux",
+    "actif": true,
+    "created_at": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "email": "sophie@test.fr",
+    "telephone": "0623456789",
+    "mot_de_passe": "employe123",
+    "role": "employe",
+    "adresse_rue": "28 Cours de l'Intendance",
+    "adresse_code_postal": "33000",
+    "adresse_ville": "Bordeaux",
+    "actif": true,
+    "created_at": "2024-01-10T14:30:00Z"
+  },
+  {
+    "id": 3,
+    "nom": "Bernard",
+    "prenom": "José",
+    "email": "jose@vitegourmand.fr",
+    "telephone": "0634567890",
+    "mot_de_passe": "admin123",
+    "role": "administrateur",
+    "adresse_rue": "5 Place de la Bourse",
+    "adresse_code_postal": "33000",
+    "adresse_ville": "Bordeaux",
+    "actif": true,
+    "created_at": "2024-01-01T09:00:00Z"
+  },
+    {
+    "id": 4,
+    "nom": "Traoré",
+    "prenom": "Amadi",
+    "email": "amadi@vitegourmand.fr",
+    "telephone": "0634567890",
+    "mot_de_passe": "Aligator123$",
+    "role": "utilisateur",
+    "adresse_rue": "6 Place de la Bourse",
+    "adresse_code_postal": "33000",
+    "adresse_ville": "Bordeaux",
+    "actif": true,
+    "created_at": "2024-01-01T09:00:00Z"
+  }
+]
