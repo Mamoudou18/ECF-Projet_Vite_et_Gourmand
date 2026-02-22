@@ -10,6 +10,7 @@ export async function init() {
     console.log('Initialisation commande');
     await loadMenuCommande();
     await initGoogleMaps();
+    autoFillUserInfo();
 }
 
 //Cleanup
@@ -65,6 +66,34 @@ async function initGoogleMaps() {
     // activer le calcul manuel de frais
     document.getElementById('adresseLivraison').addEventListener('input', calculerFraisManuel);
   }
+}
+
+// ============================================
+// AUTO-COMPLÉTION - VERSION MINIMALISTE
+// ============================================
+function autoFillUserInfo() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!currentUser) {
+        window.location.href = '/signin';
+        return;
+    }
+
+    // Remplir les champs
+    document.getElementById('nom').value = currentUser.nom || '';
+    document.getElementById('prenom').value = currentUser.prenom || '';
+    document.getElementById('email').value = currentUser.email || '';
+    document.getElementById('telephone').value = currentUser.telephone || '';
+    
+    // Adresse si elle existe
+    if (currentUser.adresse_rue) {
+        document.getElementById('adressePostale').value = currentUser.adresse_rue || '';
+        document.getElementById('codePostalClient').value = currentUser.adresse_code_postal || '';
+        document.getElementById('villeClient').value = currentUser.adresse_ville || '';
+    }
+
+    // Afficher le message "infos remplies"
+    document.querySelector('.alert-auto-fill').style.display = 'flex';
 }
 
 //calcul manuel de frais
