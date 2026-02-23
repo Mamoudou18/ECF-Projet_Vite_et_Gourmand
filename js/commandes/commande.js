@@ -56,10 +56,33 @@ async function initGoogleMaps() {
       const place = autocomplete.getPlace();
       if (!place.geometry) return;
 
+    // EXTRACTION CODE POSTAL ET VILLE
+      let codePostal = '';
+      let ville = '';
+
+      place.address_components.forEach(component => {
+        const types = component.types;
+
+        if (types.includes('postal_code')) {
+          codePostal = component.long_name;
+        }
+        if (types.includes('locality')) {
+          ville = component.long_name;
+        }
+      });
+
+    // remplissage auto des champs: ville et code postal
+      document.getElementById('codePostalLivraison').value = codePostal;
+      document.getElementById('villeLivraison').value = ville;
+
+      console.log('Extraction:', { codePostal, ville });
+
+      // calcul itinéraire pour les frais de livraison hors bordeaux
       const adresseDepart = "1 Place de la République, 33000 Bordeaux, France";
       calculerItineraire(adresseDepart, place.geometry.location);
     });
-  } catch (error) {
+
+    } catch (error) {
     console.error("Erreur Google Maps :", error);
     document.getElementById("googleMap").innerHTML = 
     `<div class="alert alert-warning">Google Maps indisponible. Saisie manuelle activée.</div>`

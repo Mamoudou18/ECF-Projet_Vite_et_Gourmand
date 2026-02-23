@@ -160,10 +160,21 @@
                                 <input type="text" class="form-control" id="adresseLivraison" placeholder="12 Rue de la République, 33000 Bordeaux" required>
                                 <small class="text-muted">
                                     Si différente de votre adresse postale. 
-                                    <a href="#" class="edit-address-link" onclick="copyPostalAddress(event)">
+                                    <a href="#" class="edit-address-link" id="copyPostalAddress" onclick="copyPostalAddress(event)">
                                         Utiliser mon adresse postale
                                     </a>
                                 </small>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label"> Code postal <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="codePostalLivraison" pattern="[0-9]{5}" placeholder="33000" required >
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label"> Ville <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="villeLivraison" placeholder="Bordeaux" required >
+                                </div>
                             </div>
 
                             <div class="row">
