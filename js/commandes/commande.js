@@ -92,7 +92,7 @@ async function initGoogleMaps() {
 }
 
 // ============================================
-// AUTO-COMPLÉTION - VERSION MINIMALISTE
+// AUTO-COMPLÉTION
 // ============================================
 function autoFillUserInfo() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -119,13 +119,41 @@ function autoFillUserInfo() {
     document.querySelector('.alert-auto-fill').style.display = 'flex';
 }
 
+// ============================================
+// Copier l'adresse du client vers l'adresse de livraison
+// ============================================
+document.getElementById("copyPostalAddress").addEventListener("click", function(e){
+    e.preventDefault();
+    document.getElementById('adresseLivraison').value = document.getElementById('adressePostale').value;
+    document.getElementById('codePostalLivraison').value = document.getElementById('codePostalClient').value;
+    document.getElementById('villeLivraison').value = document.getElementById('villeClient').value;
+    calculerFraisManuel();
+})
+
 //calcul manuel de frais
+document.getElementById('villeLivraison').addEventListener('input', calculerFraisManuel);
 function calculerFraisManuel(){
     const ville = document.getElementById('villeLivraison').value.toLowerCase();
-    deliveryCost = ville.includes('bordeaux') ? 0 : 10; // Forfait fixe
+    const deliveryInfo = document.getElementById('deliveryInfo');
+    const deliveryDetails = document.getElementById('deliveryDetails');
+    const deliveryPrice = document.getElementById("deliveryPrice");
+
+    deliveryInfo.style.display = 'block';
+    console.log(ville);
+    if (ville.includes("bordeaux")) {
+        deliveryCost = 0
+        deliveryDetails.textContent = "Livraison gratuite dans Bordeaux";
+    } else {
+        deliveryCost = 10 // Forfait fixe
+        deliveryPrice.textContent = deliveryCost.toFixed(2);
+        deliveryDetails.textContent =
+        `Livraison hors Bordeaux: 10,00 € (Google Maps indisponible pour le calcul des frais. Donc ce forfait est fixe.)`;
+    }
+
     calculatePrice();
 }
 
+//calcul autmatique de frais
 function calculerItineraire(origin, destination) {
   directionsService.route(
     {
@@ -142,6 +170,7 @@ function calculerItineraire(origin, destination) {
 
         const deliveryInfo = document.getElementById('deliveryInfo');
         const deliveryDetails = document.getElementById('deliveryDetails');
+        const deliveryPrice = document.getElementById("deliveryPrice");
 
         deliveryInfo.style.display = 'block';
 
@@ -149,9 +178,10 @@ function calculerItineraire(origin, destination) {
           deliveryCost = 0;
           deliveryDetails.textContent = "Livraison gratuite dans Bordeaux";
         } else {
-          deliveryCost = 5 + 0.59 * distanceKm;
-          deliveryDetails.textContent =
+            deliveryCost = 5 + 0.59 * distanceKm;
+            deliveryDetails.textContent =
             `Livraison hors Bordeaux: 5,00 € + ${distanceKm.toFixed(1)} km × 0,59€ = ${deliveryCost.toFixed(2)} €`;
+            deliveryPrice.textContent = deliveryCost.toFixed(2);
         }
 
         calculatePrice();
@@ -275,7 +305,6 @@ function displayMenuRecap() {
     calculatePrice();
 }
 
-
 // ============================================
 // GESTION NOMBRE DE PERSONNES
 // ============================================
@@ -298,7 +327,6 @@ function decrementPersons() {
         calculatePrice();
     }
 }
-
 
 // ============================================
 // CALCUL DES PRIX
