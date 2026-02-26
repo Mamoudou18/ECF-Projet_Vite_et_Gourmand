@@ -9,8 +9,43 @@ let map, directionsService, directionsRenderer;
 export async function init() {
     console.log('Initialisation commande');
     await loadMenuCommande();
-    await initGoogleMaps();
     autoFillUserInfo();
+    await initGoogleMaps();
+
+    initEventListeners(); //fonction pour initialiser les écouteurs d'évènements
+}
+
+//initialiser les écouteurs d'évènements
+function initEventListeners() {
+    const villeLivraison = document.getElementById('villeLivraison');
+    if(villeLivraison){
+        villeLivraison.addEventListener("input",calculerFraisManuel);
+    }
+
+    const copyPostalAddress = document.getElementById("copyPostalAddress");
+    if(copyPostalAddress){
+        copyPostalAddress.addEventListener("click", copieAdressePostale);
+    }
+
+    const btnIncrement = document.getElementById("btnIncrement");
+    if(btnIncrement){
+        btnIncrement.addEventListener("click",incrementPersons);
+    }
+
+    const btnDecrement = document.getElementById("btnDecrement");
+    if(btnDecrement){
+        btnDecrement.addEventListener("click",decrementPersons);
+    }
+
+    const inputLocationMateriel = document.getElementById("locationMateriel");
+    if(inputLocationMateriel){
+        inputLocationMateriel.addEventListener("change",calculatePrice);
+    }
+
+    const commandeForm = document.getElementById('commandeForm');
+    if(commandeForm){
+        commandeForm.addEventListener('submit', formCommandeMenu);
+    }
 }
 
 //Cleanup
@@ -87,7 +122,7 @@ async function initGoogleMaps() {
     document.getElementById("googleMap").innerHTML = 
     `<div class="alert alert-warning">Google Maps indisponible. Saisie manuelle activée.</div>`
     // activer le calcul manuel de frais
-    document.getElementById('adresseLivraison').addEventListener('input', calculerFraisManuel);
+    calculerFraisManuel();
   }
 }
 
@@ -122,32 +157,41 @@ function autoFillUserInfo() {
 // ============================================
 // Copier l'adresse du client vers l'adresse de livraison
 // ============================================
-document.getElementById("copyPostalAddress").addEventListener("click", function(e){
+function copieAdressePostale(e){
     e.preventDefault();
     document.getElementById('adresseLivraison').value = document.getElementById('adressePostale').value;
     document.getElementById('codePostalLivraison').value = document.getElementById('codePostalClient').value;
     document.getElementById('villeLivraison').value = document.getElementById('villeClient').value;
     calculerFraisManuel();
-})
+}
 
 //calcul manuel de frais
-document.getElementById('villeLivraison').addEventListener('input', calculerFraisManuel);
 function calculerFraisManuel(){
     const ville = document.getElementById('villeLivraison').value.toLowerCase();
     const deliveryInfo = document.getElementById('deliveryInfo');
     const deliveryDetails = document.getElementById('deliveryDetails');
     const deliveryPrice = document.getElementById("deliveryPrice");
 
+    if(!ville){
+        deliveryCost = 0;
+        deliveryInfo.style.display = 'none';
+        calculatePrice();
+        return;
+    }
+    
     deliveryInfo.style.display = 'block';
-    console.log(ville);
+
     if (ville.includes("bordeaux")) {
         deliveryCost = 0
         deliveryDetails.textContent = "Livraison gratuite dans Bordeaux";
+        deliveryPrice.textContent = "0.00";
     } else {
-        deliveryCost = 10 // Forfait fixe
+        const distanceEstimee = 15;
+        deliveryCost = 5 + (0.59*distanceEstimee);
         deliveryPrice.textContent = deliveryCost.toFixed(2);
         deliveryDetails.textContent =
-        `Livraison hors Bordeaux: 10,00 € (Google Maps indisponible pour le calcul des frais. Donc ce forfait est fixe.)`;
+        `Livraison hors Bordeaux: 5,00 € + ${distanceEstimee.toFixed(1)} km × 0,59€ = ${deliveryCost.toFixed(2)} €
+        (distance estimée, Google Maps indisponible)`;
     }
 
     calculatePrice();
@@ -308,8 +352,6 @@ function displayMenuRecap() {
 // ============================================
 // GESTION NOMBRE DE PERSONNES
 // ============================================
-const btnIncrement = document.getElementById("btnIncrement");
-btnIncrement.addEventListener("click",incrementPersons);
 function incrementPersons() {
     let count = parseInt(document.getElementById('personCount').textContent);
     count++;
@@ -317,8 +359,6 @@ function incrementPersons() {
     calculatePrice();
 }
 
-const btnDecrement = document.getElementById("btnDecrement");
-btnDecrement.addEventListener("click",decrementPersons);
 function decrementPersons() {
     let count = parseInt(document.getElementById('personCount').textContent);
     if (count > minPersons) {
@@ -331,12 +371,10 @@ function decrementPersons() {
 // ============================================
 // CALCUL DES PRIX
 // ============================================
-const inputLocationMateriel = document.getElementById("locationMateriel");
-inputLocationMateriel.addEventListener("change",calculatePrice);
 function calculatePrice() {
     if (!selectedMenu) return;
     const personCount = parseInt(document.getElementById('personCount').textContent);
-    const locationMateriel = inputLocationMateriel.checked;
+    const locationMateriel = document.getElementById("locationMateriel").checked;
     // Prix menu de base
     let menuPrice = pricePerPerson * personCount;
     // Location matériel
@@ -404,7 +442,7 @@ function calculatePrice() {
     // ============================================
     // SOUMISSION DU FORMULAIRE
     // ============================================
-    document.getElementById('commandeForm').addEventListener('submit', function(e) {
+    function formCommandeMenu(e) {
         e.preventDefault();
 
         if (!validateForm()) return;
@@ -486,4 +524,4 @@ function calculatePrice() {
     console.log('📧 Commande enregistrée:', commande);
     console.log('✉️ Email de confirmation envoyé à:', commande.client.email);
     console.log('📧 Email envoyé à l\'entreprise: julie@viteetgourmand.fr');
-});
+};
