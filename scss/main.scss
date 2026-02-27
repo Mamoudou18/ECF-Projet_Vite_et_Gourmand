@@ -1477,3 +1477,48 @@ overflow: hidden;
     width: 100%; 
     margin-bottom: 1.5rem;
 }
+
+// Page utilisateur
+
+//Header Dashboard
+    .dashboard-header { 
+        background: linear-gradient(135deg, $primary 0%, $accent 100%);
+        color: $white-primary;
+        padding: 3rem 0 2rem;
+        margin-top: 56px;
+    }
+
+        .user-info-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: $primary;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: $accent;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .user-details h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-details p {
+            margin: 0;
+            opacity: 0.9;
+        }
