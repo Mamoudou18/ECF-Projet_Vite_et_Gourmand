@@ -1771,4 +1771,45 @@ overflow: hidden;
     box-shadow: 0 0 0 0.2rem $primary;
 }
 
+/* Avis */
+.review-card {
+    background: var(--light);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.stars {
+    color: $accent;
+    font-size: 1.2rem;
+}
+
+.review-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.review-status.pending {
+    background: #fff3cd;
+    color: $primary;
+}
+
+.review-status.published {
+    background: #d4edda;
+    color: #155724;
+}
+
+.review-status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
 
