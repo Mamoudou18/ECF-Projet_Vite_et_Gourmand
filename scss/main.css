@@ -13695,4 +13695,24 @@ li {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   border-radius: 8px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #6B5847;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+  border: 2px solid #E5DFCE;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #6B5847;
+  box-shadow: 0 0 0 0.2rem #6B5847;
 }/*# sourceMappingURL=main.css.map */

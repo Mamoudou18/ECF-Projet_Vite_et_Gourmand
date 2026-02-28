@@ -172,9 +172,268 @@
                         </div>
 
                         <div class="text-center mt-3">
-                            <button class="btn btn-outline-dark">
+                            <button class="btn btn-outline-primary">
                                 Voir toutes mes commandes <i class="bi bi-arrow-right"></i>
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Mes commandes -->
+                <div id="commandes" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-cart-check"></i>
+                            Mes commandes
+                        </h4>
+
+                        <!-- Filtres -->
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Filtrer par statut</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="nouveau">Nouveau</option>
+                                    <option value="accepte">Acceptée</option>
+                                    <option value="preparation">En préparation</option>
+                                    <option value="livraison">En livraison</option>
+                                    <option value="livre">Livrée</option>
+                                    <option value="termine">Terminée</option>
+                                    <option value="annule">Annulée</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Rechercher</label>
+                                <input type="text" class="form-control" id="searchOrder" placeholder="N° commande, menu...">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-outline-secondary w-100">
+                                    <i class="bi bi-x-circle"></i> Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Liste complète des commandes -->
+                        <div id="ordersList">
+                            <!-- Commande 1 -->
+                            <div class="order-card" data-status="livraison">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">#CMD-2024-0015</div>
+                                        <small class="text-muted">Commandé le 15/01/2024 à 14:30</small>
+                                    </div>
+                                    <span class="order-status status-livraison">
+                                        <i class="bi bi-truck"></i> En livraison
+                                    </span>
+                                </div>
+                                <div class="order-details">
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-book"></i>
+                                        <span>Menu Noël Gourmand</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-people"></i>
+                                        <span>8 personnes</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Livraison: 20/01/2024 à 18h00</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>15 Rue de la Liberté, Bordeaux</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-currency-euro"></i>
+                                        <strong>320,00 €</strong>
+                                    </div>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Voir détail
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-geo-alt"></i> Suivre ma commande
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Commande 2 -->
+                            <div class="order-card" data-status="accepte">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">#CMD-2024-0014</div>
+                                        <small class="text-muted">Commandé le 12/01/2024 à 10:15</small>
+                                    </div>
+                                    <span class="order-status status-accepte">
+                                        <i class="bi bi-check-circle"></i> Acceptée
+                                    </span>
+                                </div>
+                                <div class="order-details">
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-book"></i>
+                                        <span>Menu Végétarien Gourmand</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-people"></i>
+                                        <span>10 personnes</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Livraison: 25/01/2024 à 12h00</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>22 Avenue Victor Hugo, Bordeaux</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-currency-euro"></i>
+                                        <strong>380,00 €</strong>
+                                    </div>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Voir détail
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-pencil"></i> Modifier
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-x-circle"></i> Annuler
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Commande 3 -->
+                            <div class="order-card" data-status="termine">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">#CMD-2024-0012</div>
+                                        <small class="text-muted">Commandé le 08/01/2024 à 16:20</small>
+                                    </div>
+                                    <span class="order-status status-termine">
+                                        <i class="bi bi-check-circle-fill"></i> Terminée
+                                    </span>
+                                </div>
+                                <div class="order-details">
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-book"></i>
+                                        <span>Menu Classique</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-people"></i>
+                                        <span>6 personnes</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Livrée le: 10/01/2024 à 19h00</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>8 Rue Montesquieu, Bordeaux</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-currency-euro"></i>
+                                        <strong>240,00 €</strong>
+                                    </div>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Voir détail
+                                    </button>
+                                    <button class="btn btn-sm btn-warning">
+                                        <i class="bi bi-star"></i> Laisser un avis
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-arrow-repeat"></i> Recommander
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Commande 4 -->
+                            <div class="order-card" data-status="termine">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">#CMD-2023-0245</div>
+                                        <small class="text-muted">Commandé le 20/12/2023 à 11:45</small>
+                                    </div>
+                                    <span class="order-status status-termine">
+                                        <i class="bi bi-check-circle-fill"></i> Terminée
+                                    </span>
+                                </div>
+                                <div class="order-details">
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-book"></i>
+                                        <span>Menu Réveillon</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-people"></i>
+                                        <span>12 personnes</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Livrée le: 24/12/2023 à 17h00</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>15 Rue de la Liberté, Bordeaux</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-currency-euro"></i>
+                                        <strong>520,00 €</strong>
+                                    </div>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Voir détail
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-arrow-repeat"></i> Recommander
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Commande 5 -->
+                            <div class="order-card" data-status="annule">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">#CMD-2023-0230</div>
+                                        <small class="text-muted">Commandé le 15/12/2023 à 09:30</small>
+                                    </div>
+                                    <span class="order-status status-annule">
+                                        <i class="bi bi-x-circle"></i> Annulée
+                                    </span>
+                                </div>
+                                <div class="order-details">
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-book"></i>
+                                        <span>Menu Pâques</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-people"></i>
+                                        <span>8 personnes</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span>Annulée le: 16/12/2023</span>
+                                    </div>
+                                    <div class="order-detail-item">
+                                        <i class="bi bi-info-circle text-danger"></i>
+                                        <span>Motif: Changement de date événement</span>
+                                    </div>
+                                </div>
+                                <div class="order-actions">
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Voir détail
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="noOrdersFound" style="display: none;" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">Aucune commande trouvée</p>
                         </div>
                     </div>
                 </div>
