@@ -13476,12 +13476,10 @@ li {
   opacity: 0.9;
 }
 
-/* Section principale */
 .dashboard-section {
   padding: 3rem 0;
 }
 
-/* Menu latéral */
 .sidebar {
   background: #fff;
   border-radius: 15px;
@@ -13531,4 +13529,170 @@ li {
 .sidebar-menu i {
   font-size: 1.2rem;
   width: 25px;
+}
+
+.content-card {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px #6B5847;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.content-card h4, .content-card .h4 {
+  color: #6B5847;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.content-card h4 i, .content-card .h4 i {
+  color: #d4af37;
+}
+
+.section-content {
+  display: none;
+}
+
+.section-content.active {
+  display: block;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #d4af37, #e6c14a);
+  color: #6B5847;
+  padding: 1.5rem;
+  border-radius: 15px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px #6B5847;
+}
+
+.stat-card i {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.stat-card h3, .stat-card .h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.order-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s;
+}
+
+.order-card:hover {
+  border-color: #6B5847;
+  box-shadow: 0 5px 20px #6B5847;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.order-id {
+  font-weight: 700;
+  color: #6B5847;
+  font-size: 1.1rem;
+}
+
+.order-status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.status-nouveau {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-accepte {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-preparation {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-livraison {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.status-livre {
+  background: #e0f2f1;
+  color: #00796b;
+}
+
+.status-termine {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status-annule {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.order-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.order-detail-item i {
+  color: #d4af37;
+}
+
+.order-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-sm, .btn-group-sm > .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
 }/*# sourceMappingURL=main.css.map */
