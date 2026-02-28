@@ -561,6 +561,69 @@
                     </div>
                 </div>
 
+                <!-- SECTION: Mon profil -->
+                <div id="profil" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-person-gear"></i>
+                            Modifier mon profil
+                        </h4>
+
+                        <form id="profileForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nom" class="form-label">
+                                        <i class="bi bi-person"></i> Nom *
+                                    </label>
+                                    <input type="text" class="form-control" id="nom" value="Dupont" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="prenom" class="form-label">
+                                        <i class="bi bi-person"></i> Prénom *
+                                    </label>
+                                    <input type="text" class="form-control" id="prenom" value="Jean" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email *
+                                </label>
+                                <input type="email" class="form-control" id="email" value="jean.dupont@email.com" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">
+                                    <i class="bi bi-telephone"></i> Téléphone *
+                                </label>
+                                <input type="tel" class="form-control" id="telephone" value="0612345678" required pattern="[0-9]{10}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="adresse" class="form-label">
+                                    <i class="bi bi-geo-alt"></i> Adresse postale *
+                                </label>
+                                <input type="text" class="form-control" id="adresse" value="15 Rue de la Liberté" required placeholder="Numéro et nom de rue">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="codePostal" class="form-label">Code postal *</label>
+                                    <input type="text" class="form-control" id="codePostal" value="33000" required pattern="[0-9]{5}">
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="ville" class="form-label">Ville *</label>
+                                    <input type="text" class="form-control" id="ville" value="Bordeaux" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-lg w-100" style="background: var(--dark); color: white;">
+                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
