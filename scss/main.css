@@ -13757,4 +13757,9 @@ li {
 .review-status.rejected {
   background: #f8d7da;
   color: #721c24;
+}
+
+.btn-lg, .btn-group-lg > .btn {
+  background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
+  color: #fff;
 }/*# sourceMappingURL=main.css.map */

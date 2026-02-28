@@ -1813,3 +1813,8 @@ overflow: hidden;
     color: #721c24;
 }
 
+.btn-lg{
+    background: linear-gradient(135deg, $primary 0%, $accent 100%);
+    color: $white-primary;
+}
+
