@@ -19,6 +19,15 @@ function initEventListeners(){
             showSection(sectionId,this);
         });
     });
+
+    const btnVoirCommandes = document.getElementById("btn-voir-commandes");
+    if(btnVoirCommandes){
+        btnVoirCommandes.addEventListener("click", function(e){
+            e.preventDefault();
+            const commandesLink = document.querySelector('.sidebar-menu a[data-section="commandes-section"]');
+            showSection("commandes-section",commandesLink)
+        })
+    }
 }
 
 // Naviguer entre les sections
