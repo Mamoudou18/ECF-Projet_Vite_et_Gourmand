@@ -108,3 +108,23 @@ function filterOrders() {
         
     document.getElementById('noOrdersFound').style.display = visibleCount === 0 ? 'block' : 'none';
 }
+
+// Initialiser tous les filtres
+
+function resetFilters(){
+    const status = document.getElementById('filterStatus');
+    const search = document.getElementById('searchOrder');
+    const orders = document.querySelectorAll('.order-card');
+    const noResultsMsg = document.getElementById('noOrdersFound');
+
+    if(status) status.value = '';
+    if(search) search.value = '';
+
+    orders.forEach(order => {
+        order.style.display ='block';
+    });
+
+    if(noResultsMsg) {
+        noResultsMsg.style.display = 'none';
+    }
+}
