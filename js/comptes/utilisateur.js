@@ -7,6 +7,7 @@ export async function init() {
 // initiliser les écouteurs d'évèenement
 
 function initEventListeners(){
+    // Navigation entre les sections
     const menuLinks = document.querySelectorAll(".sidebar-menu a");
 
     menuLinks.forEach(link => {
@@ -20,6 +21,7 @@ function initEventListeners(){
         });
     });
 
+    // Bouton voir les commandes
     const btnVoirCommandes = document.getElementById("btn-voir-commandes");
     if(btnVoirCommandes){
         btnVoirCommandes.addEventListener("click", function(e){
@@ -28,6 +30,27 @@ function initEventListeners(){
             showSection("commandes-section",commandesLink)
         })
     }
+
+    // Filtres commandes
+
+    const inpuFilterStatus = document.getElementById("filterStatus");
+    if(inpuFilterStatus){
+        inpuFilterStatus.addEventListener("change",filterOrders);
+    }
+
+    const inputSearchOrder = document.getElementById("searchOrder");
+    if(inputSearchOrder){
+        inputSearchOrder.addEventListener("input",filterOrders);
+    }
+
+    const inputResetFilterBtn = document.getElementById("resetFilterBtn");
+    if(inputResetFilterBtn){
+        inputResetFilterBtn.addEventListener("click",function(e){
+            e.preventDefault();
+            resetFilters()
+        });
+    }
+
 }
 
 // Naviguer entre les sections
@@ -57,4 +80,31 @@ if(clickedLink){
         
 // Scroll vers le haut
 window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Filtre commandes
+function filterOrders() {
+    const status = document.getElementById('filterStatus').value;
+    const search = document.getElementById('searchOrder').value.toLowerCase();
+    const orders = document.querySelectorAll('.order-card');
+    let visibleCount = 0;
+
+    console.log(search);
+        
+    orders.forEach(order => {
+        const orderStatus = order.getAttribute('data-status');
+        const orderText = order.textContent.toLowerCase();
+            
+        const statusMatch = status === '' || orderStatus === status;
+        const searchMatch = search === '' || orderText.includes(search);
+            
+        if (statusMatch && searchMatch) {
+            order.style.display = 'block';
+            visibleCount++;
+        } else {
+            order.style.display = 'none';
+        }
+    });
+        
+    document.getElementById('noOrdersFound').style.display = visibleCount === 0 ? 'block' : 'none';
 }
