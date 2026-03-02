@@ -1,0 +1,1624 @@
+{
+  "menus": [
+    {
+      "id": 1,
+      "titre": "Féérie de Noël",
+      "theme": "noel",
+      "regime": "classique",
+      "description": "Un menu festif aux saveurs traditionnelles pour célébrer Noël avec élégance.",
+      "description_longue": "Plongez dans la magie de Noël avec notre menu traditionnel qui ravira petits et grands. Préparé avec des produits frais et locaux, ce repas festif est conçu pour créer des moments inoubliables autour de la table. Chaque plat est élaboré avec soin par nos chefs pour garantir une expérience culinaire exceptionnelle.",
+      "prix": 299.00,
+      "nb_personnes_min": 10,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800"
+      ],
+      "entrees": [
+        {
+          "nom": "Foie gras de canard mi-cuit",
+          "description": "Servi avec confiture de figues et pain toasté",
+          "allergenes": ["Gluten", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400"
+        },
+        {
+          "nom": "Salade de homard",
+          "description": "Accompagnée de sa vinaigrette aux agrumes",
+          "allergenes": ["Crustacés", "Moutarde"],
+          "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Dinde fermière farcie aux marrons",
+          "description": "Sauce au porto, gratin dauphinois et légumes de saison",
+          "allergenes": ["Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=400"
+        },
+        {
+          "nom": "Chapon rôti aux épices",
+          "description": "Purée de céleri et jus corsé",
+          "allergenes": ["Céleri", "Lait"],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Bûche de Noël chocolat-praliné",
+          "description": "Croustillant noisette et ganache montée",
+          "allergenes": ["Gluten", "Œufs", "Fruits à coque", "Lait"],
+          "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400"
+        },
+        {
+          "nom": "13 desserts provençaux",
+          "description": "Tradition de Noël du Sud de la France",
+          "allergenes": ["Gluten", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+        }
+      ],
+      "conditions": [
+        "Délai de commande : 7 jours ouvrés minimum",
+        "Conservation : 0°C à 4°C",
+        "Matériel : caution de 600€ si non restitué sous 10 jours"
+      ]
+    },
+    {
+      "id": 2,
+      "titre": "Hiver Gourmand",
+      "theme": "noel",
+      "regime": "hallal",
+      "description": "Recettes chaleureuses et épicées, adaptées aux régimes halal.",
+      "description_longue": "Un menu chaleureux qui marie les saveurs orientales aux traditions hivernales. Chaque plat est préparé selon les règles halal avec des produits certifiés de qualité supérieure.",
+      "prix": 325.00,
+      "nb_personnes_min": 10,
+      "stock": 18,
+      "image_principale": "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800",
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+        "https://images.unsplash.com/photo-1563379091339-03b87701c4a8?w=800",
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"
+      ],
+      "entrees": [
+        {
+          "nom": "Brick au thon et câpres",
+          "description": "Croustillant et parfumé aux épices douces",
+          "allergenes": ["Gluten", "Poisson"],
+          "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Épaule d'agneau confite aux épices",
+          "description": "Accompagnée de semoule aux raisins secs",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Cornes de gazelle",
+          "description": "Pâtisserie orientale à la pâte d'amande",
+          "allergenes": ["Gluten", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1559493648-8e78c96d2c8a?w=400"
+        }
+      ],
+      "conditions": [
+        "Viande 100% certifiée halal",
+        "Délai de commande : 7 jours ouvrés",
+        "Conservation : 0°C à 4°C"
+      ]
+    },
+    {
+      "id": 3,
+      "titre": "Noël Végétal",
+      "theme": "noel",
+      "regime": "vegetarien",
+      "description": "Une composition végétale raffinée pour un Noël léger.",
+      "description_longue": "Découvrez une cuisine végétarienne créative et savoureuse. Ce menu prouve que l'on peut célébrer avec gourmandise tout en respectant un régime sans viande.",
+      "prix": 223.20,
+      "nb_personnes_min": 8,
+      "stock": 25,
+      "image_principale": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800"
+      ],
+      "entrees": [
+        {
+          "nom": "Velouté de butternut au gingembre",
+          "description": "Crème de coco et graines torréfiées",
+          "allergenes": ["Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Wellington végétarien",
+          "description": "Légumes rôtis en croûte, sauce aux champignons",
+          "allergenes": ["Gluten", "Lait"],
+          "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Pavlova aux fruits rouges",
+          "description": "Meringue croustillante, chantilly vanille",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+        }
+      ],
+      "conditions": [
+        "100% végétarien (œufs et produits laitiers inclus)",
+        "Délai : 5 jours ouvrés",
+        "Conservation : 0°C à 4°C"
+      ]
+    },
+    {
+      "id": 4,
+      "titre": "Réveillon Prestige",
+      "theme": "noel",
+      "regime": "classique",
+      "description": "Le summum de la gastronomie pour le réveillon du Nouvel An.",
+      "description_longue": "Un menu d'exception avec des produits rares et nobles. Homard, caviar, foie gras... Vivez une expérience gastronomique inoubliable pour célébrer la nouvelle année.",
+      "prix": 495.00,
+      "nb_personnes_min": 6,
+      "stock": 10,
+      "image_principale": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+        "https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=800",
+        "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Homard breton en médaillon",
+          "description": "Caviar osciètre, émulsion champagne",
+          "allergenes": ["Crustacés", "Poisson"],
+          "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400"
+        },
+        {
+          "nom": "Foie gras de canard aux truffes",
+          "description": "Pain d'épices toasté, gelée au porto",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400"
+        },
+        {
+          "nom": "Saint-Jacques poêlées",
+          "description": "Purée de panais, jus de crustacés",
+          "allergenes": ["Mollusques", "Crustacés", "Lait"],
+          "image": "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Tournedos Rossini",
+          "description": "Filet de bœuf, foie gras poêlé, truffe noire",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1558030006-450675393462?w=400"
+        },
+        {
+          "nom": "Turbot sauvage rôti",
+          "description": "Beurre blanc à la vanille, légumes glacés",
+          "allergenes": ["Poisson", "Lait"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Sphère chocolat or et passion",
+          "description": "Cœur coulant fruit de la passion, feuille d'or",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
+        },
+        {
+          "nom": "Soufflé au Grand Marnier",
+          "description": "Glacé vanille bourbon",
+          "allergenes": ["Œufs", "Lait", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400"
+        }
+      ],
+      "conditions": [
+        "Produits ultra-frais, préparation le jour même",
+        "Délai de commande : 10 jours minimum",
+        "Service traiteur inclus sur Bordeaux"
+      ]
+    },
+    {
+      "id": 5,
+      "titre": "Pâques en Famille",
+      "theme": "paques",
+      "regime": "classique",
+      "description": "Un repas convivial pour célébrer le printemps.",
+      "description_longue": "Menu de Pâques traditionnel avec agneau pascal et œufs en chocolat. Parfait pour réunir toute la famille autour d'un repas festif printanier.",
+      "prix": 245.00,
+      "nb_personnes_min": 8,
+      "stock": 22,
+      "image_principale": "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Asperges blanches sauce mousseline",
+          "description": "Asperges fraîches du Sud-Ouest",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Gigot d'agneau rôti aux herbes",
+          "description": "Flageolets à la française, jus corsé",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Nid de Pâques en chocolat",
+          "description": "Mousse au chocolat, œufs pralinés",
+          "allergenes": ["Œufs", "Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+        }
+      ],
+      "conditions": [
+        "Agneau d'origine française",
+        "Délai : 5 jours ouvrés",
+        "Possibilité de récupération le jour J"
+      ]
+    },
+    {
+      "id": 6,
+      "titre": "Pâques Végétarien",
+      "theme": "paques",
+      "regime": "vegetarien",
+      "description": "Célébrez Pâques avec un menu 100% végétarien.",
+      "description_longue": "Un menu de printemps frais et coloré, sans viande ni poisson. Des légumes de saison sublimés par nos chefs.",
+      "prix": 189.00,
+      "nb_personnes_min": 6,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Salade printanière aux fleurs",
+          "description": "Jeunes pousses, radis, fleurs comestibles",
+          "allergenes": ["Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Lasagnes aux légumes de saison",
+          "description": "Courgettes, aubergines, ricotta maison",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Tarte citron meringuée",
+          "description": "Pâte sablée, crème citron, meringue italienne",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?w=400"
+        }
+      ],
+      "conditions": [
+        "Légumes bio et locaux",
+        "Délai : 4 jours ouvrés",
+        "Conservation : 24h maximum"
+      ]
+    },
+    {
+      "id": 7,
+      "titre": "Anniversaire Enfant Festif",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "Menu ludique et coloré pour les anniversaires d'enfants.",
+      "description_longue": "Des plats qui plairont aux petits gourmands ! Menu adapté aux enfants avec des portions généreuses et des saveurs douces.",
+      "prix": 180.00,
+      "nb_personnes_min": 10,
+      "stock": 30,
+      "image_principale": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800",
+        "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=800"
+      ],
+      "entrees": [
+        {
+          "nom": "Mini-pizzas margherita",
+          "description": "Tomate, mozzarella, basilic frais",
+          "allergenes": ["Gluten", "Lait"],
+          "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"
+        },
+        {
+          "nom": "Bâtonnets de légumes et dip",
+          "description": "Carottes, concombres, sauce au yaourt",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1564671165093-20688ff1ffad?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Nuggets de poulet maison",
+          "description": "Frites maison et ketchup artisanal",
+          "allergenes": ["Gluten", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400"
+        },
+        {
+          "nom": "Mini-burgers gourmands",
+          "description": "Pain brioché, steak haché, fromage",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Gâteau d'anniversaire personnalisé",
+          "description": "Génoise, crème au beurre, décor au choix",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400"
+        },
+        {
+          "nom": "Cupcakes colorés",
+          "description": "Assortiment vanille, chocolat, fraise",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400"
+        }
+      ],
+      "conditions": [
+        "Personnalisation du gâteau incluse",
+        "Délai : 3 jours ouvrés",
+        "Animation possible en supplément"
+      ]
+    },
+    {
+      "id": 8,
+      "titre": "Anniversaire Adulte Chic",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "Un menu raffiné pour un anniversaire élégant.",
+      "description_longue": "Célébrez votre anniversaire avec style ! Un menu gastronomique qui impressionnera vos invités.",
+      "prix": 320.00,
+      "nb_personnes_min": 12,
+      "stock": 15,
+      "image_principale": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Carpaccio de Saint-Jacques",
+          "description": "Agrumes, huile de truffe, mesclun",
+          "allergenes": ["Mollusques"],
+          "image": "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Magret de canard aux cerises",
+          "description": "Gratin dauphinois, sauce aux cerises",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Fraisier revisité",
+          "description": "Crème mousseline, fraises fraîches",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400"
+        }
+      ],
+      "conditions": [
+        "Vaisselle et service inclus",
+        "Délai : 7 jours ouvrés",
+        "Livraison dans un rayon de 50km"
+      ]
+    },
+    {
+      "id": 9,
+      "titre": "Brunch Dominical",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Un brunch généreux pour débuter le week-end.",
+      "description_longue": "Profitez d'un brunch complet avec des produits frais et variés. Parfait pour un dimanche en famille ou entre amis.",
+      "prix": 195.00,
+      "nb_personnes_min": 8,
+      "stock": 25,
+      "image_principale": "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800",
+        "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800",
+        "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800",
+        "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=800"
+      ],
+      "entrees": [
+        {
+          "nom": "Assortiment de viennoiseries",
+          "description": "Croissants, pains au chocolat, brioches",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400"
+        },
+        {
+          "nom": "Fruits frais de saison",
+          "description": "Salade de fruits, jus d'orange pressé",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Œufs brouillés au saumon fumé",
+          "description": "Pain complet grillé, avocat",
+          "allergenes": ["Œufs", "Poisson", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400"
+        },
+        {
+          "nom": "Omelette aux fines herbes",
+          "description": "Jambon blanc, emmental, salade verte",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Pancakes aux fruits rouges",
+          "description": "Sirop d'érable, chantilly",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=400"
+        }
+      ],
+      "conditions": [
+        "Livraison entre 9h et 11h",
+        "Délai : 2 jours ouvrés",
+        "Boissons chaudes en option"
+      ]
+    },
+    {
+      "id": 10,
+      "titre": "Déjeuner d'Affaires",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Menu professionnel pour vos réunions d'affaires.",
+      "description_longue": "Un menu équilibré et raffiné, parfait pour impressionner vos partenaires commerciaux lors d'un déjeuner professionnel.",
+      "prix": 280.00,
+      "nb_personnes_min": 6,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Tartare de saumon à l'avocat",
+          "description": "Citron vert, chips de légumes",
+          "allergenes": ["Poisson"],
+          "image": "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Pavé de cabillaud rôti",
+          "description": "Purée de céleri, sauce vierge",
+          "allergenes": ["Poisson", "Céleri", "Lait"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Tiramisu classique",
+          "description": "Mascarpone, café, cacao",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"
+        }
+      ],
+      "conditions": [
+        "Livraison précise garantie",
+        "Délai : 48h minimum",
+        "Matériel de service inclus"
+      ]
+    },
+    {
+      "id": 11,
+      "titre": "Saveurs d'Orient",
+      "theme": "classique",
+      "regime": "hallal",
+      "description": "Voyage culinaire au cœur du Maghreb.",
+      "description_longue": "Découvrez les saveurs authentiques de la cuisine orientale avec ce menu généreux et parfumé. Certifié halal.",
+      "prix": 265.00,
+      "nb_personnes_min": 10,
+      "stock": 18,
+      "image_principale": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+        "https://images.unsplash.com/photo-1563379091339-03b87701c4a8?w=800",
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
+        "https://images.unsplash.com/photo-1559493648-8e78c96d2c8a?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Assortiment de mezze",
+          "description": "Houmous, caviar d'aubergine, taboulé",
+          "allergenes": ["Gluten", "Sésame"],
+          "image": "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=400"
+        },
+        {
+          "nom": "Pastilla au poulet",
+          "description": "Pâte filo, amandes, cannelle",
+          "allergenes": ["Gluten", "Fruits à coque", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Couscous royal",
+          "description": "Agneau, merguez, poulet, légumes mijotés",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400"
+        },
+        {
+          "nom": "Tajine d'agneau aux pruneaux",
+          "description": "Semoule, amandes grillées, miel",
+          "allergenes": ["Gluten", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1563379091339-03b87701c4a8?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Assortiment de pâtisseries orientales",
+          "description": "Baklava, makroud, corne de gazelle",
+          "allergenes": ["Gluten", "Fruits à coque", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1559493648-8e78c96d2c8a?w=400"
+        }
+      ],
+      "conditions": [
+        "Viande 100% certifiée halal",
+        "Délai : 5 jours ouvrés",
+        "Épices importées du Maghreb"
+      ]
+    },
+    {
+      "id": 12,
+      "titre": "Menu Gastronomique du Chef",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "L'excellence culinaire à votre table.",
+      "description_longue": "Un menu d'exception créé par notre chef étoilé. Produits nobles, techniques pointues et présentation soignée.",
+      "prix": 450.00,
+      "nb_personnes_min": 6,
+      "stock": 8,
+      "image_principale": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Œuf parfait en coque",
+          "description": "Mousse de morilles, tuile de parmesan",
+          "allergenes": ["Œufs", "Lait", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400"
+        },
+        {
+          "nom": "Ravioles de langoustines",
+          "description": "Bisque légère, estragon frais",
+          "allergenes": ["Crustacés", "Gluten", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400"
+        },
+        {
+          "nom": "Tarte fine de foie gras",
+          "description": "Poire caramélisée, réduction balsamique",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Pigeonneau rôti",
+          "description": "Jus au thym, légumes primeurs glacés",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        },
+        {
+          "nom": "Bar de ligne en croûte de sel",
+          "description": "Beurre blanc citronné, fenouil confit",
+          "allergenes": ["Poisson", "Lait"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        },
+        {
+          "nom": "Ris de veau croustillant",
+          "description": "Jus de truffe, purée de topinambour",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1558030006-450675393462?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Sphère chocolat Caraïbes",
+          "description": "Cœur coulant, sorbet passion",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
+        },
+        {
+          "nom": "Millefeuille à la vanille",
+          "description": "Crème diplomate, caramel beurre salé",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?w=400"
+        },
+        {
+          "nom": "Soufflé au citron",
+          "description": "Coulis de fruits rouges, glace vanille",
+          "allergenes": ["Œufs", "Lait", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+        }
+      ],
+      "conditions": [
+        "Commande minimum 10 jours à l'avance",
+        "Chef présent sur demande (supplément)",
+        "Accord mets-vins disponible"
+      ]
+    },
+    {
+      "id": 13,
+      "titre": "Menu Vegan Créatif",
+      "theme": "classique",
+      "regime": "vegan",
+      "description": "100% végétal, 100% gourmand.",
+      "description_longue": "Un menu entièrement vegan qui prouve que l'on peut se régaler sans aucun produit d'origine animale. Créativité et saveurs au rendez-vous.",
+      "prix": 205.00,
+      "nb_personnes_min": 6,
+      "stock": 22,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Buddha bowl coloré",
+          "description": "Quinoa, avocat, légumes croquants, tahini",
+          "allergenes": ["Sésame"],
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Curry de légumes au lait de coco",
+          "description": "Riz basmati, naan vegan",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Mousse au chocolat vegan",
+          "description": "Base aquafaba, chocolat noir 70%",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400"
+        }
+      ],
+      "conditions": [
+        "100% végétal garanti",
+        "Délai : 4 jours ouvrés",
+        "Sans gluten possible sur demande"
+      ]
+    },
+    {
+      "id": 14,
+      "titre": "Terroir du Sud-Ouest",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Les spécialités généreuses du Sud-Ouest.",
+      "description_longue": "Redécouvrez les classiques de la cuisine du Sud-Ouest : confit, foie gras et vins locaux. Un repas authentique et généreux.",
+      "prix": 295.00,
+      "nb_personnes_min": 10,
+      "stock": 15,
+      "image_principale": "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800",
+        "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800",
+        "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Salade landaise",
+          "description": "Gésiers confits, foie gras, magret fumé",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Confit de canard",
+          "description": "Pommes de terre sarladaises, haricots verts",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Gâteau basque",
+          "description": "Crème pâtissière à la cerise noire",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+        }
+      ],
+      "conditions": [
+        "Produits du terroir certifiés",
+        "Délai : 6 jours ouvrés",
+        "Accompagnement vin possible"
+      ]
+    },
+    {
+      "id": 15,
+      "titre": "Menu Fruits de Mer",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Un plateau généreux de fruits de mer frais.",
+      "description_longue": "Huîtres, crevettes, langoustines, bulots... Un festival de fruits de mer pour les amateurs de la mer.",
+      "prix": 380.00,
+      "nb_personnes_min": 6,
+      "stock": 12,
+      "image_principale": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+        "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?w=800",
+        "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Plateau de fruits de mer",
+          "description": "Huîtres, crevettes, langoustines, bulots",
+          "allergenes": ["Crustacés", "Mollusques"],
+          "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Bouillabaisse marseillaise",
+          "description": "Poissons nobles, rouille, croûtons",
+          "allergenes": ["Poisson", "Crustacés", "Gluten", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Tarte tropézienne",
+          "description": "Brioche, crème à la fleur d'oranger",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?w=400"
+        }
+      ],
+      "conditions": [
+        "Produits ultra-frais du jour",
+        "Délai : 48h minimum",
+        "Livraison en glacière isotherme"
+      ]
+    },
+    {
+      "id": 16,
+      "titre": "Cuisine Italienne Authentique",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Les saveurs authentiques de l'Italie.",
+      "description_longue": "Un voyage culinaire en Italie avec des recettes traditionnelles préparées avec des produits importés directement.",
+      "prix": 255.00,
+      "nb_personnes_min": 8,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800",
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+        "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=800",
+        "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Antipasti misti",
+          "description": "Charcuterie italienne, légumes grillés, mozzarella",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Lasagnes à la bolognaise maison",
+          "description": "Viande mijotée 3h, béchamel, parmesan",
+          "allergenes": ["Gluten", "Lait", "Œufs", "Céleri"],
+          "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Tiramisu au café",
+          "description": "Recette traditionnelle, mascarpone",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"
+        }
+      ],
+      "conditions": [
+        "Produits italiens certifiés",
+        "Délai : 4 jours ouvrés",
+        "Possibilité menu sans gluten"
+      ]
+    },
+    {
+      "id": 17,
+      "titre": "Menu Asiatique Fusion",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Un voyage culinaire en Asie.",
+      "description_longue": "Découvrez les saveurs de l'Asie avec ce menu fusion qui mélange influences chinoises, japonaises et thaïlandaises.",
+      "prix": 270.00,
+      "nb_personnes_min": 8,
+      "stock": 18,
+      "image_principale": "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800",
+        "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800",
+        "https://images.unsplash.com/photo-1563379091339-03b87701c4a8?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Assortiment de sushis et makis",
+          "description": "Saumon, thon, avocat, concombre",
+          "allergenes": ["Poisson", "Soja", "Sésame", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400"
+        },
+        {
+          "nom": "Raviolis vapeur",
+          "description": "Porc et crevettes, sauce soja",
+          "allergenes": ["Gluten", "Crustacés", "Soja"],
+          "image": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Pad Thaï aux crevettes",
+          "description": "Nouilles de riz, légumes croquants, cacahuètes",
+          "allergenes": ["Crustacés", "Arachides", "Soja", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=400"
+        },
+        {
+          "nom": "Bœuf sauté au wok",
+          "description": "Légumes croquants, riz cantonnais",
+          "allergenes": ["Soja", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1563379091339-03b87701c4a8?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Perles du Japon au lait de coco",
+          "description": "Mangue fraîche, sirop de litchi",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Poisson cru ultra-frais",
+        "Délai : 48h minimum",
+        "Conservation : consommer rapidement"
+      ]
+    },
+    {
+      "id": 18,
+      "titre": "Barbecue Américain",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "Un vrai BBQ à l'américaine pour vos événements.",
+      "description_longue": "Ribs, burgers, coleslaw... Vivez l'expérience d'un vrai barbecue américain avec des portions généreuses.",
+      "prix": 285.00,
+      "nb_personnes_min": 12,
+      "stock": 15,
+      "image_principale": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1558030006-450675393462?w=800",
+        "https://images.unsplash.com/photo-1562967914-608f82629710?w=800",
+        "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Onion rings croustillants",
+          "description": "Sauce barbecue maison",
+          "allergenes": ["Gluten", "Lait"],
+          "image": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=400"
+        },
+        {
+          "nom": "Buffalo wings piquantes",
+          "description": "Sauce ranch, céleri croquant",
+          "allergenes": ["Lait", "Céleri"],
+          "image": "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Travers de porc sauce BBQ",
+          "description": "Coleslaw, frites de patate douce",
+          "allergenes": ["Gluten", "Moutarde"],
+          "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"
+        },
+        {
+          "nom": "Pulled pork burger",
+          "description": "Pain brioché, cheddar, pickles",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Brownies au chocolat",
+          "description": "Noix de pécan, glace vanille",
+          "allergenes": ["Gluten", "Œufs", "Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400"
+        }
+      ],
+      "conditions": [
+        "Viande fumée 12h",
+        "Délai : 5 jours ouvrés",
+        "Possibilité de cuisson sur place"
+      ]
+    },
+    {
+      "id": 19,
+      "titre": "Menu Sans Gluten Gourmand",
+      "theme": "classique",
+      "regime": "sans-gluten",
+      "description": "100% sans gluten, 100% savoureux.",
+      "description_longue": "Un menu complet sans gluten qui ne fait aucun compromis sur le goût. Parfait pour les intolérances alimentaires.",
+      "prix": 260.00,
+      "nb_personnes_min": 6,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800",
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Salade quinoa et légumes grillés",
+          "description": "Feta, tomates séchées, vinaigrette balsamique",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Poulet rôti aux herbes",
+          "description": "Riz basmati, ratatouille maison",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Fondant au chocolat sans gluten",
+          "description": "Chocolat noir 70%, coulis de fruits rouges",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400"
+        }
+      ],
+      "conditions": [
+        "Cuisine dédiée sans gluten",
+        "Délai : 4 jours ouvrés",
+        "Certification sans gluten"
+      ]
+    },
+    {
+      "id": 20,
+      "titre": "Repas Champêtre",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Un déjeuner simple et convivial en plein air.",
+      "description_longue": "Parfait pour un pique-nique ou un repas en extérieur. Des plats faciles à transporter et à déguster.",
+      "prix": 175.00,
+      "nb_personnes_min": 10,
+      "stock": 25,
+      "image_principale": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800",
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Cake salé aux olives",
+          "description": "Fromage de chèvre, tomates séchées",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1590424357190-0d0a2e1f24be?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Quiche lorraine",
+                    "description": "Lardons, crème fraîche, pâte brisée maison",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1562835155-a19a8c46c14f?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Tarte aux fruits de saison",
+          "description": "Pâte sablée, crème pâtissière",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1519915212116-7cfef71f1d3e?w=400"
+        }
+      ],
+      "conditions": [
+        "Emballage isotherme inclus",
+        "Délai : 48h",
+        "Parfait pour pique-nique"
+      ]
+    },
+    {
+      "id": 21,
+      "titre": "Menu Tapas Espagnol",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "L'ambiance festive des tapas espagnols.",
+      "description_longue": "Une sélection variée de tapas authentiques pour partager et découvrir les saveurs d'Espagne.",
+      "prix": 220.00,
+      "nb_personnes_min": 8,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+        "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=800",
+        "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Assortiment de tapas froides",
+          "description": "Jambon ibérique, manchego, olives marinées",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=400"
+        },
+        {
+          "nom": "Croquetas de jamón",
+          "description": "Croquettes crémeuses au jambon serrano",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400"
+        },
+        {
+          "nom": "Gambas al ajillo",
+          "description": "Crevettes à l'ail et piment",
+          "allergenes": ["Crustacés"],
+          "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Paella valenciana",
+          "description": "Poulet, fruits de mer, safran",
+          "allergenes": ["Crustacés", "Mollusques"],
+          "image": "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400"
+        },
+        {
+          "nom": "Tortilla española",
+          "description": "Pommes de terre, oignons, œufs",
+          "allergenes": ["Œufs"],
+          "image": "https://images.unsplash.com/photo-1562835155-a19a8c46c14f?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Crème catalane",
+          "description": "Crème brûlée à la cannelle",
+          "allergenes": ["Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400"
+        }
+      ],
+      "conditions": [
+        "Produits importés d'Espagne",
+        "Délai : 48h minimum",
+        "Idéal pour apéritif dînatoire"
+      ]
+    },
+    {
+      "id": 22,
+      "titre": "Menu Détox Healthy",
+      "theme": "classique",
+      "regime": "vegetarien",
+      "description": "Légèreté et vitalité au menu.",
+      "description_longue": "Un menu équilibré et vitaminé pour prendre soin de soi. Légumes bio, graines, jus frais... La santé dans l'assiette.",
+      "prix": 195.00,
+      "nb_personnes_min": 6,
+      "stock": 22,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Bowl détox arc-en-ciel",
+          "description": "Légumes crus, graines germées, vinaigrette au citron",
+          "allergenes": ["Sésame"],
+          "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Papillote de légumes vapeur",
+          "description": "Quinoa, sauce au yaourt grec",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Salade de fruits frais",
+          "description": "Fruits de saison, sirop léger à la menthe",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Légumes bio certifiés",
+        "Délai : 24h",
+        "Conservation : 48h maximum"
+      ]
+    },
+    {
+      "id": 23,
+      "titre": "Plateau Fromages et Charcuterie",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "L'apéritif gourmand par excellence.",
+      "description_longue": "Un plateau généreux de fromages affinés et charcuterie artisanale pour accompagner vos apéritifs.",
+      "prix": 165.00,
+      "nb_personnes_min": 8,
+      "stock": 30,
+      "image_principale": "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=800",
+        "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=800",
+        "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Plateau de fromages affinés",
+          "description": "Comté 24 mois, Roquefort, Camembert, Brie",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400"
+        },
+        {
+          "nom": "Planche de charcuterie",
+          "description": "Jambon Serrano, saucisson sec, terrine",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1529059997568-3d847b1154f0?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Raclette traditionnelle",
+          "description": "Fromage à raclette, pommes de terre, charcuterie",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1559564484-e48a781c5f25?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Plateau de fruits secs et confits",
+          "description": "Figues, abricots, dattes, noix",
+          "allergenes": ["Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Fromages affinés artisanaux",
+        "Délai : 48h",
+        "Accompagnement pain et confiture"
+      ]
+    },
+    {
+      "id": 24,
+      "titre": "Menu Poisson Méditerranéen",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Les saveurs fraîches de la Méditerranée.",
+      "description_longue": "Un menu centré sur les poissons nobles et les saveurs ensoleillées du bassin méditerranéen.",
+      "prix": 340.00,
+      "nb_personnes_min": 8,
+      "stock": 14,
+      "image_principale": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800",
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
+        "https://images.unsplash.com/photo-1580217593608-61931cefc821?w=800",
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Tartare de daurade",
+          "description": "Agrumes, huile d'olive, coriandre fraîche",
+          "allergenes": ["Poisson"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Loup de mer en croûte de sel",
+          "description": "Légumes grillés, sauce vierge",
+          "allergenes": ["Poisson"],
+          "image": "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Panna cotta à la fleur d'oranger",
+          "description": "Coulis d'agrumes, pistaches concassées",
+          "allergenes": ["Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+        }
+      ],
+      "conditions": [
+        "Poisson ultra-frais du jour",
+        "Délai : 48h minimum",
+        "Pêche durable certifiée"
+      ]
+    },
+    {
+      "id": 25,
+      "titre": "Menu Burger Gourmet",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "Le burger élevé au rang de gastronomie.",
+      "description_longue": "Des burgers maison avec des produits de qualité supérieure. Pain brioche, viande d'exception et sauces maison.",
+      "prix": 215.00,
+      "nb_personnes_min": 10,
+      "stock": 25,
+      "image_principale": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+        "https://images.unsplash.com/photo-1562967914-608f82629710?w=800",
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800",
+        "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Frites de patate douce",
+          "description": "Sauce aioli maison",
+          "allergenes": ["Œufs"],
+          "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Burger du chef",
+          "description": "Bœuf Angus, bacon, cheddar, oignons confits",
+          "allergenes": ["Gluten", "Lait", "Œufs", "Moutarde"],
+          "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"
+        },
+        {
+          "nom": "Burger végétarien",
+          "description": "Galette de pois chiches, légumes grillés",
+          "allergenes": ["Gluten", "Sésame"],
+          "image": "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Milkshake gourmand",
+          "description": "Vanille, chocolat ou fraise, chantilly",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400"
+        }
+      ],
+      "conditions": [
+        "Viande fraîche premium",
+        "Délai : 48h",
+        "Pain brioché artisanal"
+      ]
+    },
+    {
+      "id": 26,
+      "titre": "Menu Indien Épicé",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Les saveurs authentiques de l'Inde.",
+      "description_longue": "Un voyage culinaire en Inde avec des épices soigneusement sélectionnées et des recettes traditionnelles.",
+      "prix": 235.00,
+      "nb_personnes_min": 8,
+      "stock": 18,
+      "image_principale": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
+        "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800",
+        "https://images.unsplash.com/photo-1603894584373-5ac82b2fb654?w=800",
+        "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Samosas aux légumes",
+          "description": "Chutney à la menthe et tamarind",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400"
+        },
+        {
+          "nom": "Pakoras mixtes",
+          "description": "Beignets de légumes épicés",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1626074353765-517a65abe6bc?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Poulet tikka masala",
+          "description": "Riz basmati, naan au fromage",
+          "allergenes": ["Lait", "Gluten"],
+          "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400"
+        },
+        {
+          "nom": "Curry d'agneau",
+          "description": "Sauce épicée, riz pilaf aux raisins",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Kulfi pistache",
+          "description": "Glace traditionnelle indienne",
+          "allergenes": ["Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Épices importées d'Inde",
+        "Niveau de piquant ajustable",
+        "Délai : 48h"
+      ]
+    },
+    {
+      "id": 27,
+      "titre": "Menu Petit-Déjeuner Continental",
+      "theme": "classique",
+      "regime": "classique",
+      "description": "Commencez la journée en douceur.",
+      "description_longue": "Un petit-déjeuner complet et raffiné pour bien démarrer la journée. Idéal pour séminaires ou événements matinaux.",
+      "prix": 125.00,
+      "nb_personnes_min": 10,
+      "stock": 30,
+      "image_principale": "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800",
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800",
+        "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Corbeille de viennoiseries",
+          "description": "Croissants, pains au chocolat, brioches",
+          "allergenes": ["Gluten", "Lait", "Œufs"],
+          "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400"
+        },
+        {
+          "nom": "Yaourts et céréales",
+          "description": "Yaourt nature, granola maison, miel",
+          "allergenes": ["Lait", "Fruits à coque"],
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Œufs brouillés au saumon",
+          "description": "Pain complet, beurre salé",
+          "allergenes": ["Œufs", "Poisson", "Gluten", "Lait"],
+          "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Assortiment de fruits frais",
+          "description": "Fruits de saison découpés",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Livraison très tôt le matin possible",
+        "Café et jus inclus",
+        "Délai : 24h"
+      ]
+    },
+    {
+      "id": 28,
+      "titre": "Menu Grillades Party",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "Un BBQ convivial pour vos fêtes.",
+      "description_longue": "Viandes grillées, saucisses, brochettes... Tout pour une fête réussie autour du barbecue.",
+      "prix": 265.00,
+      "nb_personnes_min": 15,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+        "https://images.unsplash.com/photo-1558030006-450675393462?w=800",
+        "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800",
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Brochettes de légumes marinés",
+          "description": "Poivrons, courgettes, oignons",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Assortiment de grillades",
+          "description": "Côtelettes, merguez, chipolatas, brochettes",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400"
+        },
+        {
+          "nom": "Accompagnements BBQ",
+          "description": "Salade de pommes de terre, coleslaw, maïs grillé",
+          "allergenes": ["Œufs", "Moutarde"],
+          "image": "https://images.unsplash.com/photo-1564671165093-20688ff1ffad?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Brochettes de fruits au chocolat",
+          "description": "Fruits frais, chocolat fondu",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+        }
+      ],
+      "conditions": [
+        "Viandes de qualité bouchère",
+        "Possibilité de cuisson sur place",
+        "Délai : 48h"
+      ]
+    },
+    {
+      "id": 29,
+      "titre": "Menu Minceur Équilibré",
+      "theme": "classique",
+      "regime": "vegetarien",
+      "description": "Manger sainement sans se priver.",
+      "description_longue": "Un menu complet, équilibré et savoureux pour ceux qui font attention à leur ligne sans renoncer au plaisir.",
+      "prix": 185.00,
+      "nb_personnes_min": 6,
+      "stock": 20,
+      "image_principale": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Soupe de légumes verts",
+          "description": "Brocoli, épinards, courgettes",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Filet de poulet grillé",
+          "description": "Légumes vapeur, riz complet",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Fromage blanc fruits rouges",
+          "description": "0% de matière grasse, coulis sans sucre ajouté",
+          "allergenes": ["Lait"],
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400"
+        }
+      ],
+      "conditions": [
+        "Calories contrôlées",
+        "Délai : 24h",
+        "Conseils nutritionnels inclus"
+      ]
+    },
+    {
+      "id": 30,
+      "titre": "Menu Tex-Mex Festif",
+      "theme": "anniversaire",
+      "regime": "classique",
+      "description": "L'ambiance festive du Mexique.",
+      "description_longue": "Tacos, fajitas, guacamole... Vivez une fiesta mexicaine haute en couleurs et en saveurs !",
+      "prix": 240.00,
+      "nb_personnes_min": 10,
+      "stock": 22,
+      "image_principale": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800",
+      "galerie": [
+        "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800",
+        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800",
+        "https://images.unsplash.com/photo-1599974982948-83f612e3249e?w=800",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400"
+      ],
+      "entrees": [
+        {
+          "nom": "Nachos et guacamole",
+          "description": "Chips de maïs, guacamole maison, salsa piquante",
+          "allergenes": [],
+          "image": "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400"
+        },
+        {
+          "nom": "Quesadillas au poulet",
+          "description": "Fromage fondu, piment jalapeño",
+          "allergenes": ["Gluten", "Lait"],
+          "image": "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=400"
+        }
+      ],
+      "plats": [
+        {
+          "nom": "Fajitas mixtes",
+          "description": "Bœuf, poulet, poivrons, oignons",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400"
+        },
+        {
+          "nom": "Tacos al pastor",
+          "description": "Porc mariné, ananas, coriandre",
+          "allergenes": ["Gluten"],
+          "image": "https://images.unsplash.com/photo-1599974982948-83f612e3249e?w=400"
+        }
+      ],
+      "desserts": [
+        {
+          "nom": "Churros au chocolat",
+          "description": "Sauce au chocolat chaud, sucre cannelle",
+          "allergenes": ["Gluten", "Œufs", "Lait"],
+          "image": "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=400"
+        }
+      ],
+      "conditions": [
+        "Épices mexicaines authentiques",
+        "Délai : 48h",
+        "Accompagnement margarita sans alcool possible"
+      ]
+    }
+  ]
+}

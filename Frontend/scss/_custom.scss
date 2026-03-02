@@ -1,0 +1,22 @@
+// Définition de la charte graphique
+$primary: #6B5847;
+$secondary: #E5DFCE;
+$white-primary: #fff;
+$white-secondary: #F0EFEA;
+$accent: #d4af37;
+$link-color: $primary;
+
+
+$font-family-sans-serif: "Poppins", sans-serif !default;
+$font-family-serif: "Poppins", sans-serif !default;
+$title-style: "Playfair Display";
+
+$body-font-size: 0.938rem;
+$text-hedline-size:1.25rem;
+$big-title-size:3.938rem;
+$sub-title-size: 1.875rem;
+
+$btn-border-radius: 0.938rem;
+
+
+@import "../node_modules/bootstrap/scss/bootstrap";
