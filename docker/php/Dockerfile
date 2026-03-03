@@ -7,7 +7,7 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 WORKDIR /var/www/html
 
 # Copier les fichiers PHP
-COPY ./ViteGourmandBackEnd /var/www/html/backend
+COPY ./Backend /var/www/html/backend
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html
