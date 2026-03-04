@@ -1,6 +1,7 @@
 -- =============================================
 -- VUES - Vite & Gourmand
 -- =============================================
+USE ViteGourmandRestaurent_db
 
 -- Vue : menus complets
 CREATE VIEW vue_menus_complets AS
@@ -8,21 +9,23 @@ SELECT
     m.id,
     m.titre,
     m.description,
-    m.prix,
+    m.prix_base,
     m.nb_personnes_min,
     m.stock,
     m.conditions,
-    t.libelle AS theme,
-    r.libelle AS regime,
-    GROUP_CONCAT(mi.url ORDER BY mi.ordre SEPARATOR ', ') AS images
+    GROUP_CONCAT(DISTINCT t.libelle  ORDER BY t.libelle  SEPARATOR ', ') AS themes,
+    GROUP_CONCAT(DISTINCT r.libelle  ORDER BY r.libelle  SEPARATOR ', ') AS regimes,
+    GROUP_CONCAT(DISTINCT mi.url     ORDER BY mi.ordre   SEPARATOR ', ') AS images
 FROM menus m
-JOIN themes t ON m.theme_id = t.id
-JOIN regimes r ON m.regime_id = r.id
-LEFT JOIN menu_images mi ON m.id = mi.menu_id
+LEFT JOIN menu_theme  mt ON m.id = mt.menu_id
+LEFT JOIN themes         t ON mt.theme_id  = t.id
+LEFT JOIN menu_regime mr ON m.id = mr.menu_id
+LEFT JOIN regimes        r ON mr.regime_id = r.id
+LEFT JOIN menu_images   mi ON m.id = mi.menu_id
 GROUP BY 
-    m.id, m.titre, m.description, m.prix, 
-    m.nb_personnes_min, m.stock, m.conditions,
-    t.libelle, r.libelle;
+    m.id, m.titre, m.description, m.prix_base,
+    m.nb_personnes_min, m.stock, m.conditions;
+
 
 -- =============================================
 
@@ -32,12 +35,12 @@ SELECT
     p.id,
     p.nom,
     p.description,
-    p.type,
+    p.type_id,
     GROUP_CONCAT(a.libelle SEPARATOR ', ') AS allergenes
 FROM plats p
-LEFT JOIN plats_allergenes pa ON p.id = pa.plat_id
+LEFT JOIN plat_allergene pa ON p.id = pa.plat_id
 LEFT JOIN allergenes a ON pa.allergene_id = a.id
-GROUP BY p.id, p.nom, p.description, p.type;
+GROUP BY p.id, p.nom, p.description, p.type_id;
 
 -- =============================================
 
@@ -48,9 +51,9 @@ SELECT
     m.titre AS menu_titre,
     p.id AS plat_id,
     p.nom AS plat_nom,
-    p.type AS plat_type
+    p.type_id AS plat_type
 FROM menus m
-JOIN menus_plats mp ON m.id = mp.menu_id
+JOIN menu_plats mp ON m.id = mp.menu_id
 JOIN plats p ON mp.plat_id = p.id;
 
 -- =============================================
@@ -112,12 +115,14 @@ WHERE sa.libelle = 'valide';
 CREATE VIEW vue_historique_commandes AS
 SELECT 
     h.id,
-    h.changed_at,
+    h.created_at,
+    h.modifie_par,
     c.id AS commande_id,
     sc.libelle AS statut,
     u.nom,
     u.prenom
-FROM historique_statuts h
-JOIN commandes c ON h.commande_id = c.id
+FROM commande_historique_statuts h
+JOIN commandes c  ON h.commande_id = c.id
 JOIN statuts_commande sc ON h.statut_id = sc.id
-JOIN users u ON h.user_id = u.id;
+JOIN users u ON c.user_id = u.id;
+
