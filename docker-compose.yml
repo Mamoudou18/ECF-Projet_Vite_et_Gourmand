@@ -35,8 +35,8 @@ services:
     container_name: php
     restart: always
     volumes:
-      - ./Backend:/var/www/html/backend
-      - ./Frontend:/var/www/html/frontend
+      - ./backend:/var/www/html/backend
+      - ./frontend:/var/www/html/frontend
     environment:
       DB_HOST: mysql
       DB_NAME: ${DB_NAME}

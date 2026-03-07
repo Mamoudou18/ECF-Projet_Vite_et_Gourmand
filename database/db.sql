@@ -359,3 +359,8 @@ INSERT INTO jours (libelle, ordre) VALUES
 INSERT INTO horaires (jour_id, heure_ouverture, heure_fermeture, is_ferme)
 SELECT id, '09:00:00', '19:00:00', FALSE FROM jours;
 
+
+ALTER TABLE users
+CHANGE COLUMN is_active is_actif BOOLEAN DEFAULT 1
+
+select * from tokens
