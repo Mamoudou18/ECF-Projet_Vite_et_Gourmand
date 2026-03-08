@@ -28,11 +28,12 @@ $action    = $parts[2] ?? null; // register
 if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
     echo json_encode([
         'status' => 'success',
-        'message' => 'API Backend Vite & Gourmand opérationnelle ',
+        'message' => 'API Backend Vite & Gourmand opérationnelle',
         'version' => '1.0.0',
         'timestamp' => date('Y-m-d H:i:s'),
         'routes_disponibles' => [
-            'POST /api/auth/register' => 'Inscription utilisateur'
+            'POST /api/auth/register' => 'Inscription utilisateur',
+            'POST /api/auth/login' => 'Connexion utilisateur'
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -44,7 +45,7 @@ switch ($ressource) {
     case 'auth':
         // Vérification que le controller existe
         $controllerPath = __DIR__ . '/../controllers/AuthController.php';
-        
+
         if (!file_exists($controllerPath)) {
             http_response_code(501);
             echo json_encode([
@@ -80,12 +81,35 @@ switch ($ressource) {
                 }
                 break;
 
+            // ✅ NOUVELLE ROUTE : LOGIN
+            case 'login':
+                if ($method === 'POST') {
+                    // Vérification que la méthode login existe
+                    if (method_exists($controller, 'login')) {
+                        $controller->login();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error' => 'Méthode non implémentée',
+                            'details' => 'La méthode login() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error' => 'Méthode HTTP non autorisée',
+                        'details' => 'Utilisez POST pour /api/auth/login',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
             default:
                 http_response_code(404);
                 echo json_encode([
                     'error' => 'Action non trouvée',
                     'details' => "L'action '$action' n'existe pas pour auth",
-                    'actions_disponibles' => ['register']
+                    'actions_disponibles' => ['register', 'login']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;

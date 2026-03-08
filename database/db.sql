@@ -291,20 +291,18 @@ CREATE TABLE avis (
         FOREIGN KEY (statut_id) REFERENCES statuts_avis(id)
 );
 
-
 CREATE TABLE tokens (
-    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id    INT UNSIGNED NOT NULL,
-    token      VARCHAR(255) NOT NULL UNIQUE,
-    type       ENUM('verification_email', 'reset_password', 'auth') NOT NULL,
-    used       BOOLEAN NOT NULL DEFAULT FALSE,
-    expires_at DATETIME NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    token VARCHAR(64) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NULL,
 
-    CONSTRAINT fk_tokens_user
-        FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-);
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- =============================================
 -- DONNÉES DE RÉFÉRENCE (INSERTS)
