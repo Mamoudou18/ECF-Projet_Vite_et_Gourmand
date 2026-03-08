@@ -7,8 +7,10 @@ const inputRegisterForm = document.getElementById("registerForm");
 const inputNom = document.getElementById("nom");
 const inputPrenom = document.getElementById("prenom");
 const inputEmail = document.getElementById("email");
-const inputTelephone = document.getElementById("telephone");
-const inputAdresse = document.getElementById("adresse");
+const inputGsm = document.getElementById("telephone");
+const inputAdresse = document.getElementById("adressePostale");
+const inputcodePostal = document.getElementById("codePostalClient");
+const inputVille = document.getElementById("villeClient");
 const inputRgpd = document.getElementById("rgpd");
 
 //valider la saisie du mail
@@ -119,8 +121,10 @@ async function handleRegister(event) {
     const nom = inputNom.value.trim();
     const prenom = inputPrenom.value.trim();
     const email = inputEmail.value.trim();
-    const telephone = inputTelephone.value.trim();
+    const gsm = inputGsm.value.trim();
     const adresse = inputAdresse.value.trim();
+    const codePostal = inputcodePostal.value.trim();
+    const ville = inputVille.value.trim();
     const rgpd = inputRgpd.checked;
 
     // Vérifications
@@ -144,7 +148,7 @@ async function handleRegister(event) {
         return;
     }
 
-    if (!/^[0-9]{10}$/.test(telephone.replace(/\s/g, ''))) {
+    if (!/^[0-9]{10}$/.test(gsm.replace(/\s/g, ''))) {
         showError('Le numéro de téléphone doit contenir 10 chiffres');
         return;
     }
@@ -158,37 +162,46 @@ async function handleRegister(event) {
         nom,
         prenom,
         email,
-        telephone: telephone.replace(/\s/g, ''),
+        gsm: gsm.replace(/\s/g, ''),
         adresse,
-        password
+        code_postal:codePostal,
+        ville,
+        password,
+        confirm_password :passwordConfirm
     };
 
-    try {
-        const response = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData)
-        });
+    const response = await fetch('http://localhost/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+    });
 
-        const data = await response.json();
+    const texte = await response.text();
+    console.log('Réponse brute :',texte);
 
-        if (!response.ok) {
-            showError(data.error || 'Une erreur est survenue');
+    if (!response.ok) {
+
+        let data;
+        try{
+            data = JSON.parse(texte);
+        } catch(e){
+            showError('Erreur réseau ou serveur');
             registerBtn.disabled = false;
             registerBtn.innerHTML = 'Créer mon compte';
             return;
         }
-
-        // Succès
-        alert(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
-        window.location.href = 'login.html';
-
-    } catch (error) {
-        console.error('Erreur register :', error);
-        showError('Une erreur est survenue, veuillez réessayer.');
+        showError(data.error || 'Echec de l\'inscription');
         registerBtn.disabled = false;
         registerBtn.innerHTML = 'Créer mon compte';
+        return;
     }
+
+    // si tout est ok, on parse
+    const data = JSON.parse(texte);
+
+    // Succès
+    alert(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
+    window.location.href = 'login.html';
 }
 
 // Afficher erreur
