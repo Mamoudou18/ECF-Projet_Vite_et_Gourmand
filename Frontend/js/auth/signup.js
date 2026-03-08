@@ -201,7 +201,9 @@ async function handleRegister(event) {
 
     // Succès
     alert(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
-    window.location.href = 'login.html';
+
+    // Rédirection vers la page de connexion
+    window.location.href = '/signin';
 }
 
 // Afficher erreur
