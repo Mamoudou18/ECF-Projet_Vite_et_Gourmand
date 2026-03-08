@@ -17,13 +17,13 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="nom" class="form-label">
-                                <i class="bi bi-person-fill"></i> Nom *
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" id="nom" placeholder="Votre nom" required minlength="2">
                         </div>
                         <div class="col-md-6">
                             <label for="prenom" class="form-label">
-                                <i class="bi bi-person-fill"></i> Prénom *
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
                             </label>
                             <input type="text" class="form-control" id="prenom" placeholder="Votre prénom" required minlength="2">
                         </div>
@@ -32,7 +32,7 @@
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label">
-                            <i class="bi bi-envelope-fill"></i> Adresse email *
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -48,7 +48,7 @@
                     <!-- Téléphone -->
                     <div class="mb-3">
                         <label for="telephone" class="form-label">
-                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) *
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -61,17 +61,37 @@
                     <!-- Adresse postale -->
                     <div class="mb-3">
                         <label for="adresse" class="form-label">
-                            <i class="bi bi-geo-alt-fill"></i> Adresse postale *
+                            <i class="bi bi-geo-alt-fill"></i> Adresse postale <span class="text-danger">*</span>
                         </label>
                         <textarea 
                             class="form-control" id="adresse" rows="2" placeholder="12 rue de la République, 33000 Bordeaux" required>
                         </textarea>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="adressePostale" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="codePostalClient" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="villeClient" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
                     <!-- Mot de passe -->
                     <div class="mb-3">
                         <label for="password" class="form-label">
-                            <i class="bi bi-lock-fill primary"></i> Mot de passe *
+                            <i class="bi bi-lock-fill primary"></i> Mot de passe <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -117,7 +137,7 @@
                     <!-- Confirmation mot de passe -->
                     <div class="mb-3">
                         <label for="passwordConfirm" class="form-label">
-                            <i class="bi bi-shield-lock-fill"></i> Confirmer le mot de passe *
+                            <i class="bi bi-shield-lock-fill"></i> Confirmer le mot de passe <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -140,7 +160,7 @@
                             <input class="form-check-input" type="checkbox" id="rgpd" required>
                             <label class="form-check-label" for="rgpd">
                                 J'accepte la <a href="mentions_legales.html" target="_blank" class="link-primary-custom">politique de confidentialité</a> 
-                                et les <a href="cgv.html" target="_blank" class="link-primary-custom">CGV</a> *
+                                et les <a href="cgv.html" target="_blank" class="link-primary-custom">CGV</a> <span class="text-danger">*</span>
                             </label>
                         </div>
                     </div>
