@@ -1,9 +1,4 @@
 // ============================================
-// IMPORTS & CONSTANTES
-// ============================================
-const USERS_FILE = '/data/users.json';
-
-// ============================================
 // INITIALISATION
 // ============================================
 export async function init() {
@@ -28,9 +23,7 @@ export function cleanup() {
     console.log('Nettoyage page connexion');
 }
 
-// ============================================
-// ÉLÉMENTS DOM
-// ============================================
+// Initialisation des inputs
 function initElements() {
     // Inputs
     const inputPassword = document.getElementById("password");
@@ -74,38 +67,49 @@ async function handleLogin(event) {
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Connexion...';
 
-    try {
-        // Charger les utilisateurs depuis users.json
-        const response = await fetch(USERS_FILE);
-        if (!response.ok) throw new Error('Erreur chargement utilisateurs');
-        
-        const users = await response.json();
-        
-        // Chercher l'utilisateur
-        const user = users.find(u => 
-            u.email === email && 
-            u.mot_de_passe === password && 
-            u.actif === true
-        );
 
-        if (user) {
-            // CONNEXION RÉUSSIE
-            console.log('Connexion réussie:', user.email);
-            
-            // Stocker dans localStorage (SANS le mot de passe)
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    let raw = JSON.stringify({
+        email,
+        password
+    });
+
+    const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow"
+    };
+
+    fetch("http://localhost/api/auth/login", requestOptions)
+    .then((response) => {
+        if(response.ok){
+            return response.json()
+        }else{
+            console.error('Erreur de connexion :', error);
+            showError('Erreur lors de la connexion. Veuillez réessayer.');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
+        }
+     })
+    .then((result) => {
+        if (result) {
             const userSession = {
-                id: user.id,
-                nom: user.nom,
-                prenom: user.prenom,
-                email: user.email,
-                role: user.role,
-                telephone: user.telephone,
-                adresse_rue: user.adresse_rue,
-                adresse_code_postal: user.adresse_code_postal,
-                adresse_ville: user.adresse_ville
+                id: result.user.id,
+                nom: result.user.nom,
+                prenom: result.user.prenom,
+                email: result.user.email,
+                telephone: result.user.gsm,
+                adresse: result.user.adresse,
+                code_postal: result.user.code_postal,
+                ville: result.user.ville,
+                token: result.token,
+                role: result.user.role
             };
             localStorage.setItem('currentUser', JSON.stringify(userSession));
-            
+
             // Message succès
             showSuccess('Connexion réussie ! Redirection...');
             
@@ -115,20 +119,16 @@ async function handleLogin(event) {
                 const redirect = urlParams.get('redirect') || '/';
                 window.location.href = redirect;
             }, 1500);
-
         } else {
-            // ÉCHEC
+            console.error('Problème de récupération du result:', error);
+        }
+    })
+    .catch((error) => {
+            console.error('Erreur de connexion :', error);
             showError('Email ou mot de passe incorrect');
             loginBtn.disabled = false;
             loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
-        }
-
-    } catch (error) {
-        console.error('Erreur connexion:', error);
-        showError('Erreur lors de la connexion. Veuillez réessayer.');
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
-    }
+});
 }
 
 // ============================================

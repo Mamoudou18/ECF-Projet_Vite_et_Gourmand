@@ -88,6 +88,7 @@ class AuthController
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
+        // On vérifie la saisie du mail et du mot de passe
         if (empty($data['email']) || empty($data['password'])) {
             $this->sendJson([
                 'success' => false,
@@ -96,6 +97,7 @@ class AuthController
             return;
         }
 
+        // On vérifie le format du mail
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $this->sendJson([
                 'success' => false,
@@ -104,7 +106,7 @@ class AuthController
             return;
         }
 
-        // VÉRIFICATION DU RATE LIMITING
+        // Nombre de tentatives pour se connecter : 5 tentatives
         if (!$this->checkRateLimit($data['email'])) {
             $this->sendJson([
                 'success' => false,
@@ -116,6 +118,7 @@ class AuthController
         try {
             $user = $this->userModel->getUserByEmail($data['email']);
 
+            //utilisateur trouvé?
             if (!$user) {
                 $this->logFailedLogin($data['email'], 'User not found');
                 $this->sendJson([
@@ -125,6 +128,7 @@ class AuthController
                 return;
             }
 
+            // Compte actif?
             if (!$user['is_actif']) {
                 $this->logFailedLogin($data['email'], 'Account disabled');
                 $this->sendJson([
@@ -134,6 +138,7 @@ class AuthController
                 return;
             }
 
+            // Mot de passe correspond?
             if (!password_verify($data['password'], $user['password'])) {
                 $this->logFailedLogin($data['email'], 'Wrong password');
                 $this->sendJson([
@@ -197,6 +202,7 @@ class AuthController
     {
         $token = $this->getAuthToken();
 
+        // Token trouvé?
         if (!$token) {
             $this->sendJson([
                 'success' => false,
@@ -233,6 +239,7 @@ class AuthController
     {
         $token = $this->getAuthToken();
 
+        // Token trouvé?
         if (!$token) {
             $this->sendJson([
                 'success' => false,
