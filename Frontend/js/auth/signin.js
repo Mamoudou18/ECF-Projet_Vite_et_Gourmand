@@ -1,3 +1,4 @@
+import { getStorage, setStorage} from "../script.js";
 // ============================================
 // INITIALISATION
 // ============================================
@@ -5,7 +6,7 @@ export async function init() {
     console.log('Initialisation page connexion');
     
     // Vérifier si déjà connecté
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = getStorage();
     if (currentUser) {
         console.log('Déjà connecté, redirection...');
         window.location.href = '/';
@@ -96,7 +97,8 @@ async function handleLogin(event) {
      })
     .then((result) => {
         if (result) {
-            const userSession = {
+            // Stocker les infos user dans le storage
+            const userData = {
                 id: result.user.id,
                 nom: result.user.nom,
                 prenom: result.user.prenom,
@@ -108,7 +110,7 @@ async function handleLogin(event) {
                 token: result.token,
                 role: result.user.role
             };
-            localStorage.setItem('currentUser', JSON.stringify(userSession));
+            setStorage(userData);
 
             // Message succès
             showSuccess('Connexion réussie ! Redirection...');
