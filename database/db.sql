@@ -291,18 +291,6 @@ CREATE TABLE avis (
         FOREIGN KEY (statut_id) REFERENCES statuts_avis(id)
 );
 
-CREATE TABLE tokens (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    token VARCHAR(64) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NULL,
-
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_token (token),
-    INDEX idx_user (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 -- =============================================
 -- DONNÉES DE RÉFÉRENCE (INSERTS)
@@ -361,4 +349,6 @@ SELECT id, '09:00:00', '19:00:00', FALSE FROM jours;
 ALTER TABLE users
 CHANGE COLUMN is_active is_actif BOOLEAN DEFAULT 1
 
-select * from tokens
+
+-- Création de la colonne api_token
+ALTER TABLE users ADD COLUMN api_token VARCHAR(64) UNIQUE NOT NULL;
