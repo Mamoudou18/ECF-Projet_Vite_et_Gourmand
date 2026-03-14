@@ -162,7 +162,7 @@ class AuthController
                 'code_postal' => htmlspecialchars($user['code_postal'], ENT_QUOTES, 'UTF-8'),
                 'ville' => htmlspecialchars($user['ville'], ENT_QUOTES, 'UTF-8'),
                 'role' => htmlspecialchars($user['role'], ENT_QUOTES, 'UTF-8'),
-                'created_at' => $user['created_at']
+                'token' => htmlspecialchars($user['api_token'],ENT_QUOTES, 'UTF-8'),
             ];
 
             $this->sendJson([
