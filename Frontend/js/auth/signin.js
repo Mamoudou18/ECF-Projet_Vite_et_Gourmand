@@ -107,7 +107,7 @@ async function handleLogin(event) {
                 adresse: result.user.adresse,
                 code_postal: result.user.code_postal,
                 ville: result.user.ville,
-                api_token: result.user.token,
+                api_token: result.user.api_token,
                 role: result.user.role
             };
             setStorage(userData);
