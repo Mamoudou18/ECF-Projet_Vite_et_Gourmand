@@ -36,6 +36,13 @@ public function emailExists(string $email, ?int $excludeUserId = null): bool
     return $stm->fetch() !== false;
 }
 
+// Pour le middleware
+public function findByToken($token): array|false
+{
+    $stm = $this->pdo->prepare("SELECT * FROM users WHERE api_token= : api_token");
+    $stm-> execute([':api_token =>$token']);
+    return $stm->fetch();
+}
 
     //  Récupère l'id du rôle
     private function getRoleId(string $roleName): int
