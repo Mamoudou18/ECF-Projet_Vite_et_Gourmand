@@ -54,13 +54,15 @@ public function emailExists(string $email, ?int $excludeUserId = null): bool
     // Inscription utilisateur
     public function inscriptionUtilisateur(array $data): int
     {
+        $token = bin2hex(random_bytes(32)); //Génération du token unique
+
         $roleId = $this->getRoleId('utilisateur');
 
         $stm = $this->pdo->prepare("
             INSERT INTO users
-                (nom, prenom, email, gsm, adresse, code_postal, ville, password, role_id, is_actif, created_at)
+                (nom, prenom, email, gsm, adresse, code_postal, ville, password, role_id, api_token, is_actif, created_at)
             VALUES
-                (:nom, :prenom, :email, :gsm, :adresse, :code_postal, :ville, :password, :role_id, 1, NOW())    
+                (:nom, :prenom, :email, :gsm, :adresse, :code_postal, :ville, :password, :role_id, :api_token, 1, NOW())    
         ");
         
         $stm->execute([
@@ -73,6 +75,8 @@ public function emailExists(string $email, ?int $excludeUserId = null): bool
             'ville'         => $data['ville'],
             'password'      => password_hash($data['password'], PASSWORD_BCRYPT),
             'role_id'       => $roleId,
+            ':api_token'    => $token
+
         ]);
 
         return (int) $this->pdo->lastInsertId();

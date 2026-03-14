@@ -1,14 +1,12 @@
 <?php
 
 require_once __DIR__ . '/../models/User.php';
-require_once __DIR__ . '/../models/Token.php';
 require_once __DIR__ . '/../mail/WelcomeMail.php';
 require_once __DIR__ . '/../config/database.php';
 
 class AuthController
 {
     private User $userModel;
-    private Token $tokenModel;
     
     // Configuration du rate limiting
     private const MAX_LOGIN_ATTEMPTS = 5;
@@ -18,7 +16,6 @@ class AuthController
     {
         $this->userModel = new User();
         $pdo = Database::getInstance();
-        $this->tokenModel = new Token($pdo);
     }
 
     /**
@@ -148,17 +145,6 @@ class AuthController
                 return;
             }
 
-            // Génération du token (24h de validité)
-            $token = $this->tokenModel->creerToken($user['id'], 24);
-
-            if (!$token) {
-                $this->sendJson([
-                    'success' => false,
-                    'message' => 'Erreur lors de la création du token'
-                ], 500);
-                return;
-            }
-
             // RESET DU RATE LIMIT EN CAS DE SUCCÈS
             $this->resetRateLimit($data['email']);
 
@@ -182,7 +168,6 @@ class AuthController
             $this->sendJson([
                 'success' => true,
                 'message' => 'Connexion réussie',
-                'token' => $token,
                 'user' => $userData
             ], 200);
 
@@ -191,89 +176,6 @@ class AuthController
             $this->sendJson([
                 'success' => false,
                 'message' => 'Une erreur est survenue lors de la connexion'
-            ], 500);
-        }
-    }
-
-    /**
-     * Déconnexion d'un utilisateur
-     */
-    public function logout(): void
-    {
-        $token = $this->getAuthToken();
-
-        // Token trouvé?
-        if (!$token) {
-            $this->sendJson([
-                'success' => false,
-                'message' => 'Token manquant ou invalide'
-            ], 401);
-            return;
-        }
-
-        try {
-            if ($this->tokenModel->supprimerToken($token)) {
-                $this->sendJson([
-                    'success' => true,
-                    'message' => 'Déconnexion réussie'
-                ], 200);
-            } else {
-                $this->sendJson([
-                    'success' => false,
-                    'message' => 'Erreur lors de la déconnexion'
-                ], 500);
-            }
-        } catch (\Exception $e) {
-            error_log("[LOGOUT ERROR] " . $e->getMessage());
-            $this->sendJson([
-                'success' => false,
-                'message' => 'Une erreur est survenue lors de la déconnexion'
-            ], 500);
-        }
-    }
-
-    /**
-     * Vérification du token
-     */
-    public function verifyToken(): void
-    {
-        $token = $this->getAuthToken();
-
-        // Token trouvé?
-        if (!$token) {
-            $this->sendJson([
-                'success' => false,
-                'message' => 'Token manquant'
-            ], 401);
-            return;
-        }
-
-        try {
-            $userData = $this->tokenModel->verifierToken($token);
-
-            if ($userData) {
-                // PROTECTION XSS
-                $this->sendJson([
-                    'success' => true,
-                    'user' => [
-                        'id' => (int)$userData['id'],
-                        'nom' => htmlspecialchars($userData['nom'], ENT_QUOTES, 'UTF-8'),
-                        'prenom' => htmlspecialchars($userData['prenom'], ENT_QUOTES, 'UTF-8'),
-                        'email' => htmlspecialchars($userData['email'], ENT_QUOTES, 'UTF-8'),
-                        'role' => htmlspecialchars($userData['role'], ENT_QUOTES, 'UTF-8')
-                    ]
-                ], 200);
-            } else {
-                $this->sendJson([
-                    'success' => false,
-                    'message' => 'Token invalide ou expiré'
-                ], 401);
-            }
-        } catch (\Exception $e) {
-            error_log("[VERIFY TOKEN ERROR] " . $e->getMessage());
-            $this->sendJson([
-                'success' => false,
-                'message' => 'Erreur lors de la vérification du token'
             ], 500);
         }
     }
@@ -325,19 +227,6 @@ class AuthController
         if (file_exists($cacheFile)) {
             unlink($cacheFile);
         }
-    }
-
-    /**
-     * RÉCUPÉRATION DU TOKEN (compatible Apache + Nginx)
-     */
-    private function getAuthToken(): ?string
-    {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-        
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            return $matches[1];
-        }
-        return null;
     }
 
     /**
