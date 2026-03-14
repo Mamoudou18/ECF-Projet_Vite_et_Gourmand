@@ -40,17 +40,24 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/signin" data-show="disconnected">Connexion</a>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown" data-show="connected">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="bi-person-circle"></span> @User
+                                <span class="bi-person-circle"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <a class="dropdown-item text-primary" href="/compte">Mon compte</a>
+                                    <a class="dropdown-item text-primary" data-show="ADMIN" href="/compte">Mon compte</a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item text-primary" data-show="EMPLOYE" href="/compte">Mon compte</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-primary" data-show="UTILISATEUR" href="/compte">Mon compte</a>
+                                </li>
+
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <button class="dropdown-item text-danger" data-show="connected" id="btn-signout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+                                    <button class="dropdown-item text-danger" id="btn-signout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
                                 </li>
                             </ul>
                         </li>
