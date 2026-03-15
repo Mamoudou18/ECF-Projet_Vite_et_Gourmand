@@ -81,7 +81,6 @@ async function handleLogin(event) {
     method: "POST",
     headers: myHeaders,
     body: raw,
-    redirect: "follow"
     };
 
     fetch("http://localhost/api/auth/login", requestOptions)
@@ -103,7 +102,7 @@ async function handleLogin(event) {
                 nom: result.user.nom,
                 prenom: result.user.prenom,
                 email: result.user.email,
-                telephone: result.user.gsm,
+                telephone: result.user.gsm.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
                 adresse: result.user.adresse,
                 code_postal: result.user.code_postal,
                 ville: result.user.ville,
