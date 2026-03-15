@@ -107,3 +107,15 @@ function updateHeader(){
     }
 }
 
+// Gestion de la page active
+document.querySelectorAll('.nav-link').forEach(link => {
+    if (link.href === window.location.href) {
+        link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
+    } else {
+        // Retire active si on change de page
+        link.classList.remove('active');
+        link.removeAttribute('aria-current');
+    }
+});
+
