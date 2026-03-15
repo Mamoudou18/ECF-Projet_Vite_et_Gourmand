@@ -6,6 +6,7 @@ export async function init() {
     console.log('Initialisation page mon compte');
 
     updateDasboardHeader();
+    autoFillProfilInfoUser();
     initEventListeners();
     
 }
@@ -55,6 +56,11 @@ function initEventListeners(){
             e.preventDefault();
             resetFilters()
         });
+    }
+
+    const profilForm = document.getElementById("profilForm");
+    if(profilForm){
+        profilForm.addEventListener("submit",formModifyProfilUser);
     }
 
 }
@@ -161,4 +167,81 @@ function updateDasboardHeader(){
     // Téléphone
     const tel = document.querySelector('.user-details p:nth-child(3)');
     if(tel) tel.innerHTML = `<i class="bi bi-telephone"></i> ${user.telephone}`;
+}
+
+
+// Pre-remplir les infos user dans la section Mon Profil: 
+
+function autoFillProfilInfoUser() {
+    const user = getStorage();
+    if(!user) return;
+
+    // Remplir les champs
+    document.getElementById('nom').value = user.nom || '';
+    document.getElementById('prenom').value = user.prenom || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('telephone').value = user.telephone || '';
+    document.getElementById('adresse').value = user.adresse || '';
+    document.getElementById('codePostal').value = user.code_postal || '';
+    document.getElementById('ville').value = user.ville || '';
+}
+
+//validation du formulaire
+function validateFormModifyProfil(){
+    const errors = [];
+    
+    // Téléphone (format FR)
+    const tel = document.getElementById('telephone').value;
+    if (!/^0[1-9][0-9]{8}$/.test(tel.replace(/\s/g, ''))) {
+        errors.push('Téléphone invalide (format: 06 12 34 56 78)');
+    }
+
+    if (!document.getElementById('adresse').value.trim()) {
+        errors.push('Veuillez renseigner l\'adresse de livraison');
+    }
+
+    if (!document.getElementById('codePostal').value.trim()) {
+        errors.push('Veuillez renseigner le code postal');
+    }
+    if (!document.getElementById('ville').value.trim()) {
+        errors.push('Veuillez renseigner la ville');
+    }
+
+    if (!document.getElementById('nom').value.trim()) {
+        errors.push('Veuillez renseigner le nom');
+    }
+
+    if (!document.getElementById('prenom').value.trim()) {
+        errors.push('Veuillez renseigner le prenom');
+    }
+
+    if(errors.length > 0){
+        alert('Erreurs de validation :\n\n' + errors.join('\n'));
+        return false;
+    }
+    return true;  
+}
+
+// Soumission du formulaire
+function formModifyProfilUser(e){
+    e.preventDefault();
+
+    if(!validateFormModifyProfil()) return;
+
+    const user = getStorage();
+    if(!user) return;
+
+    const updateUser = {
+        ...user, // conserver les champs non modifiés
+        nom: document.getElementById('nom').value,
+        prenom: document.getElementById('prenom').value,
+        gsm: document.getElementById('telephone').value,
+        adresse: document.getElementById('adresse').value,
+        code_postal: document.getElementById('codePostal').value,
+        ville: document.getElementById('ville').value
+
+    };
+
+    // Appeller l'api ici
+
 }
