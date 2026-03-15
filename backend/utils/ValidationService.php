@@ -3,7 +3,7 @@
 class ValidationService
 {
     /**
-     * Valide les données de connexion
+     * Valider les données de connexion
      */
     public function validateLogin(array $data): array
     {
@@ -21,7 +21,7 @@ class ValidationService
     }
 
     /**
-     * Valide les données d'inscription
+     * Valider les données d'inscription
      */
     public function validateRegister(array $data): array
     {
@@ -65,7 +65,7 @@ class ValidationService
     }
 
     /**
-     * Valide le mot de passe
+     * Valider le mot de passe
      */
     private function validatePassword(array $data, array &$errors): void
     {
@@ -85,4 +85,41 @@ class ValidationService
             $errors['confirm_password'] = 'Les mots de passe ne correspondent pas.';
         }
     }
+
+    /**
+     * Valider les données de mise à jour de l'utilisateur
+     */
+    public function validateUpdateUser( array $data) : array
+    {
+        $errors = [];
+
+        if (empty(trim($data['nom'] ?? ''))) {
+            $errors['nom'] = 'Le nom est requis.';
+        }
+
+        if (empty(trim($data['prenom'] ?? ''))) {
+            $errors['prenom'] = 'Le prénom est requis.';
+        }
+
+        if (empty(trim($data['gsm'] ?? ''))) {
+            $errors['gsm'] = 'Le numéro de téléphone est requis.';
+        } elseif (!preg_match('/^(\+?\d{10,15})$/', preg_replace('/\s/', '', $data['gsm']))) {
+            $errors['gsm'] = 'Le numéro de téléphone est invalide.';
+        }
+
+        if (empty(trim($data['adresse'] ?? ''))) {
+            $errors['adresse'] = 'L\'adresse est requise.';
+        }
+
+        if (empty(trim($data['code_postal'] ?? ''))) {
+            $errors['code_postal'] = 'Le code postal est requis.';
+        }
+
+        if (empty(trim($data['ville'] ?? ''))) {
+            $errors['ville'] = 'La ville est requise.';
+        }
+
+        return $errors;
+    }
+
 }

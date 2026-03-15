@@ -118,16 +118,10 @@ public function findByToken($token): array|false
 // Mise à jour des informations utilisateur
 public function updateUser(int $id, array $data): bool
 {
-    // ✅ Vérifier si l'email est déjà pris par un AUTRE utilisateur
-    if ($this->emailExists($data['email'], $id)) {
-        throw new \Exception("Cet email est déjà utilisé par un autre compte.");
-    }
-
     $stm = $this->pdo->prepare("
         UPDATE users 
         SET nom = :nom,
             prenom = :prenom,
-            email = :email,
             gsm = :gsm,
             adresse = :adresse,
             code_postal = :code_postal,
@@ -139,7 +133,6 @@ public function updateUser(int $id, array $data): bool
         'id'            => $id,
         'nom'           => $data['nom'],
         'prenom'        => $data['prenom'],
-        'email'         => $data['email'],
         'gsm'           => $data['gsm'],
         'adresse'       => $data['adresse'],
         'code_postal'   => $data['code_postal'],
