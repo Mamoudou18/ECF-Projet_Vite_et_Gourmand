@@ -274,7 +274,7 @@ function formModifyProfilUser(e){
             
         .then((result) => {
             if(result){
-                setStorage("user", updateUser);
+                setStorage(updateUser);
                 alert("Profil mis à jour avec succès !");
             }
         })
