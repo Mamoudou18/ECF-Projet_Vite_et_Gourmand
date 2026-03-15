@@ -1,4 +1,4 @@
-import { getStorage } from "../script.js";
+import { getStorage, setStorage } from "../script.js";
 
 
 // Initialisation 
@@ -235,13 +235,52 @@ function formModifyProfilUser(e){
         ...user, // conserver les champs non modifiés
         nom: document.getElementById('nom').value,
         prenom: document.getElementById('prenom').value,
-        gsm: document.getElementById('telephone').value,
+        telephone: document.getElementById('telephone').value.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
         adresse: document.getElementById('adresse').value,
         code_postal: document.getElementById('codePostal').value,
         ville: document.getElementById('ville').value
 
     };
+    // Extraire les variables APRES avoir défini updateUser
+    const { nom, prenom, telephone, adresse, code_postal, ville } = updateUser;
 
-    // Appeller l'api ici
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+        nom,
+        prenom,
+        gsm:telephone,
+        adresse,
+        ville,
+        code_postal,
+    });
+
+
+    const requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: raw,
+    };
+
+    fetch(`http://localhost/api/auth/user?id=${user.id}`, requestOptions)
+        .then((response) => {
+            if(response.ok){
+               return response.json()
+            }else{
+                alert('Erreur lors de la mise du profil.')
+            }
+        })
+            
+        .then((result) => {
+            if(result){
+                setStorage("user", updateUser);
+                alert("Profil mis à jour avec succès !");
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur réseau :", error);
+            alert("Erreur réseau, veuillez réessayer.");
+        })
 
 }
