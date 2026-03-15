@@ -1,7 +1,13 @@
+import { getStorage } from "../script.js";
+
+
 // Initialisation 
 export async function init() {
     console.log('Initialisation page mon compte');
+
+    updateDasboardHeader();
     initEventListeners();
+    
 }
 
 // initiliser les écouteurs d'évèenement
@@ -127,4 +133,32 @@ function resetFilters(){
     if(noResultsMsg) {
         noResultsMsg.style.display = 'none';
     }
+}
+
+// Récupération des initiales, prenom, nom email et tel pour header de l'user
+function updateDasboardHeader(){
+
+    // On récupère les infos user depuis le storage
+    const user = getStorage();
+    if(!user) return;
+
+    // Avatar initiales
+
+    const avatar = document.getElementById("user-avatar");
+    if(avatar){
+        const initiales = `${user.prenom.charAt(0)}${user.nom.charAt(0)}`.toUpperCase();
+        avatar.textContent = initiales;
+    }
+
+    // Nom
+    const nom = document.querySelector('.user-details h3');
+    if(nom) nom.textContent = `Bienvenue, ${user.prenom} ${user.nom}`;
+
+    // Email
+    const email = document.querySelector('.user-details p:nth-child(2)');
+    if(email) email.innerHTML = `<i class="bi bi-envelope"></i> ${user.email}`;
+
+    // Téléphone
+    const tel = document.querySelector('.user-details p:nth-child(3)');
+    if(tel) tel.innerHTML = `<i class="bi bi-telephone"></i> ${user.telephone}`;
 }
