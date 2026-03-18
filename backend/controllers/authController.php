@@ -148,7 +148,7 @@ class AuthController
      * Mise à jour d'un utilisateur
      */
     public function updateUser(): void{
-        $id = (int) ($_GET['id'] ?? 0); // ou depuis l'URL /api/utilisateurs/5
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null; // ou depuis l'URL /api/utilisateurs/5
 
         if (!$id) {
             $this->response->error('ID invalide.', 400);
@@ -184,11 +184,61 @@ class AuthController
                 return;
             }
 
-            $this->response->success(['message' => 'Profil mis à jour avec succès.'], 201);
+            $this->response->success(['message' => 'Profil mis à jour avec succès.'], 200);
 
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
             $this->response->error('Une erreur est survenue.', 500);
+        }
+    }
+
+    /**
+     * Initialisation mot de passe
+     */
+
+    public function updatePassword(): void
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || empty($data)) {
+            $this->response->error('Données invalides.', 400);
+            return;
+        }
+
+        $errors = $this->validator->validateUpdatePassword($data);
+
+        if (!empty($errors)) {
+            $this->response->error('Erreur de validation.', 422, $errors);
+            return;
+        }
+
+        // Récupérer l'id via query string
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+
+        if (!$id) {
+            $this->response->error('ID manquant.', 400);
+            return;
+        }
+
+        try {
+            // Vérifier l'ancien mot de passe
+            $user = $this->userModel->findById($id);
+
+            if (!$user || !password_verify($data['old_password'], $user['password'])) {
+                $this->response->error('Ancien mot de passe incorrect.', 401);
+                return;
+            }
+
+            $success = $this->userModel->updatePassword($id, $data['new_password']);
+
+            if ($success) {
+                $this->response->success(['message' => 'Mot de passe mis à jour avec succès.'], 200);
+            } else {
+                $this->response->error('Erreur lors de la mise à jour.', 500);
+            }
+
+        } catch (Exception $e) {
+            $this->response->error('Erreur serveur.', 500);
         }
     }
 

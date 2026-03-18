@@ -35,6 +35,7 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'POST /api/auth/register' => 'Inscription utilisateur',
             'POST /api/auth/login' => 'Connexion utilisateur',
             'PUT /api/auth/user?id={id}' => 'Modification profil utilisateur',
+            'PUT /api/auth/password?id={id}' => 'Initialisation mot de passe',
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -128,12 +129,35 @@ switch ($ressource) {
                 }
                 break;
 
+            //Nouvelle route:passeword
+            case 'password':
+                if ($method === 'PUT') {
+                    // Vérification que la méthode login existe
+                    if (method_exists($controller, 'updatePassword')) {
+                        $controller->updatePassword();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error' => 'Méthode non implémentée',
+                            'details' => 'La méthode updatePassword() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error' => 'Méthode HTTP non autorisée',
+                        'details' => 'Utilisez PUT pour /api/auth/password?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
             default:
                 http_response_code(404);
                 echo json_encode([
                     'error' => 'Action non trouvée',
                     'details' => "L'action '$action' n'existe pas pour auth",
-                    'actions_disponibles' => ['register', 'login','user']
+                    'actions_disponibles' => ['register', 'login','user','password']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;

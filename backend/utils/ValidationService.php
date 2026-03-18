@@ -122,4 +122,37 @@ class ValidationService
         return $errors;
     }
 
+    /**
+     * validés les champs réquis pour le changement de password
+     */
+
+    public function validateUpdatePassword(array $data): array
+    {
+        $oldPassword = $data['old_password'] ?? '';
+        $newdPassword = $data['new_password'] ?? '';
+        $confirmPassword = $data['confirm_password'] ?? '';
+
+        $errors = [];
+
+        if (empty($oldPassword)) {
+            $errors['old_password'] = 'L\'ancien mot de passe est requis.';
+        }
+
+        if (empty($newdPassword)) {
+            $errors['new_password'] = 'Le nouveau mot de passe est requis.';
+        } elseif (strlen($newdPassword) < 10) {
+            $errors['new_password'] = 'Le mot de passe doit contenir au moins 8 caractères.';
+        }  elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', $newdPassword)) {
+            $errors['password'] = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.';
+        }
+
+        if (empty($confirmPassword)) {
+            $errors['confirm_password'] = 'La confirmation est requise.';
+        } elseif ($newdPassword !== $confirmPassword) {
+            $errors['confirm_password'] = 'Les mots de passe ne correspondent pas.';
+        }
+
+        return $errors;
+    }
+
 }
