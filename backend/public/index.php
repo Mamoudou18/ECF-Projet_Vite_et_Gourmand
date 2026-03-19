@@ -43,7 +43,8 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'POST /api/auth/login' => 'Connexion utilisateur',
             'PUT /api/auth/user?id={id}' => 'Modification profil utilisateur',
             'PUT /api/auth/password?id={id}' => 'Initialisation mot de passe',
-            'POST /api/auth/forgot-password' => 'Demande réinitialisation mot de passe'
+            'POST /api/auth/forgot-password' => 'Demande réinitialisation mot de passe',
+            'POST /api/auth/reset-password'  => 'Initialisation mot de passe oublié'
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -159,6 +160,7 @@ switch ($ressource) {
                     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
                 break;
+
             // Nouvelle route : forgot-password
             case 'forgot-password':
                 if ($method === 'POST') {
@@ -181,13 +183,34 @@ switch ($ressource) {
                 }
                 break;
 
+            // Nouvelle route : reset-password
+            case 'reset-password':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'resetPassword')) {
+                        $controller->resetPassword();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error' => 'Méthode non implémentée',
+                            'details' => 'La méthode resetPassword() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error' => 'Méthode HTTP non autorisée',
+                        'details' => 'Utilisez POST pour /api/auth/reset-password',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
 
             default:
                 http_response_code(404);
                 echo json_encode([
                     'error' => 'Action non trouvée',
                     'details' => "L'action '$action' n'existe pas pour auth",
-                    'actions_disponibles' => ['register', 'login','user','password','forgot-password']
+                    'actions_disponibles' => ['register', 'login','user','password','forgot-password','reset-password']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;

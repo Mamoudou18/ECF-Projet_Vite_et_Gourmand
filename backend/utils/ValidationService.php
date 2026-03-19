@@ -129,7 +129,7 @@ class ValidationService
     public function validateUpdatePassword(array $data): array
     {
         $oldPassword = $data['old_password'] ?? '';
-        $newdPassword = $data['new_password'] ?? '';
+        $newPassword = $data['new_password'] ?? '';
         $confirmPassword = $data['confirm_password'] ?? '';
 
         $errors = [];
@@ -138,17 +138,17 @@ class ValidationService
             $errors['old_password'] = 'L\'ancien mot de passe est requis.';
         }
 
-        if (empty($newdPassword)) {
+        if (empty($newPassword)) {
             $errors['new_password'] = 'Le nouveau mot de passe est requis.';
-        } elseif (strlen($newdPassword) < 10) {
+        } elseif (strlen($newPassword) < 10) {
             $errors['new_password'] = 'Le mot de passe doit contenir au moins 10 caractères.';
-        }  elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', $newdPassword)) {
+        }  elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', $newPassword)) {
             $errors['new_password'] = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.';
         }
 
         if (empty($confirmPassword)) {
             $errors['confirm_password'] = 'La confirmation est requise.';
-        } elseif ($newdPassword !== $confirmPassword) {
+        } elseif ($newPassword !== $confirmPassword) {
             $errors['confirm_password'] = 'Les mots de passe ne correspondent pas.';
         }
 
@@ -158,7 +158,21 @@ class ValidationService
     public function validateResetPassword(array $data): array
     {
         $errors = [];
-        $this->validatePassword($data, $errors);
+        $newPassword = $data['new_password'] ?? '';
+
+        if (empty($newPassword)) {
+            $errors['new_password'] = 'Le mot de passe est requis.';
+        } elseif (strlen($newPassword) < 10) {
+            $errors['new_password'] = 'Le mot de passe doit contenir au minimum 10 caractères.';
+        } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', $newPassword)) {
+            $errors['password'] = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.';
+        }
+
+        if (empty($data['confirm_password'] ?? '')) {
+            $errors['confirm_password'] = 'La confirmation du mot de passe est requise.';
+        } elseif ($data['new_password'] !== $data['confirm_password']) {
+            $errors['confirm_password'] = 'Les mots de passe ne correspondent pas.';
+        }
         return $errors;
     }
 
