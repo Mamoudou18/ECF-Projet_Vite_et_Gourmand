@@ -139,6 +139,7 @@ async function handleForgotPassword(event) {
     event.preventDefault();
 
     const email = document.getElementById('forgotEmail').value.trim();
+    const messageDiv = document.getElementById('forgotMessage');
 
     if (!email) {
         alert('Veuillez entrer votre adresse email');
@@ -146,29 +147,35 @@ async function handleForgotPassword(event) {
     }
 
     try {
-        // Vérifier si l'email existe
-        const response = await fetch(USERS_FILE);
-        const users = await response.json();
-        const userExists = users.some(u => u.email === email);
+        const response = await fetch('http://localhost/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
 
-        if (userExists) {
-            alert(`Un email de réinitialisation a été envoyé à ${email}`);
-        } else {
-            alert('Cette adresse email n\'est pas enregistrée');
+        const data = await response.json();
+
+        messageDiv.classList.remove('d-none', 'alert-danger', 'alert-success');
+        messageDiv.classList.add(response.ok ? 'alert-success' : 'alert-danger');
+        messageDiv.textContent = data.message;
+
+        if (response.ok) {
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPassword"));
+                modal.hide();
+                document.getElementById('forgotPasswordForm').reset();
+            }, 3000);
         }
 
-        // Fermer modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPassword"));
-        modal.hide();
-
-        // Reset formulaire
-        document.getElementById('forgotPasswordForm').reset();
-
     } catch (error) {
-        console.error('Erreur:', error);
-        alert('Erreur lors de l\'envoi. Veuillez réessayer.');
+        console.error(error);
+        messageDiv.classList.remove('d-none', 'alert-success');
+        messageDiv.classList.add('alert-danger');
+        messageDiv.textContent = 'Une erreur est survenue.';
     }
+
 }
+
 
 // ============================================
 // MESSAGES
