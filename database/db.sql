@@ -352,3 +352,9 @@ CHANGE COLUMN is_active is_actif BOOLEAN DEFAULT 1
 
 -- Création de la colonne api_token
 ALTER TABLE users ADD COLUMN api_token VARCHAR(64) UNIQUE NOT NULL;
+
+-- ajout de deux colonnes pour reset password (envoi mail)
+ALTER TABLE users 
+ADD COLUMN reset_token VARCHAR(64) NULL,
+ADD COLUMN reset_token_expires_at DATETIME NULL;
+

@@ -141,9 +141,9 @@ class ValidationService
         if (empty($newdPassword)) {
             $errors['new_password'] = 'Le nouveau mot de passe est requis.';
         } elseif (strlen($newdPassword) < 10) {
-            $errors['new_password'] = 'Le mot de passe doit contenir au moins 8 caractères.';
+            $errors['new_password'] = 'Le mot de passe doit contenir au moins 10 caractères.';
         }  elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/', $newdPassword)) {
-            $errors['password'] = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.';
+            $errors['new_password'] = 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.';
         }
 
         if (empty($confirmPassword)) {
@@ -152,6 +152,13 @@ class ValidationService
             $errors['confirm_password'] = 'Les mots de passe ne correspondent pas.';
         }
 
+        return $errors;
+    }
+
+    public function validateResetPassword(array $data): array
+    {
+        $errors = [];
+        $this->validatePassword($data, $errors);
         return $errors;
     }
 

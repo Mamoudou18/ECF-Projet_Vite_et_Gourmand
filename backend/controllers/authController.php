@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../mail/WelcomeMail.php';
+require_once __DIR__ . '/../mail/ResetPasswordMail.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
 require_once __DIR__ . '/../utils/RateLimitService.php';
@@ -243,5 +244,85 @@ class AuthController
             $this->response->error('Erreur serveur.', 500);
         }
     }
+
+    /**
+    * Demande de réinitialisation de mot de passe
+    */
+    public function forgotPassword(): void
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || empty($data['email'])) {
+            $this->response->error('Email manquant.', 400);
+            return;
+        }
+
+        try {
+            $user = $this->userModel->getUserByEmail($data['email']);
+
+            if ($user) {
+                $token     = bin2hex(random_bytes(32));
+                $expires   = date('Y-m-d H:i:s', time() + 3600);
+                $resetLink = ($_ENV['FRONTEND_URL'] ?? 'http://localhost:3000') . '/reset-password?token=' . $token;
+
+                $this->userModel->saveResetToken($user['id'], $token, $expires);
+                ResetPasswordMail::send($user['email'], $resetLink);
+            }
+
+            $this->response->success([
+                'message' => 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            $this->response->error('Erreur serveur.', 500);
+        }
+    }
+
+    /**
+     * Réinitialisation du mot de passe via token
+    */
+    public function resetPassword(): void
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || empty($data)) {
+            $this->response->error('Données invalides.', 400);
+            return;
+        }
+
+        $errors = $this->validator->validateResetPassword($data);
+
+        if (!empty($errors)) {
+            $this->response->error('Erreur de validation.', 422, $errors);
+            return;
+        }
+
+        try {
+            $user = $this->userModel->findByResetToken($data['token']);
+
+            if (!$user) {
+                $this->response->error('Token invalide ou expiré.', 400);
+                return;
+            }
+
+            // Vérifier expiration
+            if (strtotime($user['reset_token_expires_at']) < time()) {
+                $this->response->error('Token expiré.', 400);
+                return;
+            }
+
+            // Update password + clear token
+            $this->userModel->updatePassword($user['id'], $data['new_password']);
+            $this->userModel->clearResetToken($user['id']);
+
+            $this->response->success(['message' => 'Mot de passe réinitialisé avec succès.'], 200);
+
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            $this->response->error('Erreur serveur.', 500);
+        }
+    }
+
 
 }

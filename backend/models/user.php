@@ -11,38 +11,38 @@ class User
         $this->pdo = Database::getInstance();
     }
 
-/**
- * Vérifie si l'email existe
- */
-public function emailExists(string $email, ?int $excludeUserId = null): bool
-{
-    if ($excludeUserId === null) {
-        // Cas inscription
-        $stm = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
-        $stm->execute(['email' => $email]);
-    } else {
-        // Cas modification : exclure l'utilisateur actuel
-        $stm = $this->pdo->prepare("
-            SELECT id FROM users 
-            WHERE email = :email 
-            AND id != :exclude_id
-        ");
-        $stm->execute([
-            'email' => $email,
-            'exclude_id' => $excludeUserId
-        ]);
+    /**
+    * Vérifie si l'email existe
+     */
+    public function emailExists(string $email, ?int $excludeUserId = null): bool
+    {
+        if ($excludeUserId === null) {
+            // Cas inscription
+            $stm = $this->pdo->prepare("SELECT id FROM users WHERE email = :email");
+            $stm->execute(['email' => $email]);
+        } else {
+            // Cas modification : exclure l'utilisateur actuel
+            $stm = $this->pdo->prepare("
+                SELECT id FROM users 
+                WHERE email = :email 
+                AND id != :exclude_id
+            ");
+            $stm->execute([
+                'email' => $email,
+                'exclude_id' => $excludeUserId
+            ]);
+        }
+        
+        return $stm->fetch() !== false;
     }
-    
-    return $stm->fetch() !== false;
-}
 
-// Pour le middleware
-public function findByToken($token): array|false
+    // Pour le middleware
+    public function findByToken( string $token): array|false
 {
     $stm = $this->pdo->prepare("SELECT * FROM users WHERE api_token= : api_token");
-    $stm-> execute([':api_token =>$token']);
+    $stm-> execute([':api_token' =>$token]);
     return $stm->fetch();
-}
+    }
 
     //  Récupère l'id du rôle
     private function getRoleId(string $roleName): int
@@ -115,30 +115,30 @@ public function findByToken($token): array|false
         return $stm->fetch();
     }
 
-// Mise à jour des informations utilisateur
-public function updateUser(int $id, array $data): bool
-{
-    $stm = $this->pdo->prepare("
-        UPDATE users 
-        SET nom = :nom,
-            prenom = :prenom,
-            gsm = :gsm,
-            adresse = :adresse,
-            code_postal = :code_postal,
-            ville = :ville
-        WHERE id = :id
-    ");
+    // Mise à jour des informations utilisateur
+    public function updateUser(int $id, array $data): bool
+    {
+        $stm = $this->pdo->prepare("
+            UPDATE users 
+            SET nom = :nom,
+                prenom = :prenom,
+                gsm = :gsm,
+                adresse = :adresse,
+                code_postal = :code_postal,
+                ville = :ville
+            WHERE id = :id
+        ");
 
-    return $stm->execute([
-        'id'            => $id,
-        'nom'           => $data['nom'],
-        'prenom'        => $data['prenom'],
-        'gsm'           => $data['gsm'],
-        'adresse'       => $data['adresse'],
-        'code_postal'   => $data['code_postal'],
-        'ville'         => $data['ville'],
-    ]);
-}
+        return $stm->execute([
+            'id'            => $id,
+            'nom'           => $data['nom'],
+            'prenom'        => $data['prenom'],
+            'gsm'           => $data['gsm'],
+            'adresse'       => $data['adresse'],
+            'code_postal'   => $data['code_postal'],
+            'ville'         => $data['ville'],
+        ]);
+    }
 
 
     // Désactiver un utilisateur
@@ -188,4 +188,44 @@ public function updateUser(int $id, array $data): bool
             'role_id' => $roleId
         ]);
     }
+
+    // Sauvegarder le token de réinitialisation
+    public function saveResetToken(int $id, string $token, string $expires): bool
+    {
+        $stm = $this->pdo->prepare("
+            UPDATE users 
+            SET reset_token = :token, 
+                reset_token_expires_at = :expires 
+            WHERE id = :id
+        ");
+        return $stm->execute([
+            'token'   => $token,
+            'expires' => $expires,
+            'id'      => $id
+        ]);
+    }
+
+    // Trouver un utilisateur par reset token
+    public function findByResetToken(string $token): array|false
+    {
+        $stm = $this->pdo->prepare("
+            SELECT * FROM users 
+            WHERE reset_token = :token
+        ");
+        $stm->execute([':token' => $token]);
+        return $stm->fetch();
+    }
+
+    // Effacer le reset token après utilisation
+    public function clearResetToken(int $id): bool
+    {
+        $stm = $this->pdo->prepare("
+            UPDATE users 
+            SET reset_token = NULL, 
+                reset_token_expires_at = NULL 
+            WHERE id = :id
+        ");
+        return $stm->execute(['id' => $id]);
+    }
+
 }
