@@ -58,10 +58,12 @@ class AuthController
                 $this->response->error('Erreur lors de la création du compte.', 500);
                 return;
             }
+            $mailResult = WelcomeMail::send($data['email'], $data['prenom'], $data['nom']);
 
-            WelcomeMail::send($data['email'], $data['prenom'], $data['nom']);
-
-            $this->response->success(['message' => 'Compte créé avec succès. Un email de bienvenue vous a été envoyé.'], 201);
+            $this->response->success([
+                'message' => 'Compte créé avec succès. Un email de bienvenue vous a été envoyé.',
+                'mail_debug' => $mailResult
+            ], 201);
 
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
