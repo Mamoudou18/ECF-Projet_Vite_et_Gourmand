@@ -1,4 +1,8 @@
-//GESTION DE L'INSCRIPTION D'UN UTILISATEUR
+import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showError } from "../utils/util.js";
+
+// ****************************************
+// GESTION DE L'INSCRIPTION D'UN UTILISATEUR
+//****************************************** */
 
 // Récupération des inputs du formulaire
 const inputPassword = document.getElementById("password");
@@ -13,103 +17,19 @@ const inputcodePostal = document.getElementById("codePostalClient");
 const inputVille = document.getElementById("villeClient");
 const inputRgpd = document.getElementById("rgpd");
 
-//valider la saisie du mail
-inputEmail.addEventListener("input", validateEmail)
-function validateEmail(){
-    const emailMessage = document.getElementById("emailMessage");
-    const emailUser = inputEmail.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(emailRegex.test(emailUser)){
-        emailMessage.style.display = 'none';
-        return true;
-    } else {
-        emailMessage.style.display = 'block';
-        return false;
-    }
-}
-
 // Afficher et masquer le mot de passe
-function showPassword(toggleId, inputId) {
-    const toggle = document.getElementById(toggleId);
-    const input = document.getElementById(inputId);
-    const eyeOpen = toggle.innerHTML;
-    const eyeClosed = `<i class="bi bi-eye-slash-fill"></i>`;
-
-    toggle.addEventListener("click", () => {
-        const type = input.type === 'password' ? 'text' : 'password';
-        input.type = type;
-        toggle.innerHTML = type === 'password' ? eyeOpen : eyeClosed;
-    });
-}
 showPassword("togglePassword", "password");
 showPassword("togglePasswordConfirm", "passwordConfirm");
 
 // Vérifier la force du mot de passe
-inputPassword.addEventListener("input", checkPasswordStrength);
+inputPassword.addEventListener("input", () => checkPasswordStrength(inputPassword));
 
-function checkPasswordStrength() {
-    const password = inputPassword.value;
-    const strengthBar = document.getElementById('strengthBar');
-
-    const hasLength = password.length >= 10;
-    const hasUppercase = /[A-Z]/.test(password);
-    const hasLowercase = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    updateRequirement('req-length', hasLength);
-    updateRequirement('req-uppercase', hasUppercase);
-    updateRequirement('req-lowercase', hasLowercase);
-    updateRequirement('req-number', hasNumber);
-    updateRequirement('req-special', hasSpecial);
-
-    const score = [hasLength, hasUppercase, hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
-
-    strengthBar.className = 'password-strength-bar';
-    if (score <= 2) {
-        strengthBar.classList.add('strength-weak');
-    } else if (score <= 4) {
-        strengthBar.classList.add('strength-medium');
-    } else {
-        strengthBar.classList.add('strength-strong');
-    }
-
-    return score === 5;
-}
-
-function updateRequirement(id, isValid) {
-    const element = document.getElementById(id);
-    const icon = element.querySelector('i');
-
-    if (isValid) {
-        element.classList.add('valid');
-        element.classList.remove('invalid');
-        icon.className = 'bi bi-check-circle-fill';
-    } else {
-        element.classList.add('invalid');
-        element.classList.remove('valid');
-        icon.className = 'bi bi-x-circle-fill';
-    }
-}
+//valider la saisie du mail
+inputEmail.addEventListener("input",() => validateEmail(inputEmail));
 
 // Vérifier la correspondance des mots de passe
-inputPassword.addEventListener("input", checkPasswordMatch);
-inputPasswordConfirm.addEventListener("input", checkPasswordMatch);
-function checkPasswordMatch() {
-    const password = inputPassword.value;
-    const passwordConfirm = inputPasswordConfirm.value;
-    const message = document.getElementById("passwordMatchMessage");
-    if (passwordConfirm.length > 0) {
-        if (password !== passwordConfirm) {
-            message.style.display = 'block';
-            return false;
-        } else {
-            message.style.display = 'none';
-            return true;
-        }
-    }
-    return false;
-}
+inputPassword.addEventListener("input", () => checkPasswordMatch(inputPassword, inputPasswordConfirm));
+inputPasswordConfirm.addEventListener("input", () => checkPasswordMatch(inputPassword, inputPasswordConfirm));
 
 // Gestion de l'inscription
 inputRegisterForm.addEventListener("submit", handleRegister);
@@ -128,7 +48,7 @@ async function handleRegister(event) {
     const rgpd = inputRgpd.checked;
 
     // Vérifications
-    if (!checkPasswordStrength()) {
+    if (!checkPasswordStrength(inputPassword)) {
         showError('Le mot de passe ne respecte pas tous les critères de sécurité');
         return;
     }
@@ -204,19 +124,6 @@ async function handleRegister(event) {
 
     // Rédirection vers la page de connexion
     window.location.href = '/signin';
-}
-
-// Afficher erreur
-function showError(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-
-    errorText.textContent = message;
-    errorMessage.style.display = 'block';
-
-    setTimeout(() => {
-        errorMessage.style.display = 'none';
-    }, 5000);
 }
 
 // Formater le téléphone pendant la saisie

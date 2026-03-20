@@ -1,0 +1,104 @@
+// Afficher et masquer le mot de passe
+export function showPassword(toggleId, inputId) {
+    const toggle = document.getElementById(toggleId);
+    const input = document.getElementById(inputId);
+    const eyeOpen = toggle.innerHTML;
+    const eyeClosed = `<i class="bi bi-eye-slash-fill"></i>`;
+
+    toggle.addEventListener("click", () => {
+        const type = input.type === 'password' ? 'text' : 'password';
+        input.type = type;
+        toggle.innerHTML = type === 'password' ? eyeOpen : eyeClosed;
+    });
+}
+
+// Vérifier la force du mot de passe
+export function checkPasswordStrength(inputPassword) {
+    const password = inputPassword.value;
+    const strengthBar = document.getElementById('strengthBar');
+
+    const hasLength = password.length >= 10;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    updateRequirement('req-length', hasLength);
+    updateRequirement('req-uppercase', hasUppercase);
+    updateRequirement('req-lowercase', hasLowercase);
+    updateRequirement('req-number', hasNumber);
+    updateRequirement('req-special', hasSpecial);
+
+    const score = [hasLength, hasUppercase, hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
+
+    strengthBar.className = 'password-strength-bar';
+    if (score <= 2) {
+        strengthBar.classList.add('strength-weak');
+    } else if (score <= 4) {
+        strengthBar.classList.add('strength-medium');
+    } else {
+        strengthBar.classList.add('strength-strong');
+    }
+
+    return score === 5;
+}
+
+export function updateRequirement(id, isValid) {
+    const element = document.getElementById(id);
+    const icon = element.querySelector('i');
+
+    if (isValid) {
+        element.classList.add('valid');
+        element.classList.remove('invalid');
+        icon.className = 'bi bi-check-circle-fill';
+    } else {
+        element.classList.add('invalid');
+        element.classList.remove('valid');
+        icon.className = 'bi bi-x-circle-fill';
+    }
+}
+
+// Validation email
+export function validateEmail(inputEmail){
+    const emailMessage = document.getElementById("emailMessage");
+    const emailUser = inputEmail.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(emailRegex.test(emailUser)){
+        emailMessage.style.display = 'none';
+        return true;
+    } else {
+        emailMessage.style.display = 'block';
+        return false;
+    }
+}
+
+// Correspondance email
+export function checkPasswordMatch(inputPassword, inputPasswordConfirm) {
+    const password = inputPassword.value;
+    const passwordConfirm = inputPasswordConfirm.value;
+    const message = document.getElementById("passwordMatchMessage");
+    if (passwordConfirm.length > 0) {
+        if (password !== passwordConfirm) {
+            message.style.display = 'block';
+            return false;
+        } else {
+            message.style.display = 'none';
+            return true;
+        }
+    }
+    return false;
+}
+
+
+// Afficher erreur
+export function showError(message) {
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+
+    errorText.textContent = message;
+    errorMessage.style.display = 'block';
+
+    setTimeout(() => {
+        errorMessage.style.display = 'none';
+    }, 5000);
+}
