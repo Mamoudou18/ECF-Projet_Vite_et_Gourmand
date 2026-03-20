@@ -50,7 +50,7 @@ export function getRole(){
 // Gestion de la déconnexion : supprime la clé du localStorage et recharge la page
 function signout(){
     removeStorage();
-    window.location.reload();
+    window.location.href = '/signin';
 }
 
 // Vérifier si connecté
