@@ -1,4 +1,4 @@
-import { showPassword, checkPasswordStrength, checkPasswordMatch, showError } from "../utils/util.js";
+import { showPassword, checkPasswordStrength, checkPasswordMatch, showSuccess, showError } from "../utils/util.js";
 
 
 // Récupération des inputs du formulaire
@@ -66,6 +66,7 @@ async function handleResetPassword(event) {
         msg.classList.remove('hidden');
 
         if (data.success) {
+            showSuccess('Votre mot de passe à été mis à jour avec succès.')
             setTimeout(() => window.location.href = '/signin', 2000);
         } else {
             showError(data.message || 'Une erreur est survenue.');

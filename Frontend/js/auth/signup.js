@@ -1,4 +1,4 @@
-import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showError } from "../utils/util.js";
+import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showError, showSuccess } from "../utils/util.js";
 
 // ****************************************
 // GESTION DE L'INSCRIPTION D'UN UTILISATEUR
@@ -120,7 +120,7 @@ async function handleRegister(event) {
     const data = JSON.parse(texte);
 
     // Succès
-    alert(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
+    showSuccess(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
 
     // Rédirection vers la page de connexion
     window.location.href = '/signin';
