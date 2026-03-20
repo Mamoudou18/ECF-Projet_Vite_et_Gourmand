@@ -624,6 +624,112 @@
                     </div>
                 </div>
 
+                <!-- SECTION: Mot de passe -->
+                <div id="password-section" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-shield-lock"></i>
+                            Changer mon mot de passe
+                        </h4>
+                        <div class="register-body">
+
+                            <form id="initPasswordForm">
+
+                                <!-- Mot de passe -->
+                                <div class="mb-3">
+                                    <label for="oldPassword" class="form-label">
+                                        <i class="bi bi-lock-fill primary"></i> Mot de passce actuel <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="oldPassword" placeholder="••••••••••" required minlength="10">
+                                        <span class="password-toggle" type="button" id="toggleOldPassword">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+
+                                    <label for="newPassword" class="form-label">
+                                        <i class="bi bi-lock-fill primary"></i> Nouveau mot de passe <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="newPassword" placeholder="••••••••••" required minlength="10">
+                                        <span class="password-toggle" type="button" id="togglePassword">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Barre de force -->
+                                    <div class="password-strength">
+                                        <div class="password-strength-bar" id="strengthBar"></div>
+                                    </div>
+
+                                    <!-- Exigences -->
+                                    <div class="password-requirements mt-2">
+                                        <div class="requirement" id="req-length">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Minimum 10 caractères</span>
+                                        </div>
+                                        <div class="requirement" id="req-uppercase">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 majuscule</span>
+                                        </div>
+                                        <div class="requirement" id="req-lowercase">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 minuscule</span>
+                                        </div>
+                                        <div class="requirement" id="req-number">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 chiffre</span>
+                                        </div>
+                                        <div class="requirement" id="req-special">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 caractère spécial (!@#$%^&*)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Confirmation mot de passe -->
+                                <div class="mb-3">
+                                    <label for="passwordConfirm" class="form-label">
+                                        <i class="bi bi-shield-lock-fill"></i> Confirmer le nouveau mot de passe <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                                        <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+                                    <small id="passwordMatchMessage" class="text-danger" style="display: none;">
+                                        Les mots de passe ne correspondent pas
+                                    </small>
+                                </div>
+
+                                <!-- Bouton inscription -->
+                                <button type="submit" class="btn btn-register" id="resetPasswordBtn">
+                                    <i class="bi bi-unlock-fill"></i> Réinitialiser mon mot de passe
+                                </button>
+
+                            </form>
+                            <!-- Messages -->
+                            <div id="message" class="message hidden"></div>
+                            <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <span id="errorText"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
