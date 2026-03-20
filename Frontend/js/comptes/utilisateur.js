@@ -1,4 +1,5 @@
 import { getStorage, setStorage } from "../script.js";
+import { showError, showSuccess } from "../utils/util.js";
 
 
 // Initialisation 
@@ -268,19 +269,19 @@ function formModifyProfilUser(e){
             if(response.ok){
                return response.json()
             }else{
-                alert('Erreur lors de la mise du profil.')
+                showError('Erreur lors de la mise du profil.');
             }
         })
             
         .then((result) => {
             if(result){
                 setStorage(updateUser);
-                alert("Profil mis à jour avec succès !");
+                showSuccess('Profil mis à jour avec succès !');
             }
         })
         .catch((error) => {
             console.error("Erreur réseau :", error);
-            alert("Erreur réseau, veuillez réessayer.");
+            showError('Erreur réseau, veuillez réessayer.');
         })
 
 }
