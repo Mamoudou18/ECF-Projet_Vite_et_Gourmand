@@ -1,4 +1,6 @@
 import { getStorage, setStorage} from "../script.js";
+import { showError, showSuccess } from "../utils/util.js";
+
 // ============================================
 // INITIALISATION
 // ============================================
@@ -174,34 +176,6 @@ async function handleForgotPassword(event) {
         messageDiv.textContent = 'Une erreur est survenue.';
     }
 
-}
-
-
-// ============================================
-// MESSAGES
-// ============================================
-function showError(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    const successMessage = document.getElementById('successMessage');
-
-    successMessage.style.display = 'none';
-    errorText.textContent = message;
-    errorMessage.style.display = 'block';
-
-    setTimeout(() => {
-        errorMessage.style.display = 'none';
-    }, 5000);
-}
-
-function showSuccess(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const successMessage = document.getElementById('successMessage');
-    const successText = document.getElementById('successText');
-
-    errorMessage.style.display = 'none';
-    successText.textContent = message;
-    successMessage.style.display = 'block';
 }
 
 // ============================================
