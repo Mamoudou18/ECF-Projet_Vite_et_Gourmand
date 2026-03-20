@@ -1,5 +1,5 @@
 import { getStorage, setStorage } from "../script.js";
-import { showError, showSuccess } from "../utils/util.js";
+import { showPassword, checkPasswordStrength, checkPasswordMatch, showSuccess, showError, } from "../utils/util.js";
 
 
 // Initialisation 
@@ -284,4 +284,89 @@ function formModifyProfilUser(e){
             showError('Erreur réseau, veuillez réessayer.');
         })
 
+}
+
+// *******************************************************
+//Initialisation mot de passe depuis un compte utilisateur:
+// *********************************************************
+
+// Récupération des inputs du formulaire
+const inoutOldPassword = document.getElementById("oldPassword");
+const inputPassword = document.getElementById("newPassword");
+const inputPasswordConfirm = document.getElementById("passwordConfirm");
+const inputInitPasswordForm = document.getElementById("initPasswordForm");
+
+// Afficher et masquer le mot de passe
+showPassword("toggleOldPassword", "oldPassword");
+showPassword("togglePassword", "newPassword");
+showPassword("togglePasswordConfirm", "passwordConfirm");
+
+// Vérifier la force du mot de passe
+inputPassword.addEventListener("input", () => checkPasswordStrength(inputPassword));
+
+
+// Vérifier la correspondance des mots de passe
+inputPassword.addEventListener("input", () => checkPasswordMatch(inputPassword, inputPasswordConfirm));
+inputPasswordConfirm.addEventListener("input", () => checkPasswordMatch(inputPassword, inputPasswordConfirm));
+
+// Gestion de la réinitialisation
+inputInitPasswordForm.addEventListener("submit", handleInitPassword);
+
+async function handleInitPassword(event) {
+    event.preventDefault();
+
+    const user = getStorage();
+    if(!user) return;
+
+    const old_password = inoutOldPassword.value;
+    const new_password = inputPassword.value;
+    const confirm_password = inputPasswordConfirm.value;
+
+    // Vérifications
+    if (!checkPasswordStrength(inputPassword)) {
+        showError('Le mot de passe ne respecte pas tous les critères de sécurité');
+        return;
+    }
+
+    if (new_password !== confirm_password) {
+        showError('Les mots de passe ne correspondent pas');
+        return;
+    }
+
+    // Désactiver le bouton
+    const initPasswordBtn = document.getElementById('initPasswordBtn');
+    initPasswordBtn.disabled = true;
+    initPasswordBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Réinitialisation...';
+
+    try {
+        const response = await fetch(`http://localhost/api/auth/password?id=${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ old_password, new_password, confirm_password })
+        });
+
+        const data = await response.json();
+
+        const msg = document.getElementById('message');
+        msg.textContent = data.message;
+        msg.classList.remove('hidden');
+
+        if (data.success) {
+            showSuccess('Mot de passe mis à jour avec succès !');
+            setTimeout(() => window.location.reload(), 2000);
+            initPasswordBtn.disabled = false;
+            initPasswordBtn.innerHTML = 'Réinitialiser';
+        } else {
+                console.log(error);
+                showError(data.message || 'Une erreur est survenue.');
+                initPasswordBtn.disabled = false;
+                initPasswordBtn.innerHTML = 'Réinitialiser';
+        }
+
+    } catch (error) {
+        console.log(error);
+        showError('Erreur réseau, veuillez réessayer.');
+        initPasswordBtn.disabled = false;
+        initPasswordBtn.innerHTML = 'Réinitialiser';
+    }
 }
