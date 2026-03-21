@@ -176,4 +176,145 @@ class ValidationService
         return $errors;
     }
 
+    /**
+     * Validation création (tous les champs obligatoires)
+     */
+    public function validateMenu(array $data): array
+    {
+        $errors = [];
+
+        // --- Champs de base ---
+        if (empty(trim($data['titre'] ?? ''))) {
+            $errors['titre'] = 'Le titre est requis.';
+        }
+
+        if (!isset($data['prix_base']) || $data['prix_base'] === '') {
+            $errors['prix_base'] = 'Le prix de base est requis.';
+        } elseif (!is_numeric($data['prix_base']) || $data['prix_base'] < 0) {
+            $errors['prix_base'] = 'Le prix de base doit être un nombre positif.';
+        }
+
+        if (!isset($data['nb_personnes_min']) || $data['nb_personnes_min'] === '') {
+            $errors['nb_personnes_min'] = 'Le nombre de personnes est requis.';
+        } elseif (!is_numeric($data['nb_personnes_min']) || (int)$data['nb_personnes_min'] < 1) {
+            $errors['nb_personnes_min'] = 'Le nombre de personnes doit être au moins 1.';
+        }
+
+        if (!isset($data['stock']) || $data['stock'] === '') {
+            $errors['stock'] = 'Le stock est requis.';
+        } elseif (!is_numeric($data['stock']) || (int)$data['stock'] < 0) {
+            $errors['stock'] = 'Le stock doit être un nombre positif ou zéro.';
+        }
+
+        // --- Thème ---
+        if (empty($data['theme_id']) || !is_numeric($data['theme_id'])) {
+            $errors['theme_id'] = 'Un thème valide est requis.';
+        }
+
+        // --- Régimes (optionnel) ---
+        if (isset($data['regime_ids']) && !is_array($data['regime_ids'])) {
+            $errors['regime_ids'] = 'Les régimes doivent être un tableau.';
+        }
+
+        // --- Plats ---
+        if (!is_array($data['plats'] ?? null) || empty($data['plats'])) {
+            $errors['plats'] = 'Au moins un plat est requis.';
+        } else {
+            $auMoinsUnPlat = false;
+            foreach ($data['plats'] as $i => $trio) {
+                foreach (['entree', 'plat', 'dessert'] as $cle) {
+                    if (!empty($trio[$cle])) {
+                        $auMoinsUnPlat = true;
+                        if (empty(trim($trio[$cle]['nom'] ?? ''))) {
+                            $errors["plats.$i.$cle.nom"] = "Le nom du $cle #" . ($i + 1) . " est requis.";
+                        }
+                    }
+                }
+            }
+            if (!$auMoinsUnPlat) {
+                $errors['plats'] = 'Au moins un plat est requis.';
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Validation mise à jour (seuls les champs envoyés sont validés)
+     */
+    public function validateMenuUpdate(array $data): array
+    {
+        $errors = [];
+
+        // --- Champs de base : validés seulement si présents ---
+        if (array_key_exists('titre', $data) && empty(trim($data['titre']))) {
+            $errors['titre'] = 'Le titre ne peut pas être vide.';
+        }
+
+        if (array_key_exists('prix_base', $data)) {
+            if ($data['prix_base'] === '') {
+                $errors['prix_base'] = 'Le prix de base ne peut pas être vide.';
+            } elseif (!is_numeric($data['prix_base']) || $data['prix_base'] < 0) {
+                $errors['prix_base'] = 'Le prix de base doit être un nombre positif.';
+            }
+        }
+
+        if (array_key_exists('nb_personnes_min', $data)) {
+            if ($data['nb_personnes_min'] === '') {
+                $errors['nb_personnes_min'] = 'Le nombre de personnes ne peut pas être vide.';
+            } elseif (!is_numeric($data['nb_personnes_min']) || (int)$data['nb_personnes_min'] < 1) {
+                $errors['nb_personnes_min'] = 'Le nombre de personnes doit être au moins 1.';
+            }
+        }
+
+        if (array_key_exists('stock', $data)) {
+            if ($data['stock'] === '') {
+                $errors['stock'] = 'Le stock ne peut pas être vide.';
+            } elseif (!is_numeric($data['stock']) || (int)$data['stock'] < 0) {
+                $errors['stock'] = 'Le stock doit être un nombre positif ou zéro.';
+            }
+        }
+
+        // --- Thème : validé seulement si présent ---
+        if (array_key_exists('theme_id', $data)) {
+            if (!empty($data['theme_id']) && !is_numeric($data['theme_id'])) {
+                $errors['theme_id'] = 'Le thème doit être un identifiant valide.';
+            }
+        }
+
+        // --- Régimes : validés seulement si présents ---
+        if (isset($data['regime_ids']) && !is_array($data['regime_ids'])) {
+            $errors['regime_ids'] = 'Les régimes doivent être un tableau.';
+        }
+
+        // --- Plats : validés seulement si présents (null = inchangé) ---
+        if (isset($data['plats'])) {
+            if (!is_array($data['plats'])) {
+                $errors['plats'] = 'Les plats doivent être un tableau.';
+            } elseif (!empty($data['plats'])) {
+                // Si envoyé non vide → au moins un plat valide
+                $auMoinsUnPlat = false;
+                foreach ($data['plats'] as $i => $trio) {
+                    foreach (['entree', 'plat', 'dessert'] as $cle) {
+                        if (!empty($trio[$cle])) {
+                            $auMoinsUnPlat = true;
+                            if (empty(trim($trio[$cle]['nom'] ?? ''))) {
+                                $errors["plats.$i.$cle.nom"] = "Le nom du $cle #" . ($i + 1) . " est requis.";
+                            }
+                        }
+                    }
+                }
+                if (!$auMoinsUnPlat) {
+                    $errors['plats'] = 'Au moins un plat est requis.';
+                }
+            }
+            // [] vide = intention de tout vider → on laisse passer
+        }
+
+        return $errors;
+    }
+
+
+
+
 }

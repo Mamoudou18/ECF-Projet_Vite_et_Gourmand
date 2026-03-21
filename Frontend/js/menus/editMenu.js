@@ -196,7 +196,7 @@ function ajouterPlat(menuDiv) {
     // Ajouter via bouton
     allergeneBtn.addEventListener('click', ajouterAllergene);
 
-    // ✅ Ajouter via touche Entrée
+    // Ajouter via touche Entrée
     allergeneInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();

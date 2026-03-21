@@ -126,3 +126,27 @@ JOIN commandes c  ON h.commande_id = c.id
 JOIN statuts_commande sc ON h.statut_id = sc.id
 JOIN users u ON c.user_id = u.id;
 
+
+--- Mise à jour
+CREATE OR REPLACE VIEW vue_menus_complets AS
+SELECT 
+    m.id,
+    m.titre,
+    m.description,
+    m.prix_base,
+    m.nb_personnes_min,
+    m.stock,
+    m.conditions,
+    m.is_active,
+    GROUP_CONCAT(DISTINCT t.libelle  ORDER BY t.libelle  SEPARATOR ', ') AS themes,
+    GROUP_CONCAT(DISTINCT r.libelle  ORDER BY r.libelle  SEPARATOR ', ') AS regimes,
+    GROUP_CONCAT(DISTINCT mi.url     ORDER BY mi.ordre   SEPARATOR ', ') AS images
+FROM menus m
+LEFT JOIN menu_theme  mt ON m.id = mt.menu_id
+LEFT JOIN themes       t ON mt.theme_id  = t.id
+LEFT JOIN menu_regime mr ON m.id = mr.menu_id
+LEFT JOIN regimes      r ON mr.regime_id = r.id
+LEFT JOIN menu_images mi ON m.id = mi.menu_id
+GROUP BY m.id, m.titre, m.description, m.prix_base, m.nb_personnes_min, m.stock, m.conditions, m.is_active;
+
+

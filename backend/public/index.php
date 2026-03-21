@@ -25,6 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $parts  = explode('/', trim($uri, '/'));
 $method = $_SERVER['REQUEST_METHOD'];
+// Support _method pour simuler PUT/PATCH avec form-data
+if ($method === 'POST' && isset($_POST['_method'])) {
+    $method = strtoupper($_POST['_method']);
+}
+
 
 // Structure attendue : /api/{ressource}/{action}
 // Exemple : /api/auth/register
@@ -39,12 +44,18 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
         'version' => '1.0.0',
         'timestamp' => date('Y-m-d H:i:s'),
         'routes_disponibles' => [
-            'POST /api/auth/register' => 'Inscription utilisateur',
-            'POST /api/auth/login' => 'Connexion utilisateur',
-            'PUT /api/auth/user?id={id}' => 'Modification profil utilisateur',
-            'PUT /api/auth/password?id={id}' => 'Initialisation mot de passe',
-            'POST /api/auth/forgot-password' => 'Demande réinitialisation mot de passe',
-            'POST /api/auth/reset-password'  => 'Initialisation mot de passe oublié'
+            'POST /api/auth/register'              => 'Inscription utilisateur',
+            'POST /api/auth/login'                 => 'Connexion utilisateur',
+            'PUT /api/auth/user?id={id}'           => 'Modification profil utilisateur',
+            'PUT /api/auth/password?id={id}'       => 'Initialisation mot de passe',
+            'POST /api/auth/forgot-password'       => 'Demande réinitialisation mot de passe',
+            'POST /api/auth/reset-password'        => 'Initialisation mot de passe oublié',
+            'GET /api/menu/list'                   => 'Liste des menus',
+            'GET /api/menu/detail?id={id}'         => 'Détail d\'un menu',
+            'POST /api/menu/create'                => 'Créer un menu',
+            'PUT /api/menu/update?id={id}'         => 'Modifier un menu',
+            'PATCH /api/menu/toggle?id={id}'       => 'Activer/désactiver un menu',
+            'DELETE /api/menu/delete?id={id}'      => 'Supprimer un menu',
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -211,6 +222,159 @@ switch ($ressource) {
                     'error' => 'Action non trouvée',
                     'details' => "L'action '$action' n'existe pas pour auth",
                     'actions_disponibles' => ['register', 'login','user','password','forgot-password','reset-password']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
+    case 'menu':
+        $controllerPath = __DIR__ . '/../controllers/MenuController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'MenuController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new MenuController();
+
+        switch ($action) {
+
+            case 'list':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'list')) {
+                        $controller->list();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode list() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'          => 'Méthode HTTP non autorisée',
+                        'details'        => 'Utilisez GET pour /api/menu/list',
+                        'methode_recue'  => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'detail':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'detail')) {
+                        $controller->detail();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode detail() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/menu/detail?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'create':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'create')) {
+                        $controller->create();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode create() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/menu/create',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'update':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'update')) {
+                        $controller->update();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode update() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PUT pour /api/menu/update?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'toggle':
+                if ($method === 'PATCH') {
+                    if (method_exists($controller, 'toggle')) {
+                        $controller->toggle();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode toggle() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PATCH pour /api/menu/toggle?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'delete':
+                if ($method === 'DELETE') {
+                    if (method_exists($controller, 'delete')) {
+                        $controller->delete();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode delete() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez DELETE pour /api/menu/delete?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour menu",
+                    'actions_disponibles' => ['list', 'detail', 'create', 'update', 'toggle', 'delete']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;
