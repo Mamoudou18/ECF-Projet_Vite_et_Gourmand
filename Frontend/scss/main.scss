@@ -854,6 +854,7 @@ footer.footer{
     width: 100%;
 }
 
+
 .register-card {
     background: $white-primary;
     border-radius: 20px;
@@ -1816,5 +1817,11 @@ overflow: hidden;
 .btn-lg{
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
     color: $white-primary;
+}
+
+/* Override pour la page menus */
+.register-container.menu-container {
+    max-width: 1100px;
+    margin-top: 60px;
 }
 

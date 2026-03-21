@@ -13762,4 +13762,10 @@ li {
 .btn-lg, .btn-group-lg > .btn {
   background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
   color: #fff;
+}
+
+/* Override pour la page menus */
+.register-container.menu-container {
+  max-width: 1100px;
+  margin-top: 60px;
 }/*# sourceMappingURL=main.css.map */
