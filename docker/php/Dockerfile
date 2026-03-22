@@ -3,6 +3,10 @@ FROM php:8.2-fpm-alpine
 # Installer les extensions nécessaires
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
+# Config upload
+RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 

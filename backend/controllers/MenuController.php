@@ -116,28 +116,35 @@ class MenuController
                 }
             }
 
-            $imageKeys = [
-                'img_principale' => 0,
-                'img_entree'     => 1,
-                'img_plat'       => 2,
-                'img_dessert'    => 3,
-            ];
+            // ── Image principale
+            if (!empty($files['img_principale']['name'])) {
+                $url = $this->uploadImage([
+                    'tmp_name' => $files['img_principale']['tmp_name'],
+                    'name'     => $files['img_principale']['name'],
+                    'type'     => mime_content_type($files['img_principale']['tmp_name']),
+                    'size'     => filesize($files['img_principale']['tmp_name'])
+                ]);
+                if (!$url) {
+                    $this->pdo->rollBack();
+                    $this->response->error("Erreur upload image principale", 422);
+                    return;
+                }
+                $this->menu->ajouterImage($menuId, $url, 0);
+            }
 
-            foreach ($imageKeys as $key => $ordre) {
-                if (empty($files[$key]['name'])) continue;
+            // ── Images des plats indexées (img_entree_0, img_plat_0, img_dessert_0, ...)
+            $typeOrdreMap = ['img_entree' => 1, 'img_plat' => 2, 'img_dessert' => 3];
 
-                $names        = (array) $files[$key]['name'];
-                $tmps         = (array) $files[$key]['tmp_name'];
-                $uploadErrors = (array) $files[$key]['error'];
-
-                foreach ($names as $i => $name) {
-                    if ($uploadErrors[$i] !== UPLOAD_ERR_OK) continue;
+            foreach ($plats as $index => $trio) {
+                foreach ($typeOrdreMap as $prefix => $ordre) {
+                    $key = "{$prefix}_{$index}";
+                    if (empty($files[$key]['name'])) continue;
 
                     $url = $this->uploadImage([
-                        'tmp_name' => $tmps[$i],
-                        'name'     => $name,
-                        'type'     => mime_content_type($tmps[$i]),
-                        'size'     => filesize($tmps[$i])
+                        'tmp_name' => $files[$key]['tmp_name'],
+                        'name'     => $files[$key]['name'],
+                        'type'     => mime_content_type($files[$key]['tmp_name']),
+                        'size'     => filesize($files[$key]['tmp_name'])
                     ]);
 
                     if (!$url) {
@@ -148,6 +155,7 @@ class MenuController
                     $this->menu->ajouterImage($menuId, $url, $ordre);
                 }
             }
+
 
             $this->pdo->commit();
             $this->response->success(['message' => 'Menu créé avec succès.', 'id' => $menuId], 201);
@@ -406,7 +414,7 @@ class MenuController
     private function uploadImage(array $file): string|false
     {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        $maxSize      = 2 * 1024 * 1024;
+        $maxSize      = 5 * 1024 * 1024;
 
         if (!in_array($file['type'], $allowedTypes)) return false;
         if ($file['size'] > $maxSize) return false;
