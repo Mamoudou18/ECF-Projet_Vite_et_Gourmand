@@ -12,7 +12,7 @@ class MenuController
     private ResponseService $response;
     private \PDO $pdo;
 
-    private string $uploadDir = __DIR__ . '/../../public/uploads/menus/';
+    private string $uploadDir;
     private string $uploadUrl = '/uploads/menus/';
 
     public function __construct()
@@ -21,6 +21,7 @@ class MenuController
         $this->menu      = new Menu($this->pdo);
         $this->validator = new ValidationService();
         $this->response  = new ResponseService();
+        $this->uploadDir = __DIR__ . '/../public/uploads/menus/';
     }
 
     // ─────────────────────────────────────────
@@ -414,12 +415,19 @@ class MenuController
     private function uploadImage(array $file): string|false
     {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        $maxSize      = 5 * 1024 * 1024;
+        $maxSize      = 10 * 1024 * 1024; //10Mo
 
-        if (!in_array($file['type'], $allowedTypes)) return false;
-        if ($file['size'] > $maxSize) return false;
+        if (!in_array($file['type'], $allowedTypes)) {
+            error_log('type not allowed: ' . $file['type']);
+            return false;
+        }
+        if ($file['size'] > $maxSize) {
+            error_log('file too big');
+            return false;
+        }
 
         if (!is_dir($this->uploadDir)) {
+            error_log('creating dir: ' . $this->uploadDir);
             mkdir($this->uploadDir, 0755, true);
         }
 
@@ -427,10 +435,16 @@ class MenuController
         $filename  = uniqid('menu_', true) . '.' . $extension;
         $dest      = $this->uploadDir . $filename;
 
-        if (!move_uploaded_file($file['tmp_name'], $dest)) return false;
+        error_log('dest: ' . $dest);
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            error_log('move_uploaded_file failed');
+            return false;
+        }
 
         return $this->uploadUrl . $filename;
     }
+
 
     private function deleteImage(string $imageUrl): void
     {

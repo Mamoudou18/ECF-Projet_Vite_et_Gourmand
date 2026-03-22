@@ -1,3 +1,5 @@
+import { showError } from "../utils/util.js";
+
     // ========== VARIABLES GLOBALES ==========
     let menus = []
     let filteredMenus = [];
@@ -16,7 +18,9 @@
     //chargement des menus depuis le json
     async function loadMenus() {
         try {
-            const response = await fetch('data/menus.json');
+            const response = await fetch('http://localhost/api/menu/list');
+            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+
             const data = await response.json();
             menus = data.menus;
             filteredMenus = [...menus];
@@ -77,12 +81,21 @@
             const stockClass = menu.stock < 10 ? 'low' : '';
             const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
+            // Extraire la première image
+            console.log("images brutes:", menu.images);
+            console.log("images splittées:", menu.images ? menu.images.split(',') : 'null');
+            
+            const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
+            const imagePrincipale = images.length > 0 ? `http://localhost${images[0]}` : 'assets/img/default-menu.jpg';
+            
+            console.log("imagePrincipale:", imagePrincipale);
+
             container.innerHTML += `
                 <div class="col-xl-4 col-lg-6 col-md-6">
                     <div class="menu-card">
                         <div class="menu-image">
-                            <img src="${menu.image_principale}" alt="${menu.titre}">
-                            <div class="menu-badge">${menu.theme.charAt(0).toUpperCase() + menu.theme.slice(1)}</div>
+                            <img src="${imagePrincipale}" alt="${menu.titre}">
+                            <div class="menu-badge">${menu.themes.charAt(0).toUpperCase() + menu.themes.slice(1)}</div>
                             <div class="menu-stock ${stockClass}">
                                 <i class="bi bi-${stockIcon}"></i>
                                 ${menu.stock} dispo.
@@ -90,7 +103,7 @@
                         </div>
                         <div class="menu-body">
                             <h3 class="menu-title">${menu.titre}</h3>
-                            <span class="menu-theme">${menu.regime.charAt(0).toUpperCase() + menu.regime.slice(1)}</span>
+                            <span class="menu-theme">${menu.regimes.charAt(0).toUpperCase() + menu.regimes.slice(1)}</span>
                             <p class="menu-description">${menu.description}</p>
                             <div class="menu-details">
                                 <div class="menu-detail-item">
@@ -101,7 +114,7 @@
                             <div class="menu-footer">
                                 <div class="menu-price">
                                     <span class="menu-price-label">À partir de</span>
-                                    <span class="menu-price-value">${menu.prix} €</span>
+                                    <span class="menu-price-value">${menu.prix_base} €</span>
                                 </div>
                                 <a href="/detail?id=${menu.id}" class="btn btn-detail">
                                     Voir détail <i class="bi bi-arrow-right"></i>
@@ -168,21 +181,21 @@
         const maxPriceInput = parseFloat(document.getElementById("maxPriceInput").value) || 999999;
 
         filteredMenus = filteredMenus.filter(m => 
-            m.prix <= maxPrice && 
-            m.prix >= minPriceInput && 
-            m.prix <= maxPriceInput
+            m.prix_base <= maxPrice && 
+            m.prix_base >= minPriceInput && 
+            m.prix_base <= maxPriceInput
         );
 
         // Thèmes
         const selectedThemes = Array.from(document.querySelectorAll('.theme-filter:checked')).map(cb => cb.value);
         if (selectedThemes.length > 0) {
-            filteredMenus = filteredMenus.filter(m => selectedThemes.includes(m.theme));
+            filteredMenus = filteredMenus.filter(m => selectedThemes.includes(m.themes));
         }
 
         // Régimes
         const selectedRegimes = Array.from(document.querySelectorAll('.regime-filter:checked')).map(cb => cb.value);
         if (selectedRegimes.length > 0) {
-            filteredMenus = filteredMenus.filter(m => selectedRegimes.includes(m.regime));
+            filteredMenus = filteredMenus.filter(m => selectedRegimes.includes(m.regimes));
         }
 
         // Nombre de personnes
@@ -223,10 +236,10 @@
         const sortValue = document.getElementById("sortSelect").value;
         switch(sortValue) {
             case 'price-asc':
-                filteredMenus.sort((a, b) => a.prix - b.prix);
+                filteredMenus.sort((a, b) => a.prix_base - b.prix_base);
                 break;
             case 'price-desc':
-                filteredMenus.sort((a, b) => b.prix - a.prix);
+                filteredMenus.sort((a, b) => b.prix_base - a.prix_base);
                 break;
             case 'persons-asc':
                 filteredMenus.sort((a, b) => a.nb_personnes_min - b.nb_personnes_min);
