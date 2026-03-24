@@ -1,3 +1,6 @@
+import { getStorage } from "../script.js";
+import { showError } from "../utils/util.js";
+
 //Variables globales
 let selectedMenu = null;
 let minPersons = 0;
@@ -48,10 +51,24 @@ function initEventListeners() {
     }
 }
 
+const listeners = [];
+function addListener(id, event, handler) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener(event, handler);
+        listeners.push({ el, event, handler });
+    }
+}
+    
 //Cleanup
 export function cleanup() {
     console.log('Nettoyage commande');
     
+    listeners.forEach(({ el, event, handler }) => {
+        el.removeEventListener(event, handler);
+    });
+
+    listeners.length = 0;
     // Réinitialiser les variables globales
     selectedMenu = null;
     minPersons = 0;
@@ -130,7 +147,7 @@ async function initGoogleMaps() {
 // AUTO-COMPLÉTION
 // ============================================
 function autoFillUserInfo() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const currentUser = getStorage();
     
     if (!currentUser) {
         window.location.href = '/signin';
@@ -144,10 +161,10 @@ function autoFillUserInfo() {
     document.getElementById('telephone').value = currentUser.telephone || '';
     
     // Adresse si elle existe
-    if (currentUser.adresse_rue) {
-        document.getElementById('adressePostale').value = currentUser.adresse_rue || '';
-        document.getElementById('codePostalClient').value = currentUser.adresse_code_postal || '';
-        document.getElementById('villeClient').value = currentUser.adresse_ville || '';
+    if (currentUser.adresse) {
+        document.getElementById('adressePostale').value = currentUser.adresse || '';
+        document.getElementById('codePostalClient').value = currentUser.code_postal || '';
+        document.getElementById('villeClient').value = currentUser.ville || '';
     }
 
     // Afficher le message "infos remplies"
@@ -242,10 +259,11 @@ function getMenuIdFromURL() {
     return parseInt(urlParams.get('menu'));
 }
 
+
 async function loadMenuCommande() {
     const menuId = getMenuIdFromURL();
 
-    if(!menuId){
+    if(!menuId || isNaN(menuId)){
         alert("Menu introuvable. Redirection...");
         window.location.href = '/menu';
         return;
@@ -255,23 +273,53 @@ async function loadMenuCommande() {
     loader.style.display = 'block';
 
     try {
-        const response = await fetch('data/menus.json');
+        const response = await fetch(`http://localhost/api/menu/detail?id=${menuId}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
-        selectedMenu = data.menus.find(m => m.id === menuId);
+
+        selectedMenu = data.menu;
 
         if(!selectedMenu){
-            alert("Menu introuvable. Redirection...");
-            window.location.href = '/menu';
+            showError('Menu introuvable. Redirection...');
+            setTimeout(() => {
+                window.location.href = '/menu';
+            },2000);
             return;
-    }
+        }
         
+        // Séparer les plats par type_id
+        selectedMenu.entrees  = selectedMenu.plats.filter(p => p.type_id === 1);
+        selectedMenu.platsPrincipaux = selectedMenu.plats.filter(p => p.type_id === 2);
+        selectedMenu.desserts = selectedMenu.plats.filter(p => p.type_id === 3);
+
+        //recuper les allergènes
+        selectedMenu.allergenes = [... new Set (selectedMenu.plats
+            .map(plat => plat.allergenes)
+            .filter(a => a != null)
+            .flatMap(a => a.split(',')
+            .map(s => s.trim()))
+        )];
+
+        // Parser les conditions
+        selectedMenu.conditionsList = selectedMenu.conditions
+            ? selectedMenu.conditions.split(',').map(c => c.trim().replace(/^"|"$/g, '').trim()).filter(c => c)
+            : [];
+
     displayMenuRecap();
 
     } catch (error) {
         console.error('Erreur chargement menus:', error);
-        alert('Erreur lors du chargement des données');
-        window.location.href = '/menu';        
-    } finally{
+        showError('Erreur lors du chargement des données');
+        setTimeout(() => {
+            window.location.href = '/menu';
+        },2000);
+        
+        return;
+    }finally{
         loader.style.display = 'none';
     }
 }
@@ -285,27 +333,16 @@ function displayMenuRecap() {
     document.getElementById('menuTitreText').textContent = selectedMenu.titre;
     document.getElementById('menuDescription').textContent = selectedMenu.description;
     // Infos principales
-    pricePerPerson = selectedMenu.prix;
+    pricePerPerson = parseFloat(selectedMenu.prix_base) || 0 ;
     minPersons = selectedMenu.nb_personnes_min;
+
     document.getElementById('menuPrixDisplay').textContent = pricePerPerson.toFixed(2) + ' €';
     document.getElementById('menuMinPersDisplay').textContent = minPersons + ' pers.';
-    document.getElementById('menuThemeDisplay').textContent = selectedMenu.theme || 'Classique';
-    document.getElementById('menuRegimeDisplay').textContent = selectedMenu.regime || 'Classique';
-    function renderMenuItems(items, containerId) {
-        const ul = document.getElementById(containerId);
-        ul.innerHTML = '';
-        items.forEach(item => {
-            const li = document.createElement('li');
-            const icon = document.createElement('i');
-            icon.className = 'bi bi-check-circle-fill';
-            li.appendChild(icon);
-            li.appendChild(document.createTextNode(' ' + item.nom));
-            ul.appendChild(li);
-        });
-    }
+    document.getElementById('menuThemeDisplay').textContent = selectedMenu.themes || 'Classique';
+    document.getElementById('menuRegimeDisplay').textContent = selectedMenu.regimes || 'Classique';
 
     renderMenuItems(selectedMenu.entrees, 'menuEntrees');
-    renderMenuItems(selectedMenu.plats, 'menuPlats');
+    renderMenuItems(selectedMenu.platsPrincipaux, 'menuPlats');
     renderMenuItems(selectedMenu.desserts, 'menuDesserts');
 
     // Allergènes
@@ -325,12 +362,12 @@ function displayMenuRecap() {
     const conditionsUl = document.getElementById('menuConditionsListe');
     conditionsUl.innerHTML = '';
     const delaiJours = minPersons >= 20 ? 14 : 7;
-    const conditions = selectedMenu.conditions || [
+    const conditions = selectedMenu.conditionsList || [
         `Commander ce menu au minimum ${delaiJours} jours avant la prestation`,
         'Conservation : à consommer dans les 48h après livraison',
         'Réchauffage : instructions détaillées fournies avec la commande',
         'Matériel : vaisselle et couverts à prévoir (ou location possible +50€)',
-        'Stock disponible : ' + (selectedMenu.stock_disponible || 'limité')
+        'Stock disponible : ' + (selectedMenu.stock || 'limité')
     ];
     conditions.forEach(condition => {
         const li = document.createElement('li');
@@ -347,6 +384,19 @@ function displayMenuRecap() {
     document.getElementById('datePrestation').min = today.toISOString().split('T')[0];
     // Calculer le prix initial
     calculatePrice();
+}
+
+function renderMenuItems(items, containerId) {
+    const ul = document.getElementById(containerId);
+    ul.innerHTML = '';
+    items.forEach(item => {
+        const li = document.createElement('li');
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-check-circle-fill';
+        li.appendChild(icon);
+        li.appendChild(document.createTextNode(' ' + item.nom));
+        ul.appendChild(li);
+    });
 }
 
 // ============================================
@@ -396,13 +446,13 @@ function calculatePrice() {
     }
 
     // Total
-    const total = menuPrice + materielCost + deliveryCost - discount;
+    const prixTotal = menuPrice + materielCost + deliveryCost - discount;
 
     // Affichage
     document.getElementById('recapNbPersons').textContent = personCount;
     document.getElementById('recapPriceMenu').textContent = menuPrice.toFixed(2) + ' €';
     document.getElementById('recapDelivery').textContent = deliveryCost.toFixed(2) + ' €';
-    document.getElementById('recapTotal').textContent = total.toFixed(2) + ' €';
+    document.getElementById('recapTotal').textContent = prixTotal.toFixed(2) + ' €';
 
     // Activer/désactiver bouton décrémentation
     document.getElementById('btnDecrement').disabled = (personCount <= minPersons);
@@ -424,7 +474,7 @@ function calculatePrice() {
             errors.push('Téléphone invalide (format: 06 12 34 56 78)');
         }
 
-        if (parseInt(document.getElementById('personCount').textContent) > selectedMenu.stock_disponible) {
+        if (parseInt(document.getElementById('personCount').textContent) > selectedMenu.stock) {
             errors.push('Stock insuffisant pour ce nombre de personnes');
         }
 
@@ -441,7 +491,7 @@ function calculatePrice() {
 
     // ============================================
     // SOUMISSION DU FORMULAIRE
-    // ============================================
+    // ===========================================
     function formCommandeMenu(e) {
         e.preventDefault();
 
