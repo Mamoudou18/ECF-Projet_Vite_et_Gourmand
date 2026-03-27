@@ -314,6 +314,220 @@ class ValidationService
         return $errors;
     }
 
+    /**
+     * Valider les données de création d'une commande
+     */
+    public function validateCommande(array $data): array
+    {
+        $errors = [];
+
+        // --- IDs ---
+        if (empty($data['user_id']) || !is_numeric($data['user_id'])) {
+            $errors['user_id'] = 'L\'utilisateur est requis.';
+        }
+
+        if (empty($data['menu_id']) || !is_numeric($data['menu_id'])) {
+            $errors['menu_id'] = 'Le menu est requis.';
+        }
+
+        // --- Client ---
+        if (empty(trim($data['nom_client'] ?? ''))) {
+            $errors['nom_client'] = 'Le nom du client est requis.';
+        }
+
+        if (empty(trim($data['prenom_client'] ?? ''))) {
+            $errors['prenom_client'] = 'Le prénom du client est requis.';
+        }
+
+        if (empty(trim($data['email_client'] ?? ''))) {
+            $errors['email_client'] = 'L\'email du client est requis.';
+        } elseif (!filter_var($data['email_client'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email_client'] = 'L\'email du client est invalide.';
+        }
+
+        if (empty(trim($data['gsm_client'] ?? ''))) {
+            $errors['gsm_client'] = 'Le numéro de téléphone est requis.';
+        } elseif (!preg_match('/^(\+?\d{10,15})$/', preg_replace('/\s/', '', $data['gsm_client']))) {
+            $errors['gsm_client'] = 'Le numéro de téléphone est invalide.';
+        }
+
+        // --- Prestation ---
+        if (empty(trim($data['adresse_prestation'] ?? ''))) {
+            $errors['adresse_prestation'] = 'L\'adresse de prestation est requise.';
+        }
+
+        if (empty(trim($data['ville_prestation'] ?? ''))) {
+            $errors['ville_prestation'] = 'La ville de prestation est requise.';
+        }
+
+        if (empty(trim($data['code_postal_prestation'] ?? ''))) {
+            $errors['code_postal_prestation'] = 'Le code postal est requis.';
+        }
+
+        if (empty(trim($data['date_prestation'] ?? ''))) {
+            $errors['date_prestation'] = 'La date de prestation est requise.';
+        } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['date_prestation'])) {
+            $errors['date_prestation'] = 'La date doit être au format AAAA-MM-JJ.';
+        } elseif (strtotime($data['date_prestation']) < strtotime(date('Y-m-d'))) {
+            $errors['date_prestation'] = 'La date de prestation ne peut pas être dans le passé.';
+        }
+
+        if (empty(trim($data['heure_prestation'] ?? ''))) {
+            $errors['heure_prestation'] = 'L\'heure de prestation est requise.';
+        } elseif (!preg_match('/^\d{2}:\d{2}$/', $data['heure_prestation'])) {
+            $errors['heure_prestation'] = 'L\'heure doit être au format HH:MM.';
+        }
+
+        // --- Quantité / Prix ---
+        if (!isset($data['nb_personnes']) || $data['nb_personnes'] === '') {
+            $errors['nb_personnes'] = 'Le nombre de personnes est requis.';
+        } elseif (!is_numeric($data['nb_personnes']) || (int)$data['nb_personnes'] < 1) {
+            $errors['nb_personnes'] = 'Le nombre de personnes doit être au moins 1.';
+        }
+
+        if (!isset($data['prix_menu']) || $data['prix_menu'] === '') {
+            $errors['prix_menu'] = 'Le prix du menu est requis.';
+        } elseif (!is_numeric($data['prix_menu']) || $data['prix_menu'] < 0) {
+            $errors['prix_menu'] = 'Le prix du menu doit être un nombre positif.';
+        }
+
+        if (!isset($data['prix_livraison']) || $data['prix_livraison'] === '') {
+            $errors['prix_livraison'] = 'Le prix de livraison est requis.';
+        } elseif (!is_numeric($data['prix_livraison']) || $data['prix_livraison'] < 0) {
+            $errors['prix_livraison'] = 'Le prix de livraison doit être un nombre positif.';
+        }
+
+        if (!isset($data['prix_total']) || $data['prix_total'] === '') {
+            $errors['prix_total'] = 'Le prix total est requis.';
+        } elseif (!is_numeric($data['prix_total']) || $data['prix_total'] < 0) {
+            $errors['prix_total'] = 'Le prix total doit être un nombre positif.';
+        }
+
+        // --- Numéro de commande ---
+        if (empty(trim($data['numero_commande'] ?? ''))) {
+            $errors['numero_commande'] = 'Le numéro de commande est requis.';
+        }
+
+        // --- Location matériel ---
+        if (!isset($data['location_materiel']) || !in_array($data['location_materiel'], [0, 1, '0', '1', true, false], true)) {
+            $errors['location_materiel'] = 'La location de matériel doit être 0 ou 1.';
+        }
+
+        return $errors;
+    }
+
+    /**
+    * Validation mise à jour commande (seuls les champs envoyés sont validés)
+    */
+    public function validateCommandeUpdate(array $data): array
+    {
+        $errors = [];
+
+        $allowed = [
+            'nom_client', 'prenom_client', 'email_client', 'gsm_client',
+            'adresse_prestation', 'ville_prestation', 'code_postal_prestation',
+            'date_prestation', 'heure_prestation', 'nb_personnes',
+            'menu_id', 'prix_livraison', 'commentaire',
+            'location_materiel', 'statut_id', 'motif_annulation'
+        ];
+
+        // Vérifier qu'il y a au moins un champ valide
+        $filtered = array_intersect_key($data, array_flip($allowed));
+        if (empty($filtered)) {
+            $errors['general'] = 'Aucun champ valide à mettre à jour.';
+            return $errors;
+        }
+
+        // --- Client ---
+        if (array_key_exists('nom_client', $data) && empty(trim($data['nom_client']))) {
+            $errors['nom_client'] = 'Le nom ne peut pas être vide.';
+        }
+
+        if (array_key_exists('prenom_client', $data) && empty(trim($data['prenom_client']))) {
+            $errors['prenom_client'] = 'Le prénom ne peut pas être vide.';
+        }
+
+        if (array_key_exists('email_client', $data)) {
+            if (empty(trim($data['email_client']))) {
+                $errors['email_client'] = 'L\'email ne peut pas être vide.';
+            } elseif (!filter_var($data['email_client'], FILTER_VALIDATE_EMAIL)) {
+                $errors['email_client'] = 'L\'email est invalide.';
+            }
+        }
+
+        if (array_key_exists('gsm_client', $data)) {
+            if (empty(trim($data['gsm_client']))) {
+                $errors['gsm_client'] = 'Le GSM ne peut pas être vide.';
+            } elseif (!preg_match('/^(\+?\d{10,15})$/', preg_replace('/\s/', '', $data['gsm_client']))) {
+                $errors['gsm_client'] = 'Le numéro de téléphone est invalide.';
+            }
+        }
+
+        // --- Prestation ---
+        if (array_key_exists('adresse_prestation', $data) && empty(trim($data['adresse_prestation']))) {
+            $errors['adresse_prestation'] = 'L\'adresse ne peut pas être vide.';
+        }
+
+        if (array_key_exists('ville_prestation', $data) && empty(trim($data['ville_prestation']))) {
+            $errors['ville_prestation'] = 'La ville ne peut pas être vide.';
+        }
+
+        if (array_key_exists('code_postal_prestation', $data) && empty(trim($data['code_postal_prestation']))) {
+            $errors['code_postal_prestation'] = 'Le code postal ne peut pas être vide.';
+        }
+
+        if (array_key_exists('date_prestation', $data)) {
+            if (empty(trim($data['date_prestation']))) {
+                $errors['date_prestation'] = 'La date ne peut pas être vide.';
+            } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['date_prestation'])) {
+                $errors['date_prestation'] = 'Format date invalide (AAAA-MM-JJ).';
+            } elseif (strtotime($data['date_prestation']) < strtotime(date('Y-m-d'))) {
+                $errors['date_prestation'] = 'La date ne peut pas être dans le passé.';
+            }
+        }
+
+        if (array_key_exists('heure_prestation', $data)) {
+            if (empty(trim($data['heure_prestation']))) {
+                $errors['heure_prestation'] = 'L\'heure ne peut pas être vide.';
+            } elseif (!preg_match('/^\d{2}:\d{2}$/', $data['heure_prestation'])) {
+                $errors['heure_prestation'] = 'Format heure invalide (HH:MM).';
+            }
+        }
+
+        // --- Quantité / Prix ---
+        if (array_key_exists('nb_personnes', $data)) {
+            if (!is_numeric($data['nb_personnes']) || (int)$data['nb_personnes'] < 1) {
+                $errors['nb_personnes'] = 'Le nombre de personnes doit être au moins 1.';
+            }
+        }
+
+        if (array_key_exists('menu_id', $data)) {
+            if (!is_numeric($data['menu_id'])) {
+                $errors['menu_id'] = 'Le menu doit être un identifiant valide.';
+            }
+        }
+
+        if (array_key_exists('prix_livraison', $data)) {
+            if (!is_numeric($data['prix_livraison']) || $data['prix_livraison'] < 0) {
+                $errors['prix_livraison'] = 'Le prix de livraison doit être un nombre positif.';
+            }
+        }
+
+        // --- Autres ---
+        if (array_key_exists('location_materiel', $data)) {
+            if (!in_array($data['location_materiel'], [0, 1, '0', '1', true, false], true)) {
+                $errors['location_materiel'] = 'La location de matériel doit être 0 ou 1.';
+            }
+        }
+
+        if (array_key_exists('statut_id', $data)) {
+            if (!is_numeric($data['statut_id'])) {
+                $errors['statut_id'] = 'Le statut doit être un identifiant valide.';
+            }
+        }
+
+        return $errors;
+    }
 
 
 

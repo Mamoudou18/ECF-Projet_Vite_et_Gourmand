@@ -59,9 +59,10 @@ JOIN plats p ON mp.plat_id = p.id;
 -- =============================================
 
 -- Vue : commandes détaillées
-CREATE VIEW vue_commandes_details AS
+CREATE OR REPLACE VIEW vue_commandes_details AS
 SELECT 
     c.id,
+    c.numero_commande,
     c.nom_client,
     c.prenom_client,
     c.email_client,
@@ -81,15 +82,11 @@ SELECT
     c.mode_contact,
     c.created_at,
     c.updated_at,
-    u.nom        AS user_nom,
-    u.prenom     AS user_prenom,
-    u.email      AS user_email,
-    u.gsm        AS user_gsm,
+    c.user_id,
     m.titre      AS menu_titre,
     sc.libelle   AS statut
 FROM commandes c
-JOIN users u          ON c.user_id   = u.id
-JOIN menus m          ON c.menu_id   = m.id
+JOIN menus m           ON c.menu_id   = m.id
 JOIN statuts_commande sc ON c.statut_id = sc.id;
 
 

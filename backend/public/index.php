@@ -44,18 +44,29 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
         'version' => '1.0.0',
         'timestamp' => date('Y-m-d H:i:s'),
         'routes_disponibles' => [
-            'POST /api/auth/register'              => 'Inscription utilisateur',
-            'POST /api/auth/login'                 => 'Connexion utilisateur',
-            'PUT /api/auth/user?id={id}'           => 'Modification profil utilisateur',
-            'PUT /api/auth/password?id={id}'       => 'Initialisation mot de passe',
-            'POST /api/auth/forgot-password'       => 'Demande réinitialisation mot de passe',
-            'POST /api/auth/reset-password'        => 'Initialisation mot de passe oublié',
-            'GET /api/menu/list'                   => 'Liste des menus',
-            'GET /api/menu/detail?id={id}'         => 'Détail d\'un menu',
-            'POST /api/menu/create'                => 'Créer un menu',
-            'PUT /api/menu/update?id={id}'         => 'Modifier un menu',
-            'PATCH /api/menu/toggle?id={id}'       => 'Activer/désactiver un menu',
-            'DELETE /api/menu/delete?id={id}'      => 'Supprimer un menu',
+            'POST /api/auth/register'                           => 'Inscription utilisateur',
+            'POST /api/auth/login'                              => 'Connexion utilisateur',
+            'PUT /api/auth/user?id={id}'                        => 'Modification profil utilisateur',
+            'PUT /api/auth/password?id={id}'                    => 'Initialisation mot de passe',
+            'POST /api/auth/forgot-password'                    => 'Demande réinitialisation mot de passe',
+            'POST /api/auth/reset-password'                     => 'Initialisation mot de passe oublié',
+            'GET /api/menu/list'                                => 'Liste des menus',
+            'GET /api/menu/detail?id={id}'                      => 'Détail d\'un menu',
+            'POST /api/menu/create'                             => 'Créer un menu',
+            'PUT /api/menu/update?id={id}'                      => 'Modifier un menu',
+            'PATCH /api/menu/toggle?id={id}'                    => 'Activer/désactiver un menu',
+            'DELETE /api/menu/delete?id={id}'                   => 'Supprimer un menu',
+            'POST /api/commande/create-commande'                => 'Commander un menu',
+            'PUT /api/commande/update-commande?id={id}'         => 'Modifier une commande',
+            'GET /api/commande/detail-commande?id={id}'         => 'Détail d\'une commande',
+            'GET /api/commande/affiche'                         => 'Afficher toutes les commandes',
+            'GET /api/commande/user-commande?id={user_id}'      => 'Commandes d\'un utilisateur',
+            'PUT /api/commande/change-statut?id={id}'           => 'Changer statut commande',
+            'DELETE /api/commande/delete-commande?id={id}'      => 'Supprimer une commande',
+            'PUT /api/commande/annule-commande?id={id}'         => 'Annuler une commande',
+            'GET /api/commande/historique?id={id}'              => 'Historique statuts commande',
+
+
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -375,6 +386,223 @@ switch ($ressource) {
                     'error'               => 'Action non trouvée',
                     'details'             => "L'action '$action' n'existe pas pour menu",
                     'actions_disponibles' => ['list', 'detail', 'create', 'update', 'toggle', 'delete']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
+    case 'commande':
+        $controllerPath = __DIR__ . '/../controllers/CommandeController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'CommandeController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new CommandeController();
+
+        switch ($action) {
+
+            case 'affiche':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'afficheCommande')) {
+                        $controller->afficheCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode afficheCommande() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'          => 'Méthode HTTP non autorisée',
+                        'details'        => 'Utilisez GET pour /api/commande/affiche',
+                        'methode_recue'  => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'detail-commande':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'detailCommande')) {
+                        $controller->detailCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode detailCommande() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/commande/detail-commande?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'create-commande':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'createCommande')) {
+                        $controller->createCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode createCommande() n\'existe pas dans MenuController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/commande/create-commande',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'update-commande':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'updateCommande')) {
+                        $controller->updateCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode updateCommande() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PUT pour /api/commande/update-commande?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+
+            case 'user-commande':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getByUser')) {
+                        $controller->getByUser();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getByUser() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/commande/user-commande?id={user_id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'change-statut':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'changerStatutCommande')) {
+                        $controller->changerStatutCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode changerStatutCommande() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PUT pour /api/commande/change-statut?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'delete-commande':
+                if ($method === 'DELETE') {
+                    if (method_exists($controller, 'deleteCommande')) {
+                        $controller->deleteCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode deleteCommande() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez DELETE pour /api/commande/delete-commande?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'annule-commande':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'annulerCommande')) {
+                        $controller->annulerCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode annulerCommande() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PUT pour /api/commande/annule-commande?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'historique':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'historiqueCommande')) {
+                        $controller->historiqueCommande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode historiqueCommande() n\'existe pas dans CommandeController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/commande/historique?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;    
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour commande",
+                    'actions_disponibles' => ['affiche', 'detail-commande', 'user-commande', 'create-commande', 'update-commande', 'change-statut', 'delete-commande', 'annule-commande', 'historique']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;
