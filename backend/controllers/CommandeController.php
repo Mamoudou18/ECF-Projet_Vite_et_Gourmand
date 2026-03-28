@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/Commande.php';
+require_once __DIR__ . '/../mail/CommandeCreateMail.php';
 require_once __DIR__ . '/../models/HistoriqueStatut.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
@@ -134,10 +135,13 @@ class CommandeController
 
             $this->changerStatut($commandeId, 'en_attente', $data['user_id'] ?? null, 'Commande créée');
 
+            $mailCreateCommande = CommandeCreateMail::send($data['email_client'],$data['prenom_client'],$data['nom_client'], $data['numero_commande'], $data['prix_total'], $data['adresse_prestation'], $data['ville_prestation'],$data['code_postal_prestation']);
+
             $this->pdo->commit();
             $this->response->success([
                 'message'     => 'Commande créée avec succès.',
-                'commande_id' => $commandeId
+                'commande_id' => $commandeId,
+                'mail_debug' => $mailCreateCommande
             ], 201);
 
         } catch (\Exception $e) {
