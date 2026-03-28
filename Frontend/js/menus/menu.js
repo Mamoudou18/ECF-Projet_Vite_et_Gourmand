@@ -82,13 +82,8 @@ import { showError } from "../utils/util.js";
             const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
             // Extraire la première image
-            console.log("images brutes:", menu.images);
-            console.log("images splittées:", menu.images ? menu.images.split(',') : 'null');
-            
             const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
             const imagePrincipale = images.length > 0 ? `http://localhost${images[0]}` : 'assets/img/default-menu.jpg';
-            
-            console.log("imagePrincipale:", imagePrincipale);
 
             container.innerHTML += `
                 <div class="col-xl-4 col-lg-6 col-md-6">
@@ -134,7 +129,6 @@ import { showError } from "../utils/util.js";
     // -----------------------
     function updatePagination() {
         const totalPages = Math.max(1,Math.ceil(filteredMenus.length / itemsPerPage));
-        console.log(currentPage);
         document.getElementById("page-info").textContent =
             `Page ${currentPage} sur ${totalPages}`;
 

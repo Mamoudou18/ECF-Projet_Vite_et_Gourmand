@@ -311,7 +311,17 @@
                             </button>
                         </div>
                     </div>
+                    <!-- Message d'erreur (masqué par défaut) -->
+                    <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span id="errorText"></span>
+                    </div>
 
+                    <!-- Message de succès (masqué par défaut) -->
+                    <div id="successMessage" class="alert alert-success" style="display: none;">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span id="successText"></span>
+                    </div>
                     <div class="alert alert-info mt-3 mb-0">
                         <small>
                             <i class="bi bi-info-circle-fill"></i>
@@ -350,7 +360,6 @@
                     <strong>Prochaines étapes :</strong>
                     <ul class="text-start mt-2 mb-0">
                         <li>Vous recevrez un email de confirmation dans quelques instants</li>
-                        <li>Notre équipe vous contactera sous 24h pour valider les détails</li>
                         <li>Vous pouvez suivre votre commande depuis votre espace client</li>
                     </ul>
                 </div>
@@ -359,7 +368,7 @@
                 <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='/menu'">
                     <i class="bi bi-arrow-left"></i> Retour aux menus
                 </button>
-                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/utlisateur'">
+                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/utilisateur'">
                     <i class="bi bi-person-circle"></i> Mon espace
                 </button>
             </div>

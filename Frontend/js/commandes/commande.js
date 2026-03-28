@@ -1,5 +1,5 @@
 import { getStorage } from "../script.js";
-import { showError } from "../utils/util.js";
+import { showError, showSuccess } from "../utils/util.js";
 
 //Variables globales
 let selectedMenu = null;
@@ -264,7 +264,7 @@ async function loadMenuCommande() {
     const menuId = getMenuIdFromURL();
 
     if(!menuId || isNaN(menuId)){
-        alert("Menu introuvable. Redirection...");
+        showError("Menu introuvable. Redirection...");
         window.location.href = '/menu';
         return;
     }
@@ -458,7 +458,7 @@ function calculatePrice() {
     document.getElementById('btnDecrement').disabled = (personCount <= minPersons);
     }
 
-    //validation du formulaire:
+//validation du formulaire:
     function validateForm() {
         const errors = [];
     
@@ -470,6 +470,7 @@ function calculatePrice() {
     
         // Téléphone (format FR)
         const tel = document.getElementById('telephone').value;
+
         if (!/^0[1-9][0-9]{8}$/.test(tel.replace(/\s/g, ''))) {
             errors.push('Téléphone invalide (format: 06 12 34 56 78)');
         }
@@ -483,95 +484,87 @@ function calculatePrice() {
         }
 
         if(errors.length > 0){
-            alert('Erreurs de validation :\n\n' + errors.join('\n'));
+            showError('Erreurs de validation :\n\n' + errors.join('\n'));
             return false;
         }
         return true;
     }
 
-    // ============================================
-    // SOUMISSION DU FORMULAIRE
-    // ===========================================
-    function formCommandeMenu(e) {
-        e.preventDefault();
+// ============================================
+// SOUMISSION DU FORMULAIRE
+// ===========================================
+function formCommandeMenu(e) {
+    e.preventDefault();
 
-        if (!validateForm()) return;
+    if (!validateForm()) return;
 
-        if (!document.getElementById('acceptCGV').checked) {
-            alert('Veuillez accepter les conditions générales de vente');
-            return;
+    if (!document.getElementById('acceptCGV').checked) {
+        showError('Veuillez accepter les conditions générales de vente');
+        return;
+    }
+
+    const datePrestation = new Date(document.getElementById('datePrestation').value);
+    const dateMin = new Date(document.getElementById('datePrestation').min);
+
+    if (datePrestation < dateMin) {
+        const delaiJours = minPersons >= 20 ? 14 : 7;
+        showError(`La date de prestation doit être au minimum ${delaiJours} jours après aujourd'hui`);
+        return;
+    }
+
+    const currentUser = getStorage();
+    if (!currentUser) return;
+
+    const nbPersonnes = parseInt(document.getElementById('personCount').textContent);
+    const locationMateriel = document.getElementById("locationMateriel").checked;
+    const menuPrice = pricePerPerson * nbPersonnes;
+    const materielCost = locationMateriel ? 50 : 0;
+    const discount = nbPersonnes >= minPersons + 5 ? menuPrice * 0.10 : 0;
+    const prixTotal = menuPrice + materielCost + deliveryCost - discount;
+    const numeroCommande = 'CMD-' + Date.now();
+
+    const commande = {
+        user_id: currentUser.id,
+        menu_id: selectedMenu.id,
+        nom_client: document.getElementById('nom').value.trim(),
+        prenom_client: document.getElementById('prenom').value.trim(),
+        email_client: document.getElementById('email').value.trim(),
+        gsm_client: document.getElementById('telephone').value.trim(),
+        adresse_prestation: document.getElementById('adresseLivraison').value.trim(),
+        ville_prestation: document.getElementById('villeLivraison').value.trim(),
+        code_postal_prestation: document.getElementById('codePostalLivraison').value.trim(),
+        date_prestation: document.getElementById('datePrestation').value,
+        heure_prestation: document.getElementById('heurePrestation').value,
+        nb_personnes: nbPersonnes,
+        prix_menu: menuPrice.toFixed(2),
+        prix_livraison: deliveryCost.toFixed(2),
+        prix_total: prixTotal.toFixed(2),
+        commentaire: document.getElementById('commentaire').value.trim() || null,
+        location_materiel: locationMateriel ? 1 : 0,
+        mode_contact: document.querySelector('input[name="modeContact"]:checked')?.value || null,
+        numero_commande: numeroCommande,
+    };
+
+    fetch("http://localhost/api/commande/create-commande", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(commande),
+    })
+    .then((response) => response.json())
+    .then((result) => {
+        if (result.success) {
+            // Afficher modal seulement après succès API
+            document.getElementById('orderNumber').textContent = numeroCommande;
+            document.getElementById('confirmEmail').textContent = commande.email_client;
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            modal.show();
+        } else {
+            showError(result.message || 'Une erreur est survenue');
         }
-        // Vérification de la date (CONFORME ÉNONCÉ: délai minimum)
-        const datePrestation = new Date(document.getElementById('datePrestation').value);
-        const dateMin = new Date(document.getElementById('datePrestation').min);
-        
-        if (datePrestation < dateMin) {
-            const delaiJours = minPersons >= 20 ? 14 : 7;
-            alert(`La date de prestation doit être au minimum ${delaiJours} jours après aujourd'hui`);
-            return;
-        }
-        // Récupération des données
-        const commande = {
-            numero: 'CMD-' + Date.now(),
-            date_commande: new Date().toISOString(),
-            client: {
-                nom: document.getElementById('nom').value,
-                prenom: document.getElementById('prenom').value,
-                email: document.getElementById('email').value,
-                telephone: document.getElementById('telephone').value,
-                adresse_postale: {
-                    adresse: document.getElementById('adressePostale').value,
-                    code_postal: document.getElementById('codePostalClient').value,
-                    ville: document.getElementById('villeClient').value
-                }
-            },
-            prestation: {
-                date: document.getElementById('datePrestation').value,
-                heure: document.getElementById('heurePrestation').value,
-                adresse_livraison: {
-                    adresse: document.getElementById('adresseLivraison').value,
-                    code_postal: document.getElementById('codePostalLivraison').value,
-                    ville: document.getElementById('villeLivraison').value
-                }
-            },
-            menu: {
-                id: selectedMenu.id,
-                titre: selectedMenu.titre,
-                prix_unitaire: pricePerPerson,
-                nb_personnes: parseInt(document.getElementById('personCount').textContent),
-                composition: {
-                    entrees: selectedMenu.entrees.map(e => e.nom),
-                    plats: selectedMenu.plats.map(p => p.nom),
-                    desserts: selectedMenu.desserts.map(d => d.nom)
-                },
-                allergenes: selectedMenu.allergenes || []
-            },
-            options: {
-                location_materiel: document.getElementById('locationMateriel').checked
-            },
-            prix: {
-                menu: parseFloat(document.getElementById('recapPriceMenu').textContent),
-                livraison: deliveryCost,
-                materiel: document.getElementById('locationMateriel').checked ? 50 : 0,
-                reduction: document.getElementById('recapDiscountLine').style.display !== 'none' ? 
-                parseFloat(document.getElementById('recapDiscount').textContent.replace('-', '').replace(' €', '')) : 0,
-                total: parseFloat(document.getElementById('recapTotal').textContent.replace(' €', ''))
-            },
-            commentaire: document.getElementById('commentaire').value,
-            statut: 'en_attente_validation'
-        };
+    })
+    .catch((error) => {
+        console.error('Erreur :', error);
+        showError('Une erreur réseau est survenue. Veuillez réessayer');
+    });
+}
 
-    // Sauvegarder la commande dans localStorage (CONFORME ÉNONCÉ)
-    let commandes = JSON.parse(localStorage.getItem('commandes') || '[]');
-    commandes.push(commande);
-    localStorage.setItem('commandes', JSON.stringify(commandes));
-    // Afficher modal de confirmation
-    document.getElementById('orderNumber').textContent = commande.numero;
-    document.getElementById('confirmEmail').textContent = commande.client.email;
-    const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-    modal.show();
-    // Simulation envoi email (CONFORME ÉNONCÉ)
-    console.log('📧 Commande enregistrée:', commande);
-    console.log('✉️ Email de confirmation envoyé à:', commande.client.email);
-    console.log('📧 Email envoyé à l\'entreprise: julie@viteetgourmand.fr');
-};
