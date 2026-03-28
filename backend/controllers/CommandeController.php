@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/Commande.php';
-require_once __DIR__ . '/../mail/CommandeCreateMail.php';
+require_once __DIR__ . '/../mails/CommandeCreateMail.php';
 require_once __DIR__ . '/../models/HistoriqueStatut.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';

@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../models/User.php';
-require_once __DIR__ . '/../mail/WelcomeMail.php';
-require_once __DIR__ . '/../mail/ResetPasswordMail.php';
+require_once __DIR__ . '/../mails/WelcomeMail.php';
+require_once __DIR__ . '/../mails/ResetPasswordMail.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
 require_once __DIR__ . '/../utils/RateLimitService.php';
