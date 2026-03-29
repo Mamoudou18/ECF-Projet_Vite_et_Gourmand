@@ -13768,4 +13768,14 @@ li {
 .register-container.menu-container {
   max-width: 1100px;
   margin-top: 60px;
+}
+
+/* modal confirm */
+#confirmActionModal .modal-content {
+  border-radius: 16px;
+}
+
+#confirmActionModal .modal-footer .btn {
+  border-radius: 10px;
+  min-width: 140px;
 }/*# sourceMappingURL=main.css.map */

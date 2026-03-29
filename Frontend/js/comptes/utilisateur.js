@@ -1,6 +1,12 @@
 import { getStorage, setStorage } from "../script.js";
-import { showPassword, checkPasswordStrength, checkPasswordMatch, showSuccess, showError, } from "../utils/util.js";
-
+import { 
+    showPassword, 
+    checkPasswordStrength, 
+    checkPasswordMatch, 
+    showSuccess, 
+    showError, 
+    showConfirm 
+} from "../utils/util.js";
 
 // Initialisation 
 export async function init() {
@@ -9,7 +15,9 @@ export async function init() {
     updateDasboardHeader();
     autoFillProfilInfoUser();
     initEventListeners();
-    
+    loadDashboard();
+    loadCommandes();
+    loadAvis();
 }
 
 // initiliser les écouteurs d'évèenement
@@ -82,7 +90,6 @@ if(!targetSection){
 targetSection.classList.add("active");
 console.log('Section affichée:',sectionId);
 
-
 // Mettre à jour le menu latéral
 document.querySelectorAll(".sidebar-menu a").forEach(link => {
     link.classList.remove("active");
@@ -90,7 +97,7 @@ document.querySelectorAll(".sidebar-menu a").forEach(link => {
 if(clickedLink){
     clickedLink.classList.add("active");
 }
-        
+
 // Scroll vers le haut
 window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -103,14 +110,14 @@ function filterOrders() {
     let visibleCount = 0;
 
     console.log(search);
-        
+
     orders.forEach(order => {
         const orderStatus = order.getAttribute('data-status');
         const orderText = order.textContent.toLowerCase();
-            
+
         const statusMatch = status === '' || orderStatus === status;
         const searchMatch = search === '' || orderText.includes(search);
-            
+
         if (statusMatch && searchMatch) {
             order.style.display = 'block';
             visibleCount++;
@@ -118,7 +125,7 @@ function filterOrders() {
             order.style.display = 'none';
         }
     });
-        
+
     document.getElementById('noOrdersFound').style.display = visibleCount === 0 ? 'block' : 'none';
 }
 
@@ -170,7 +177,6 @@ function updateDasboardHeader(){
     if(tel) tel.innerHTML = `<i class="bi bi-telephone"></i> ${user.telephone}`;
 }
 
-
 // Pre-remplir les infos user dans la section Mon Profil: 
 
 function autoFillProfilInfoUser() {
@@ -190,7 +196,7 @@ function autoFillProfilInfoUser() {
 //validation du formulaire
 function validateFormModifyProfil(){
     const errors = [];
-    
+
     // Téléphone (format FR)
     const tel = document.getElementById('telephone').value;
     if (!/^0[1-9][0-9]{8}$/.test(tel.replace(/\s/g, ''))) {
@@ -233,7 +239,7 @@ function formModifyProfilUser(e){
     if(!user) return;
 
     const updateUser = {
-        ...user, // conserver les champs non modifiés
+        ...user,
         nom: document.getElementById('nom').value,
         prenom: document.getElementById('prenom').value,
         telephone: document.getElementById('telephone').value.replace(/(\d{2})(?=\d)/g, '$1 ').trim(),
@@ -242,7 +248,6 @@ function formModifyProfilUser(e){
         ville: document.getElementById('ville').value
 
     };
-    // Extraire les variables APRES avoir défini updateUser
     const { nom, prenom, telephone, adresse, code_postal, ville } = updateUser;
 
     const myHeaders = new Headers();
@@ -256,7 +261,6 @@ function formModifyProfilUser(e){
         ville,
         code_postal,
     });
-
 
     const requestOptions = {
         method: "PUT",
@@ -272,7 +276,7 @@ function formModifyProfilUser(e){
                 showError('Erreur lors de la mise du profil.');
             }
         })
-            
+
         .then((result) => {
             if(result){
                 setStorage(updateUser);
@@ -303,7 +307,6 @@ showPassword("togglePasswordConfirm", "passwordConfirm");
 
 // Vérifier la force du mot de passe
 inputPassword.addEventListener("input", () => checkPasswordStrength(inputPassword));
-
 
 // Vérifier la correspondance des mots de passe
 inputPassword.addEventListener("input", () => checkPasswordMatch(inputPassword, inputPasswordConfirm));
@@ -369,4 +372,655 @@ async function handleInitPassword(event) {
         initPasswordBtn.disabled = false;
         initPasswordBtn.innerHTML = 'Réinitialiser';
     }
+}
+
+
+// ============================================================
+// AJOUTS : Tableau de bord, Commandes, Avis
+// ============================================================
+
+// Configuration des statuts
+function getStatusConfig(status) {
+    const configs = {
+        en_attente:              { label: 'En attente',              class: 'status-attente',     icon: 'bi-clock' },
+        accepte:                 { label: 'Acceptée',                class: 'status-accepte',     icon: 'bi-check-circle' },
+        en_preparation:          { label: 'En préparation',          class: 'status-preparation', icon: 'bi-box-seam' },
+        en_cours_livraison:      { label: 'En cours de livraison',   class: 'status-livraison',   icon: 'bi-truck' },
+        livre:                   { label: 'Livrée',                  class: 'status-livre',       icon: 'bi-check2-circle' },
+        attente_retour_materiel: { label: 'Attente retour matériel', class: 'status-retour',      icon: 'bi-arrow-return-left' },
+        terminee:                { label: 'Terminée',                class: 'status-termine',     icon: 'bi-check-all' },
+        annulee:                 { label: 'Annulée',                 class: 'status-annule',      icon: 'bi-x-circle' },
+    };
+    return configs[status] || { label: status, class: 'status-attente', icon: 'bi-question-circle' };
+}
+
+// ==================== TABLEAU DE BORD ====================
+
+async function loadDashboard() {
+    const user = getStorage();
+    if (!user) return;
+
+    try {
+        const response = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
+
+        const data = await response.json();
+        const allCommandes = data.commandes;
+        const liste = Array.isArray(allCommandes) ? allCommandes : [];
+
+        // Stats
+        const total = liste.length;
+        const enCours = liste.filter(c => ['en_attente', 'accepte', 'en_preparation', 'en_cours_livraison', 'livre', 'attente_retour_materiel'].includes(c.statut)).length;
+        const terminees = liste.filter(c => c.statut === 'terminee').length;
+        const annulees = liste.filter(c => c.statut === 'annulee').length;
+
+        const statsGrid = document.querySelector('.stats-grid');
+        if (statsGrid) {
+            statsGrid.innerHTML = `
+
+                <div class="stat-card">
+                    <i class="bi bi-cart-check-fill"></i>
+                    <h3>${total}</h3>
+                    <p>Commandes totales</p>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-hourglass-split"></i>
+                    <h3>${enCours}</h3>
+                    <p>En cours</p>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h3>${terminees}</h3>
+                    <p>Terminées</p>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-x-circle"></i>
+                        <h3>${annulees}</h3>
+                        <p>Annulées</p>
+                </div>
+            `;
+        }
+
+        // Commandes récentes (3 dernières)
+        const recentList = document.getElementById('recentOrdersList');
+        if (recentList) {
+            const recentes = liste.slice(0, 3);
+            if (recentes.length === 0) {
+                recentList.innerHTML = '<p class="text-muted text-center">Aucune commande pour le moment.</p>';
+            } else {
+                recentList.innerHTML = recentes.map(c => renderOrderCard(c)).join('');
+            }
+        }
+
+    } catch (error) {
+        console.error('Erreur chargement dashboard:', error);
+    }
+}
+
+// ==================== MES COMMANDES ====================
+
+async function loadCommandes() {
+    const user = getStorage();
+    if (!user) return;
+
+    try {
+        const response = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
+
+        const data = await response.json();
+        const allCommandes = data.commandes;
+        const liste = Array.isArray(allCommandes) ? allCommandes : [];
+
+        const container = document.getElementById('ordersList');
+        const noOrders = document.getElementById('noOrdersFound');
+        if (!container) return;
+
+        if (liste.length === 0) {
+            container.innerHTML = '';
+            if (noOrders) noOrders.style.display = 'block';
+        } else {
+            container.innerHTML = liste.map(c => renderOrderCard(c)).join('');
+            if (noOrders) noOrders.style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error('Erreur chargement commandes:', error);
+    }
+}
+
+// Rendu d'une carte commande
+function renderOrderCard(commande) {
+    const config = getStatusConfig(commande.statut);
+    
+    const dateCommande = new Date(commande.created_at).toLocaleDateString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+    const heureCommande = new Date(commande.created_at).toLocaleTimeString('fr-FR', {
+        hour: '2-digit', minute: '2-digit'
+    });
+
+    const datePrestation = new Date(commande.date_prestation).toLocaleDateString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+    const heurePrestation = commande.heure_prestation ? commande.heure_prestation.substring(0, 5) : '';
+
+    const montant = commande.prix_total ? `${parseFloat(commande.prix_total).toFixed(2)} €` : 'N/A';
+
+    // Boutons d'action selon le statut
+    let actions = '';
+
+    if (commande.statut === 'en_attente') {
+        actions += `<button class="btn btn-sm btn-outline-warning" onclick="modifierCommande(${commande.id})">
+            <i class="bi bi-pencil"></i> Modifier
+        </button>`;
+        actions += `<button class="btn btn-sm btn-outline-danger" onclick="annulerCommande(${commande.id})">
+            <i class="bi bi-x-circle"></i> Annuler
+        </button>`;
+    }
+
+    if (['accepte', 'en_preparation', 'en_cours_livraison', 'livre','attente_retour_materiel','terminee','annulee'].includes(commande.statut)) {
+        actions += `<button class="btn btn-sm btn-outline-info" onclick="suivreCommande(${commande.id})">
+            <i class="bi bi-geo-alt"></i> Suivre ma commande
+        </button>`;
+    }
+
+    if (commande.statut === 'terminee') {
+        actions += `<button class="btn btn-sm btn-outline-warning" onclick="laisserAvis(${commande.id})">
+            <i class="bi bi-star"></i> Laisser un avis
+        </button>`;
+        actions += `<button class="btn btn-sm btn-outline-success" onclick="recommander(${commande.id})">
+            <i class="bi bi-arrow-repeat"></i> Recommander
+        </button>`;
+    }
+
+    // Voir détail toujours présent
+    actions += `<button class="btn btn-sm btn-outline-primary" onclick="voirDetail(${commande.id})">
+        <i class="bi bi-eye"></i> Voir détail
+    </button>`;
+
+
+    return `
+        <div class="order-card" data-status="${commande.statut}">
+            <div class="order-header">
+                <div>
+                    <div class="order-id">#${commande.numero_commande || commande.id}</div>
+                    <small class="text-muted">Commandé le ${dateCommande} à ${heureCommande}</small>
+                </div>
+                <span class="order-status ${config.class}">
+                    <i class="bi ${config.icon}"></i> ${config.label}
+                </span>
+            </div>
+            <div class="order-details">
+                <div class="order-detail-item">
+                    <i class="bi bi-book"></i>
+                    <span>${commande.menu_titre || 'Menu non spécifié'}</span>
+                </div>
+                <div class="order-detail-item">
+                    <i class="bi bi-people"></i>
+                    <span>${commande.nb_personnes} personnes</span>
+                </div>
+                <div class="order-detail-item">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Prestation: ${datePrestation} à ${heurePrestation}</span>
+                </div>
+                <div class="order-detail-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>${commande.adresse_prestation || 'Adresse non renseignée'}</span>
+                </div>
+                <div class="order-detail-item">
+                    <i class="bi bi-currency-euro"></i>
+                    <strong>${montant}</strong>
+                </div>
+            </div>
+            <div class="order-actions">
+                ${actions}
+            </div>
+        </div>
+    `;
+}
+
+
+// Actions commandes (globales pour onclick)
+
+window.annulerCommande = async function(id) {
+    const confirmed = await showConfirm({
+        title: 'Annuler la commande ?',
+        message: 'Votre commande sera définitivement annulée.',
+        icon: 'bi-x-circle-fill',
+        iconColor: 'text-danger',
+        btnText: 'Oui, annuler',
+        btnClass: 'btn-danger'
+    });
+    if (!confirmed) return;
+
+    const user = getStorage();
+
+    try {
+        const response = await fetch(`http://localhost/api/commande/annule-commande?id=${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                motif_annulation: "Annulée par le client",
+                modifie_par: user.id,
+                commentaire: "Commande annulée par le client depuis l'espace client"
+            })
+        });
+
+        if (response.ok) {
+            showSuccess('Commande annulée avec succès.');
+            loadDashboard();
+            loadCommandes();
+        } else {
+            showError('Erreur lors de l\'annulation.');
+        }
+    } catch (error) {
+        console.error(error);
+        showError('Erreur réseau.');
+    }
+};
+
+
+window.modifierCommande = async function(id) {
+    try {
+        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const data = await response.json();
+
+        if (data.success && data.commande) {
+            const menuId = data.commande.menu_id;
+            window.location.href = `/commande?menu=${menuId}&modifier=${id}`;
+        } else {
+            showError("Commande introuvable.");
+        }
+    } catch (error) {
+        console.error(error);
+        showError("Erreur réseau.");
+    }
+};
+
+
+window.suivreCommande = function(id) {
+    // Ouvrir la modale de suivi
+    const modal = document.getElementById('suiviModal');
+    if (modal) {
+        document.getElementById('suiviCommandeId').textContent = `#${id}`;
+        loadSuiviCommande(id);
+        new bootstrap.Modal(modal).show();
+    }
+};
+
+window.voirDetail = async function(id) {
+    try {
+        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const data = await response.json();
+
+        if (data.success) {
+            afficherDetailCommande(data.commande);
+            new bootstrap.Modal(document.getElementById('detailCommandeModal')).show();
+        } else {
+            showError('Impossible de charger le détail.');
+        }
+    } catch (error) {
+        console.error(error);
+        showError('Erreur réseau.');
+    }
+};
+
+window.laisserAvis = function(commandeId) {
+    const avisLink = document.querySelector('.sidebar-menu a[data-section="avis-section"]');
+    showSection("avis-section", avisLink);
+    // Pré-sélectionner la commande dans le formulaire d'avis
+    const selectCommande = document.getElementById('avis-commande-select');
+    if (selectCommande) {
+        selectCommande.value = commandeId;
+        selectCommande.dispatchEvent(new Event('change'));
+    }
+};
+
+window.recommander = async function(id) {
+
+    //Définir un nouveau numéro de commande > année + mois + jour + heure + minute + seconde: CMD-250419183020
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const timestamp = String(now.getFullYear()).slice(2) + pad(now.getMonth()+1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    const newNumCommande = 'CMD-' + timestamp;
+
+
+    const confirmed = await showConfirm({
+        title: 'Recommander ?',
+        message: 'Une nouvelle commande identique sera créée.',
+        icon: 'bi-arrow-repeat',
+        iconColor: 'text-success',
+        btnText: 'Oui, recommander',
+        btnClass: 'btn-success'
+    });
+    if (!confirmed) return;
+
+    try {
+        // 1. Récupérer l'ancienne commande
+        const detailRes = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const detailData = await detailRes.json();
+
+        if (!detailData.success) {
+            showError('Impossible de récupérer la commande.');
+            return;
+        }
+
+        const old = detailData.commande;
+
+        const lisOld = {
+            user_id: old.user_id,
+            menu_id: old.menu_id,
+            nom_client: old.nom_client,
+            prenom_client: old.prenom_client,
+            email_client: old.email_client,
+            gsm_client: old.gsm_client,
+            adresse_prestation: old.adresse_prestation,
+            ville_prestation: old.ville_prestation,
+            code_postal_prestation: old.code_postal_prestation,
+            date_prestation: old.date_prestation,
+            heure_prestation: old.heure_prestation ? old.heure_prestation.substring(0, 5) : null,
+            nb_personnes: old.nb_personnes,
+            prix_livraison: old.prix_livraison,
+            prix_menu: old.prix_menu,
+            prix_total: old.prix_total,
+            location_materiel: old.location_materiel,
+            numero_commande: newNumCommande,
+            commentaire: old.commentaire
+        };
+
+        // 2. Créer une nouvelle commande avec les mêmes données
+        const createRes = await fetch(`http://localhost/api/commande/create-commande`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(lisOld)
+        });
+
+        const createData = await createRes.json();
+
+        if (createData.success) {
+            showSuccess('Nouvelle commande créée avec succès !');
+            loadDashboard();
+            loadCommandes();
+        } else {
+            showError(createData.message || 'Impossible de recommander.');
+        }
+    } catch (error) {
+        console.error(error);
+        showError('Erreur réseau.');
+    }
+};
+
+
+// Charger le suivi d'une commande
+async function loadSuiviCommande(id) {
+    try {
+        const response = await fetch(`http://localhost/api/commande/historique?id=${id}`);
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('suiviCommandeId').textContent = `#${id}`;
+            afficherSuiviCommande(data.historique);
+        } else {
+            document.getElementById('suiviCommandeContent').innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                    <p class="mt-2">${data.message || 'Aucun suivi disponible.'}</p>
+                </div>`;
+        }
+    } catch (error) {
+        console.error(error);
+        document.getElementById('suiviCommandeContent').innerHTML = `
+            <div class="text-center text-danger py-4">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                <p class="mt-2">Erreur de chargement.</p>
+            </div>`;
+    }
+}
+
+// Afficher le détail d'une commande dans la modale
+function afficherDetailCommande(commande) {
+    const container = document.getElementById('detailCommandeContent');
+    if (!container) return;
+
+    const config = getStatusConfig(commande.statut);
+    const dateCommande = new Date(commande.created_at).toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    const datePrestation = new Date(commande.date_prestation).toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+    });
+    const montantTotal = parseFloat(commande.prix_total).toFixed(2);
+    const montantMenu = parseFloat(commande.prix_menu).toFixed(2);
+    const montantLivraison = parseFloat(commande.prix_livraison).toFixed(2);
+
+    container.innerHTML = `
+        <!-- En-tête -->
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>#${commande.numero_commande}</h5>
+            <span class="order-status ${config.class}">
+                <i class="bi ${config.icon}"></i> ${config.label}
+            </span>
+        </div>
+        <hr>
+
+        <!-- Prestation -->
+        <h6 class="fw-bold text-muted mb-3"><i class="bi bi-calendar-event me-2"></i>Détails prestation</h6>
+        <div class="row g-2 mb-3">
+            <div class="col-md-4">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Date</small>
+                    <p class="mb-0 fw-semibold">${datePrestation}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Heure</small>
+                    <p class="mb-0 fw-semibold">${commande.heure_prestation || '—'}</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Personnes</small>
+                    <p class="mb-0 fw-semibold">${commande.nb_personnes}</p>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Adresse prestation</small>
+                    <p class="mb-0 fw-semibold">${commande.adresse_prestation}, ${commande.code_postal_prestation} ${commande.ville_prestation}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Menu</small>
+                    <p class="mb-0 fw-semibold">${commande.menu_titre || 'Non spécifié'}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-light rounded p-2">
+                    <small class="text-muted">Location matériel</small>
+                    <p class="mb-0 fw-semibold">${commande.location_materiel ? '<i class="bi bi-check-circle text-success"></i> Oui' : '<i class="bi bi-x-circle text-danger"></i> Non'}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarification -->
+        <h6 class="fw-bold text-muted mb-3"><i class="bi bi-currency-euro me-2"></i>Tarification</h6>
+        <div class="bg-light rounded p-3 mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span>Prix menu</span>
+                <span>${montantMenu} €</span>
+            </div>
+            ${commande.location_materiel ? `
+            <div class="d-flex justify-content-between mb-1">
+                <span>Location matériel</span>
+                <span>50.00 €</span>
+            </div>` : ''}
+            <div class="d-flex justify-content-between mb-1">
+                <span>Livraison</span>
+                <span>${montantLivraison === '0.00' ? '<span class="text-success">Gratuite</span>' : montantLivraison + ' €'}</span>
+            </div>
+            <hr class="my-2">
+            <div class="d-flex justify-content-between fw-bold">
+                <span>Total</span>
+                <span class="text-primary fs-5">${montantTotal} €</span>
+            </div>
+        </div>
+
+        <!-- Commentaire -->
+        ${commande.commentaire ? `
+        <h6 class="fw-bold text-muted mb-2"><i class="bi bi-chat-text me-2"></i>Commentaire</h6>
+        <div class="bg-light rounded p-2 mb-3">
+            <p class="mb-0">${commande.commentaire}</p>
+        </div>` : ''}
+
+        <!-- Motif annulation -->
+        ${commande.motif_annulation ? `
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i><strong>Motif d'annulation :</strong> ${commande.motif_annulation}
+        </div>` : ''}
+
+        <!-- Pied -->
+        <div class="text-muted text-end small">
+            <i class="bi bi-clock me-1"></i>Commandé le ${dateCommande}
+        </div>
+    `;
+}
+
+// Afficher les étapes de suivi
+function afficherSuiviCommande(historique) {
+    const container = document.getElementById('suiviCommandeContent');
+
+    const icones = {
+        'en_attente': { icon: 'bi-hourglass-split', color: '#f39c12' },
+        'accepte': { icon: 'bi-check-circle-fill', color: '#27ae60' },
+        'en_preparation': { icon: 'bi-box-seam', color: '#2980b9' },
+        'en_cours_livraison': { icon: 'bi-truck', color: '#e67e22' },
+        'livre': { icon: 'bi-house-check-fill', color: '#2ecc71' },
+        'attente_retour_materiel': { icon: 'bi-arrow-return-left', color: '#6c5ce7' },
+        'terminee': { icon: 'bi-check-all', color: '#155724' },
+        'annulee': { icon: 'bi-x-circle-fill', color: '#e74c3c' }
+    };
+
+    let html = '<div class="timeline">';
+
+    historique.forEach((etape, index) => {
+        const config = icones[etape.statut_libelle] || { icon: 'bi-circle', color: '#95a5a6' };
+        const isLast = index === historique.length - 1;
+        const date = new Date(etape.created_at).toLocaleString('fr-FR');
+
+        html += `
+            <div class="timeline-item d-flex mb-4 ${isLast ? '' : ''}">
+                <div class="timeline-icon me-3 text-center" style="min-width: 40px;">
+                    <i class="bi ${config.icon}" style="font-size: 1.5rem; color: ${config.color};"></i>
+                    ${!isLast ? `<div style="width: 2px; height: 30px; background: #dee2e6; margin: 5px auto;"></div>` : ''}
+                </div>
+                <div class="timeline-content">
+                    <h6 class="mb-1 fw-bold" style="color: ${config.color};">
+                        ${etape.statut_libelle.replace('_', ' ').toUpperCase()}
+                    </h6>
+                    <small class="text-muted"><i class="bi bi-clock"></i> ${date}</small>
+                    ${etape.commentaire ? `<p class="mb-0 mt-1 text-muted small">${etape.commentaire}</p>` : ''}
+                </div>
+            </div>`;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ==================== MES AVIS ====================
+
+async function loadAvis() {
+    const user = getStorage();
+    if (!user) return;
+
+    try {
+        // Charger les avis de l'utilisateur
+        const responseAvis = await fetch(`http://localhost/api/avis?id_user=${user.id}`);
+        const avis = await responseAvis.json();
+        const listeAvis = Array.isArray(avis) ? avis : [];
+
+        // Charger les commandes terminées (pour proposer de laisser un avis)
+        const responseCmd = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
+        const commandes = await responseCmd.json();
+        const listeCmd = Array.isArray(commandes) ? commandes : [];
+
+        // Commandes terminées sans avis
+        const commandesTerminees = listeCmd.filter(c => c.statut === 'terminee');
+        const commandesAvecAvis = listeAvis.map(a => a.id_commande);
+        const commandesSansAvis = commandesTerminees.filter(c => !commandesAvecAvis.includes(c.id));
+
+        // Avis publiés
+        const avisPublies = listeAvis.filter(a => a.statut === 'publie' || a.statut === 'approuve');
+        const avisEnAttente = listeAvis.filter(a => a.statut === 'en_attente');
+
+        // Remplir la section "À évaluer"
+        const pendingContainer = document.getElementById('pendingReviewsList');
+        if (pendingContainer) {
+            if (commandesSansAvis.length === 0) {
+                pendingContainer.innerHTML = '<p class="text-muted">Aucune commande à évaluer pour le moment.</p>';
+            } else {
+                pendingContainer.innerHTML = commandesSansAvis.map(c => `
+                    <div class="review-card mb-3 p-3 border rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Commande #${c.id}</strong>
+                                <span class="text-muted ms-2">${new Date(c.date_commande).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <button class="btn btn-sm btn-warning" onclick="laisserAvis(${c.id})">
+                                <i class="bi bi-star"></i> Évaluer
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Remplir les avis publiés
+        const publishedContainer = document.getElementById('publishedReviewsList');
+        if (publishedContainer) {
+            if (avisPublies.length === 0) {
+                publishedContainer.innerHTML = '<p class="text-muted">Aucun avis publié.</p>';
+            } else {
+                publishedContainer.innerHTML = avisPublies.map(a => renderAvisCard(a, 'published')).join('');
+            }
+        }
+
+        // Remplir les avis en attente
+        const awaitingContainer = document.getElementById('awaitingReviewsList');
+        if (awaitingContainer) {
+            if (avisEnAttente.length === 0) {
+                awaitingContainer.innerHTML = '<p class="text-muted">Aucun avis en attente de modération.</p>';
+            } else {
+                awaitingContainer.innerHTML = avisEnAttente.map(a => renderAvisCard(a, 'pending')).join('');
+            }
+        }
+
+    } catch (error) {
+        console.error('Erreur chargement avis:', error);
+    }
+}
+
+function renderAvisCard(avis, statusClass) {
+    const date = new Date(avis.date_avis || avis.created_at).toLocaleDateString('fr-FR');
+    const statusLabel = statusClass === 'published' ? 'Publié' : 'En attente';
+
+    return `
+        <div class="review-card mb-3 p-3 border rounded">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Commande #${avis.id_commande}</strong>
+                <span class="review-status ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="stars mb-2">${renderStars(avis.note)}</div>
+            <p class="mb-1">${avis.commentaire || ''}</p>
+            <small class="text-muted">${date}</small>
+        </div>
+    `;
+}
+
+function renderStars(note) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        stars += `<i class="bi ${i <= note ? 'bi-star-fill text-warning' : 'bi-star text-muted'}"></i>`;
+    }
+    return stars;
 }

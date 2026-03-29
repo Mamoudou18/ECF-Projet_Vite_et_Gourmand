@@ -16,6 +16,8 @@ export async function init() {
     await initGoogleMaps();
 
     initEventListeners(); //fonction pour initialiser les écouteurs d'évènements
+
+    await checkModification(); // On vérifie si c'est une modification
 }
 
 //initialiser les écouteurs d'évènements
@@ -458,6 +460,78 @@ function calculatePrice() {
     document.getElementById('btnDecrement').disabled = (personCount <= minPersons);
     }
 
+
+//Modifier une commande
+async function checkModification() {
+    const params = new URLSearchParams(window.location.search);
+    const modifierId = params.get('modifier');
+
+    if (!modifierId) return;
+
+    try {
+        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${modifierId}`);
+        const data = await response.json();
+
+        if (!data.success || !data.commande) {
+            showError("Commande introuvable.");
+            return;
+        }
+
+        const cmd = data.commande;
+
+        // Vérifier le statut
+        if (cmd.statut !== 'en_attente') {
+            showError("Cette commande ne peut plus être modifiée (statut : " + cmd.statut + ").");
+            setTimeout(() => {
+                window.location.href = '/utilisateur';
+            }, 2000);
+            return;
+        }
+
+        // Pré-remplir les champs
+        document.getElementById('adresseLivraison').value = cmd.adresse_prestation || '';
+        document.getElementById('codePostalLivraison').value = cmd.code_postal_prestation || '';
+        document.getElementById('villeLivraison').value = cmd.ville_prestation || '';
+        document.getElementById('datePrestation').value = cmd.date_prestation || '';
+        document.getElementById('heurePrestation').value = cmd.heure_prestation || '';
+        document.getElementById('commentaire').value = cmd.commentaire || '';
+
+        // Nombre de personnes
+        document.getElementById('personCount').textContent = cmd.nb_personnes || minPersons;
+
+        // Location matériel
+        document.getElementById('locationMateriel').checked = cmd.location_materiel == 1;
+
+        // Mode de contact
+        if (cmd.mode_contact) {
+            const radio = document.querySelector(`input[name="modeContact"][value="${cmd.mode_contact}"]`);
+            if (radio) radio.checked = true;
+        }
+
+        // Recalculer les frais
+        calculerFraisManuel();
+        calculatePrice();
+
+        //Modifier les titres dans le header
+        document.querySelector('.commande-header h2').innerHTML = '<i class="bi bi-pencil-square"></i> Modifier ma commande';
+        document.querySelector('.commande-header p').textContent = 'Modifiez les détails de votre commande';
+
+        // Modifier le titre et le bouton pour indiquer une modification
+        const titre = document.querySelector('.commande-title');
+        if (titre) titre.textContent = 'Modifier ma commande';
+
+        const btnSubmit = document.querySelector('#commandeForm button[type="submit"]');
+        if (btnSubmit) btnSubmit.textContent = 'Modifier ma commande';
+
+        // Stocker l'ID pour la soumission
+        document.getElementById('commandeForm').dataset.modifierId = modifierId;
+
+    } catch (error) {
+        console.error('Erreur chargement commande:', error);
+        showError("Impossible de charger la commande à modifier.");
+    }
+}
+
 //validation du formulaire:
     function validateForm() {
         const errors = [];
@@ -493,7 +567,7 @@ function calculatePrice() {
 // ============================================
 // SOUMISSION DU FORMULAIRE
 // ===========================================
-function formCommandeMenu(e) {
+async function formCommandeMenu(e) {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -521,7 +595,12 @@ function formCommandeMenu(e) {
     const materielCost = locationMateriel ? 50 : 0;
     const discount = nbPersonnes >= minPersons + 5 ? menuPrice * 0.10 : 0;
     const prixTotal = menuPrice + materielCost + deliveryCost - discount;
-    const numeroCommande = 'CMD-' + Date.now();
+
+    //Définir un nouveau numéro de commande > année + mois + jour + heure + minute + seconde: CMD-250419183020
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const timestamp = String(now.getFullYear()).slice(2) + pad(now.getMonth()+1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    const numeroCommande = 'CMD-' + timestamp;
 
     const commande = {
         user_id: currentUser.id,
@@ -534,7 +613,7 @@ function formCommandeMenu(e) {
         ville_prestation: document.getElementById('villeLivraison').value.trim(),
         code_postal_prestation: document.getElementById('codePostalLivraison').value.trim(),
         date_prestation: document.getElementById('datePrestation').value,
-        heure_prestation: document.getElementById('heurePrestation').value,
+        heure_prestation: document.getElementById('heurePrestation').value.substring(0, 5),
         nb_personnes: nbPersonnes,
         prix_menu: menuPrice.toFixed(2),
         prix_livraison: deliveryCost.toFixed(2),
@@ -545,19 +624,44 @@ function formCommandeMenu(e) {
         numero_commande: numeroCommande,
     };
 
-    fetch("http://localhost/api/commande/create-commande", {
-        method: "POST",
+    const modifierId = document.getElementById('commandeForm').dataset.modifierId;
+
+    // Si modification, re-vérifier le statut
+    if (modifierId) {
+        const checkResp = await fetch(`http://localhost/api/commande/detail-commande?id=${modifierId}`);
+        const checkData = await checkResp.json();
+
+        if (!checkData.success || checkData.commande.statut !== 'en_attente') {
+            showError("Cette commande ne peut plus être modifiée.");
+            return;
+        }
+    }
+
+    const url = modifierId
+        ? `http://localhost/api/commande/update-commande?id=${modifierId}`
+        : "http://localhost/api/commande/create-commande";
+
+    const method = modifierId ? "PUT" : "POST";
+
+    fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(commande),
     })
     .then((response) => response.json())
     .then((result) => {
         if (result.success) {
-            // Afficher modal seulement après succès API
-            document.getElementById('orderNumber').textContent = numeroCommande;
-            document.getElementById('confirmEmail').textContent = commande.email_client;
-            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-            modal.show();
+            if (modifierId) {
+                showSuccess('Commande modifiée avec succès !');
+                setTimeout(() => {
+                    window.location.href = '/utilisateur';
+                }, 2000);
+            } else {
+                document.getElementById('orderNumber').textContent = numeroCommande;
+                document.getElementById('confirmEmail').textContent = commande.email_client;
+                const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                modal.show();
+            }
         } else {
             showError(result.message || 'Une erreur est survenue');
         }
@@ -566,5 +670,5 @@ function formCommandeMenu(e) {
         console.error('Erreur :', error);
         showError('Une erreur réseau est survenue. Veuillez réessayer');
     });
-}
 
+}

@@ -115,3 +115,44 @@ export function showSuccess(message) {
     successText.textContent = message;
     successMessage.style.display = 'block';
 }
+
+
+
+// Modal de confirmation
+let modalInstance = null;
+export function showConfirm({ title, message, icon, iconColor, btnText, btnClass }) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirmActionModal');
+
+        // Personnaliser le contenu
+        document.getElementById('confirmTitle').textContent = title || 'Êtes-vous sûr ?';
+        document.getElementById('confirmMessage').textContent = message || 'Cette action est irréversible.';
+        document.getElementById('confirmIcon').innerHTML =
+            `<i class="bi ${icon || 'bi-exclamation-triangle-fill'} ${iconColor || 'text-warning'}" style="font-size: 4rem;"></i>`;
+        document.getElementById('confirmBtnText').textContent = btnText || 'Oui, confirmer';
+
+        const btn = document.getElementById('confirmActionBtn');
+        btn.className = `btn px-4 ${btnClass || 'btn-warning'}`;
+
+        // Nettoyage des anciens listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        // Créer l'instance une seule fois
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(modal);
+        }
+
+        newBtn.addEventListener('click', () => {
+            modalInstance.hide();
+            resolve(true);
+        });
+
+        modal.addEventListener('hidden.bs.modal', function handler() {
+            modal.removeEventListener('hidden.bs.modal', handler);
+            resolve(false);
+        });
+
+        modalInstance.show();
+    });
+}

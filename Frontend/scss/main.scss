@@ -1825,3 +1825,13 @@ overflow: hidden;
     margin-top: 60px;
 }
 
+
+/* modal confirm */
+#confirmActionModal .modal-content {
+    border-radius: 16px;
+}
+
+#confirmActionModal .modal-footer .btn {
+    border-radius: 10px;
+    min-width: 140px;
+}

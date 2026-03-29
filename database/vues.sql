@@ -83,6 +83,7 @@ SELECT
     c.created_at,
     c.updated_at,
     c.user_id,
+    c.menu_id,
     m.titre      AS menu_titre,
     sc.libelle   AS statut
 FROM commandes c
