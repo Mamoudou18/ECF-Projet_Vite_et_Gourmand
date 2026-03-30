@@ -621,11 +621,13 @@ async function formCommandeMenu(e) {
         commentaire: document.getElementById('commentaire').value.trim() || null,
         location_materiel: locationMateriel ? 1 : 0,
         mode_contact: document.querySelector('input[name="modeContact"]:checked')?.value || null,
-        numero_commande: numeroCommande,
     };
 
     const modifierId = document.getElementById('commandeForm').dataset.modifierId;
 
+    if (!modifierId) {
+        commande.numero_commande = numeroCommande;
+    }
     // Si modification, re-vérifier le statut
     if (modifierId) {
         const checkResp = await fetch(`http://localhost/api/commande/detail-commande?id=${modifierId}`);
@@ -654,9 +656,16 @@ async function formCommandeMenu(e) {
             if (modifierId) {
                 showSuccess('Commande modifiée avec succès !');
                 setTimeout(() => {
-                    window.location.href = '/utilisateur';
+                    const role = currentUser.role;
+                    if (role === 'administrateur') {
+                        window.location.href = '/administrateur';
+                    } else if (role === 'employe') {
+                        window.location.href = '/employe';
+                    } else {
+                        window.location.href = '/utilisateur';
+                    }
                 }, 2000);
-            } else {
+            }else {
                 document.getElementById('orderNumber').textContent = numeroCommande;
                 document.getElementById('confirmEmail').textContent = commande.email_client;
                 const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));

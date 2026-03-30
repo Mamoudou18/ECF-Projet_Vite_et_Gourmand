@@ -11,6 +11,7 @@ export const allRoutes = [
     new Route("/signin", "Connexion", "./pages/auth/signin.html", "/js/auth/signin.js"),
     new Route("/commande", "Commande", "./pages/commandes/commande.html","/js/commandes/commande.js"),
     new Route("/utilisateur", "Mon compte", "./pages/comptes/utilisateur.html","/js/comptes/utilisateur.js"),
+    new Route("/espace-employe", "Espace employe", "./pages/comptes/employe.html","/js/comptes/employe.js"),
 
 ];
 

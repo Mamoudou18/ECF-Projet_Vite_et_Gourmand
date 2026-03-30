@@ -1,0 +1,1208 @@
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1><i class="bi bi-briefcase"></i> Espace Employé</h1>
+        <p class="lead mb-0">Bienvenue, Sophie Martin</p>
+        <span class="employee-badge">
+            <i class="bi bi-shield-check"></i> Employé - Cuisine & Logistique
+        </span>
+    </div>
+</section>
+
+<!-- Stats Cards -->
+<section class="py-4">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon new">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>12</h3>
+                    <p>Nouvelles commandes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>8</h3>
+                    <p>En attente</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon progress">
+                    <i class="bi bi-arrow-repeat"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>5</h3>
+                    <p>En préparation</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>234</h3>
+                    <p>Terminées ce mois</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Messages alerts -->
+<div class="container mb-3">
+    <div id="successMessage" class="alert alert-success alert-custom" style="display: none;">
+        <i class="bi bi-check-circle-fill"></i>
+        <strong>Succès !</strong> <span id="successText"></span>
+    </div>
+    <div id="errorMessage" class="alert alert-danger alert-custom" style="display: none;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Erreur !</strong> <span id="errorText"></span>
+    </div>
+</div>
+
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="dashboard-sidebar">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" id="dashboard" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="commandes" data-section="commandes-section">
+                                <i class="bi bi-box-seam"></i>
+                                <span> Gestion Commandes</span>
+                                <span class="badge bg-danger ms-auto" id="badge-commandes" >0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="menus" data-section="menus-section">
+                                <i class="bi bi-card-list"></i>
+                                <span>Gestion Menus</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="horaires" data-section="horaires-section">
+                                <i class="bi bi-clock"></i>
+                                <span>Horaires</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="avis" data-section="avis-section">
+                                <i class="bi bi-star"></i>
+                                <span>Validation Avis</span>
+                                <span class="badge bg-warning ms-auto" id="badge-avis" >0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+
+                <!-- SECTION: Dashboard -->
+                <div id="dashboard-section" class="section-content active">
+                    <div class="content-card">
+                        <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
+                        
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Urgent !</strong> 3 commandes nécessitent une action immédiate.
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Commandes urgentes</h5>
+                        <div class="table-responsive">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Client</th>
+                                        <th>Menu</th>
+                                        <th>Date prestation</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>#CMD-2024-0045</strong></td>
+                                        <td>Marie Dubois</td>
+                                        <td>Menu Noël Premium</td>
+                                        <td>25/12/2024 - 19h00</td>
+                                        <td><span class="badge-status badge-nouveau">Nouveau</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success btn-action" onclick="acceptOrder(45)">
+                                                <i class="bi bi-check"></i> Accepter
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>#CMD-2024-0044</strong></td>
+                                        <td>Thomas Martin</td>
+                                        <td>Menu Végétarien</td>
+                                        <td>20/12/2024 - 12h30</td>
+                                        <td><span class="badge-status badge-preparation">En préparation</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary btn-action" onclick="updateOrderStatus(44, 'livraison')">
+                                                <i class="bi bi-truck"></i> Livrer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>#CMD-2024-0043</strong></td>
+                                        <td>Sophie Bernard</td>
+                                        <td>Menu Classique</td>
+                                        <td>18/12/2024 - 20h00</td>
+                                        <td><span class="badge-status badge-attente-materiel">Attente matériel</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info btn-action" onclick="contactClient(43)">
+                                                <i class="bi bi-telephone"></i> Contacter
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Activité récente</h5>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <strong>Il y a 5 minutes</strong>
+                                <p class="mb-0">Nouvelle commande #CMD-2024-0045 reçue</p>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Il y a 1 heure</strong>
+                                <p class="mb-0">Commande #CMD-2024-0044 passée en préparation</p>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Il y a 3 heures</strong>
+                                <p class="mb-0">Avis de Jean Dupont validé et publié</p>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Hier à 16h30</strong>
+                                <p class="mb-0">Menu "Pâques 2025" créé avec succès</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Commandes -->
+                <div id="commandes-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-box-seam"></i> Gestion des commandes</h4>
+
+                        <!-- Filtres -->
+                        <div class="filters-section">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Statut</label>
+                                    <select class="form-select" id="filterStatus">
+                                        <option value="">Tous les statuts</option>
+                                        <option value="en_attente">En attente</option>
+                                        <option value="accepte">Acceptée</option>
+                                        <option value="en_preparation">En préparation</option>
+                                        <option value="en_cours_livraison">En livraison</option>
+                                        <option value="livre">Livrée</option>
+                                        <option value="attente_retour_materiel">Attente matériel</option>
+                                        <option value="terminee">Terminée</option>
+                                        <option value="annulee">Annulée</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Recherche client</label>
+                                    <input type="text" class="form-control" id="searchOrder"
+                                        placeholder="Nom, email ou n° commande">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-outline-primary w-100" id="resetFilterBtn">
+                                        <i class="bi bi-x-circle"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tableau commandes -->
+                        <div class="table-responsive mt-4">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Client</th>
+                                        <th>Contact</th>
+                                        <th>Menu</th>
+                                        <th>Personnes</th>
+                                        <th>Date/Lieu</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commandesTableBody">
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="noOrdersFound" style="display: none;" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">Aucune commande trouvée</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===================== MODALES ===================== -->
+
+                <!-- Modal: Changer le statut -->
+                <div class="modal fade" id="statusModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Mettre à jour le statut</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="statusOrderId">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Commande</label>
+                                    <p id="statusOrderRef" class="text-muted"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Statut actuel</label>
+                                    <p><span id="statusCurrentBadge"></span></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nouveau statut</label>
+                                    <select class="form-select" id="newStatusSelect">
+                                        <!-- Options remplies dynamiquement selon le statut actuel -->
+                                    </select>
+                                </div>
+                                <!-- Champ matériel prêté (visible si statut = livree) -->
+                                <div class="mb-3 d-none" id="materielPretGroup">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="materielPrete">
+                                        <label class="form-check-label" for="materielPrete">
+                                            Du matériel a été prêté au client
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-success" id="confirmStatusBtn">
+                                    <i class="bi bi-check-lg"></i> Confirmer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal: Annuler une commande -->
+                <div class="modal fade" id="cancelModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title"><i class="bi bi-x-octagon"></i> Annuler la commande</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="cancelOrderId">
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>Attention :</strong> Vous devez avoir contacté le client avant d'annuler.
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Commande</label>
+                                    <p id="cancelOrderRef" class="text-muted"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mode de contact utilisé <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="cancelContactMode" required>
+                                        <option value="">-- Sélectionner --</option>
+                                        <option value="telephone">Appel téléphonique (GSM)</option>
+                                        <option value="email">Email</option>
+                                    </select>
+                                    <div class="invalid-feedback">Veuillez indiquer le mode de contact.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Motif d'annulation <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="cancelReason" rows="3"
+                                            placeholder="Expliquez le motif de l'annulation..." required></textarea>
+                                    <div class="invalid-feedback">Le motif est obligatoire.</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                                <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                                    <i class="bi bi-x-lg"></i> Confirmer l'annulation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal: Détails commande -->
+                <div class="modal fade" id="detailsModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title"><i class="bi bi-eye"></i> Détails de la commande</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="detailsModalBody">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Modification -->
+                <div class="modal fade" id="modificationModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-pencil-square"></i> Modifier la commande
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mode de contact avec le client</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactTel" value="telephone">
+                                        <label class="form-check-label" for="modifContactTel">
+                                            <i class="bi bi-telephone"></i> Téléphone
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactEmail" value="email" checked>
+                                        <label class="form-check-label" for="modifContactEmail">
+                                            <i class="bi bi-envelope"></i> Email
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modifMotif" class="form-label fw-bold">Motif de la modification</label>
+                                    <textarea class="form-control" id="modifMotif" rows="3" 
+                                        placeholder="Ex: Le client souhaite changer la date..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-warning" id="btnConfirmModification">
+                                    <i class="bi bi-pencil-square"></i> Continuer vers la modification
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal: Motif d'annulation (lecture seule) -->
+                <div class="modal fade" id="cancelReasonModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-secondary text-white">
+                                <h5 class="modal-title"><i class="bi bi-info-circle"></i> Motif d'annulation</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="cancelReasonBody">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- SECTION: Menus -->
+                <div id="menus-section" class="section-content">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0"><i class="bi bi-card-list"></i> Gestion des menus</h4>
+                            <button class="btn btn-success" onclick="openMenuModal('add')">
+                                <i class="bi bi-plus-circle"></i> Créer un menu
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/d4af37/ffffff?text=Menu+Noel" alt="Menu Noël" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Noël Premium</h5>
+                                                <span class="badge bg-danger mb-2">Noël</span>
+                                                <span class="badge bg-secondary mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 1)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(1)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 10 personnes
+                                        </p>
+                                        <div class="menu-price">50,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 25</span>
+                                            <span class="text-muted small">234 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/28a745/ffffff?text=Menu+Vegan" alt="Menu Vegan" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Vegan Délice</h5>
+                                                <span class="badge bg-success mb-2">Vegan</span>
+                                                <span class="badge bg-info mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 2)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(2)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 8 personnes
+                                        </p>
+                                        <div class="menu-price">45,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 18</span>
+                                            <span class="text-muted small">156 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/ffc107/ffffff?text=Menu+Paques" alt="Menu Pâques" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Pâques Tradition</h5>
+                                                <span class="badge bg-warning text-dark mb-2">Pâques</span>
+                                                <span class="badge bg-secondary mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 3)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(3)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 12 personnes
+                                        </p>
+                                        <div class="menu-price">42,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> Stock: 5</span>
+                                            <span class="text-muted small">89 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/17a2b8/ffffff?text=Menu+Vegetarien" alt="Menu Végétarien" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Végétarien</h5>
+                                                <span class="badge bg-info mb-2">Végétarien</span>
+                                                <span class="badge bg-secondary mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 4)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(4)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 10 personnes
+                                        </p>
+                                        <div class="menu-price">40,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 30</span>
+                                            <span class="text-muted small">178 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/6c757d/ffffff?text=Menu+Classique" alt="Menu Classique" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Classique</h5>
+                                                <span class="badge bg-secondary mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 5)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(5)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 8 personnes
+                                        </p>
+                                        <div class="menu-price">38,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 45</span>
+                                            <span class="text-muted small">312 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="menu-card">
+                                    <img src="https://via.placeholder.com/400x200/007bff/ffffff?text=Menu+Pro" alt="Menu Pro" class="menu-image">
+                                    <div class="menu-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="menu-title">Menu Événement Pro</h5>
+                                                <span class="badge bg-primary mb-2">Événement</span>
+                                                <span class="badge bg-secondary mb-2">Classique</span>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 6)"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(6)"><i class="bi bi-trash"></i> Supprimer</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-people"></i> Min. 30 personnes
+                                        </p>
+                                        <div class="menu-price">48,00 € / pers.</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 12</span>
+                                            <span class="text-muted small">67 vendus</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Horaires -->
+                <div id="horaires-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-clock"></i> Gestion des horaires</h4>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Les horaires modifiés seront visibles sur le site web et dans le pied de page.
+                        </div>
+
+                        <form onsubmit="saveHoraires(event)">
+                            <div class="horaires-grid">
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Lundi</strong>
+                                                                        <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Mardi</strong>
+                                    <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Mercredi</strong>
+                                    <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Jeudi</strong>
+                                    <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Vendredi</strong>
+                                    <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Samedi</strong>
+                                    <div>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="10:00">
+                                        <span class="mx-2">à</span>
+                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="17:00">
+                                    </div>
+                                </div>
+
+                                <div class="horaire-item">
+                                    <strong><i class="bi bi-calendar"></i> Dimanche</strong>
+                                    <div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="dimancheFerme" checked>
+                                            <label class="form-check-label text-danger" for="dimancheFerme">
+                                                <strong>Fermé</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg mt-4">
+                                <i class="bi bi-check-circle"></i> Enregistrer les horaires
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SECTION: Avis -->
+                <div id="avis-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-star"></i> Validation des avis clients</h4>
+
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>3 avis</strong> en attente de validation.
+                        </div>
+
+                        <!-- Avis en attente -->
+                        <h5 class="mt-4 mb-3">Avis en attente</h5>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="mb-1"><strong>Marie Lambert</strong></h6>
+                                        <small class="text-muted">
+                                            Commande #CMD-2024-0042 | Menu Noël Premium
+                                        </small>
+                                    </div>
+                                    <div class="text-warning">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                                <p class="mb-3">
+                                    Excellent ! Nous avons adoré le menu de Noël. Les plats étaient délicieux et très bien présentés. 
+                                    L'équipe est arrivée à l'heure et a été très professionnelle. Je recommande vivement !
+                                </p>
+                                <small class="text-muted">Posté le 18/12/2024 à 14:32</small>
+                                <div class="mt-3">
+                                    <button class="btn btn-success btn-sm" onclick="validateAvis(1, true)">
+                                        <i class="bi bi-check-circle"></i> Valider
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(1, false)">
+                                        <i class="bi bi-x-circle"></i> Refuser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="mb-1"><strong>Jean Dupont</strong></h6>
+                                        <small class="text-muted">
+                                            Commande #CMD-2024-0038 | Menu Végétarien
+                                        </small>
+                                    </div>
+                                    <div class="text-warning">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star"></i>
+                                    </div>
+                                </div>
+                                <p class="mb-3">
+                                    Très bon menu végétarien, varié et savoureux. Dommage que la livraison ait eu 15 minutes de retard, 
+                                    mais la qualité des plats compense largement.
+                                </p>
+                                <small class="text-muted">Posté le 17/12/2024 à 16:45</small>
+                                <div class="mt-3">
+                                    <button class="btn btn-success btn-sm" onclick="validateAvis(2, true)">
+                                        <i class="bi bi-check-circle"></i> Valider
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(2, false)">
+                                        <i class="bi bi-x-circle"></i> Refuser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="mb-1"><strong>Sophie Martin</strong></h6>
+                                        <small class="text-muted">
+                                            Commande #CMD-2024-0035 | Menu Pâques
+                                        </small>
+                                    </div>
+                                    <div class="text-warning">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                </div>
+                                <p class="mb-3">
+                                    Parfait de A à Z ! Menu délicieux, présentation soignée, équipe sympathique. 
+                                    Nous ferons à nouveau appel à vous pour nos prochains événements.
+                                </p>
+                                <small class="text-muted">Posté le 16/12/2024 à 10:22</small>
+                                <div class="mt-3">
+                                    <button class="btn btn-success btn-sm" onclick="validateAvis(3, true)">
+                                        <i class="bi bi-check-circle"></i> Valider
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(3, false)">
+                                        <i class="bi bi-x-circle"></i> Refuser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avis validés récemment -->
+                        <h5 class="mt-5 mb-3">Avis validés récemment</h5>
+
+                        <div class="card mb-3 border-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1"><strong>Pierre Rousseau</strong></h6>
+                                        <small class="text-muted">Commande #CMD-2024-0030 | Menu Classique</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-success">Validé</span>
+                                        <div class="text-warning mt-1">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-2">
+                                    Service impeccable, plats de qualité. Je recommande !
+                                </p>
+                                <small class="text-muted">Validé le 15/12/2024</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL: Détails Commande -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-box-seam"></i> Détails de la commande #CMD-2024-0045</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Client -->
+                <h6 class="text-primary mb-3"><i class="bi bi-person"></i> Informations client</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Nom :</strong> Marie Dubois</p>
+                        <p><strong>Email :</strong> marie.dubois@email.fr</p>
+                        <p><strong>Téléphone :</strong> 06 12 34 56 78</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Adresse :</strong><br>15 Rue des Lilas<br>33000 Bordeaux</p>
+                    </div>
+                </div>
+
+                <!-- Prestation -->
+                <h6 class="text-primary mb-3"><i class="bi bi-calendar-event"></i> Prestation</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p><strong>Date :</strong> 25/12/2024</p>
+                        <p><strong>Heure :</strong> 19h00</p>
+                        <p><strong>Lieu :</strong> 15 Rue des Lilas, Bordeaux</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Menu :</strong> Menu Noël Premium</p>
+                        <p><strong>Nombre de personnes :</strong> 12</p>
+                        <p><strong>Prix total :</strong> 600,00 €</p>
+                    </div>
+                </div>
+
+                <!-- Menu détails -->
+                <h6 class="text-primary mb-3"><i class="bi bi-card-list"></i> Composition du menu</h6>
+                <ul>
+                    <li><strong>Entrée :</strong> Foie gras mi-cuit aux figues</li>
+                    <li><strong>Plat :</strong> Chapon fermier rôti, légumes de saison</li>
+                    <li><strong>Dessert :</strong> Bûche glacée passion-fruits rouges</li>
+                </ul>
+
+                <!-- Suivi -->
+                <h6 class="text-primary mb-3 mt-4"><i class="bi bi-truck"></i> Suivi de commande</h6>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <strong>Commande reçue</strong><br>
+                        <small class="text-muted">15/12/2024 à 14:32</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-success" onclick="acceptOrder(45)">
+                    <i class="bi bi-check-circle"></i> Accepter la commande
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- MODAL: Modifier statut -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Modifier le statut</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form onsubmit="updateOrderStatus(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="orderIdStatus" value="">
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Nouveau statut</strong></label>
+                        <select class="form-select" id="newStatus" required>
+                            <option value="accepte">Accepté</option>
+                            <option value="preparation">En préparation</option>
+                            <option value="livraison">En cours de livraison</option>
+                            <option value="livre">Livré</option>
+                            <option value="attente-materiel">En attente du retour de matériel</option>
+                            <option value="termine">Terminé</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Le client sera automatiquement notifié par email du changement de statut.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check"></i> Valider
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Annuler commande -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-x-circle"></i> Annuler la commande</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form onsubmit="cancelOrder(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="orderIdCancel" value="">
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attention !</strong> Vous devez contacter le client avant d'annuler sa commande.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Mode de contact utilisé *</strong></label>
+                        <select class="form-select" id="contactMode" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="telephone">Téléphone</option>
+                            <option value="email">Email</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Motif d'annulation *</strong></label>
+                        <textarea class="form-control" id="cancelReason" rows="4" required 
+                                  placeholder="Expliquez le motif de l'annulation..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Confirmer l'annulation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Créer/Modifier Menu -->
+<div class="modal fade" id="menuModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="menuModalTitle">
+                    <i class="bi bi-plus-circle"></i> Créer un nouveau menu
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form onsubmit="saveMenu(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="menuId" value="">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Titre du menu *</strong></label>
+                            <input type="text" class="form-control" id="menuTitre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Thème *</strong></label>
+                            <select class="form-select" id="menuTheme" required>
+                                <option value="noel">Noël</option>
+                                <option value="paques">Pâques</option>
+                                <option value="classique">Classique</option>
+                                <option value="evenement">Événement</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Description *</strong></label>
+                        <textarea class="form-control" id="menuDescription" rows="3" required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Régime *</strong></label>
+                            <select class="form-select" id="menuRegime" required>
+                                <option value="classique">Classique</option>
+                                <option value="vegetarien">Végétarien</option>
+                                <option value="vegan">Vegan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Nombre de personnes min. *</strong></label>
+                            <input type="number" class="form-control" id="menuPersonnes" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Prix (pour le nb min) *</strong></label>
+                            <input type="number" class="form-control" id="menuPrix" step="0.01" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Stock disponible *</strong></label>
+                        <input type="number" class="form-control" id="menuStock" min="0" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Conditions particulières</strong></label>
+                        <textarea class="form-control" id="menuConditions" rows="2" 
+                                  placeholder="Ex: Commander 7 jours avant la prestation..."></textarea>
+                    </div>
+
+                    <hr class="my-4">
+                    <h6 class="mb-3">Composition du menu</h6>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Entrée *</strong></label>
+                            <select class="form-select" required>
+                                <option value="1">Foie gras mi-cuit</option>
+                                <option value="2">Saumon fumé maison</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Plat *</strong></label>
+                            <select class="form-select" required>
+                                <option value="3">Chapon fermier rôti</option>
+                                <option value="4">Filet de bœuf sauce morilles</option>
+                                <option value="5">Risotto aux légumes</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><strong>Dessert *</strong></label>
+                            <select class="form-select" required>
+                                <option value="6">Bûche glacée</option>
+                                <option value="7">Mousse au chocolat</option>
+                                <option value="8">Tarte citron</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Créer/Modifier Plat -->
+<div class="modal fade" id="platModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="platModalTitle">
+                    <i class="bi bi-plus-circle"></i> Créer un nouveau plat
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form onsubmit="savePlat(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="platId" value="">
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Nom du plat *</strong></label>
+                        <input type="text" class="form-control" id="platNom" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Type *</strong></label>
+                            <select class="form-select" id="platType" required>
+                                <option value="entree">Entrée</option>
+                                <option value="plat">Plat</option>
+                                <option value="dessert">Dessert</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><strong>Régime *</strong></label>
+                            <select class="form-select" id="platRegime" required>
+                                <option value="classique">Classique</option>
+                                <option value="vegetarien">Végétarien</option>
+                                <option value="vegan">Vegan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Allergènes</strong></label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="gluten" id="allerGluten">
+                                <label class="form-check-label" for="allerGluten">Gluten</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="lactose" id="allerLactose">
+                                <label class="form-check-label" for="allerLactose">Lactose</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="oeufs" id="allerOeufs">
+                                <label class="form-check-label" for="allerOeufs">Œufs</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="poisson" id="allerPoisson">
+                                <label class="form-check-label" for="allerPoisson">Poisson</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="fruits-a-coque" id="allerFruits">
+                                <label class="form-check-label" for="allerFruits">Fruits à coque</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" value="sulfites" id="allerSulfites">
+                                <label class="form-check-label" for="allerSulfites">Sulfites</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Description</strong></label>
+                        <textarea class="form-control" id="platDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
