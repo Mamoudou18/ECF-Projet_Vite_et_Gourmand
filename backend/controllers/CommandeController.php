@@ -337,12 +337,19 @@ class CommandeController
             return;
         }
 
-        $data = $this->getJsonBody();
+        $data = json_decode(file_get_contents('php://input'), true);
         $motif      = $data['motif_annulation'] ?? null;
         $modifiePar = $data['modifie_par'] ?? null;
+        $modeContact = $data['mode_contact'] ?? null;
+
 
         if (!$motif || trim($motif) === '') {
             $this->response->error('Le motif d\'annulation est requis.', 422);
+            return;
+        }
+
+        if (!$modeContact || trim($modeContact) === '') {
+            $this->response->error('Le mode de contact est requis.', 422);
             return;
         }
 
@@ -356,7 +363,7 @@ class CommandeController
 
             $this->commande->restaurerStock($menuData['menu_id']);
 
-            $this->commande->updateMotifAnnulation($id, $motif);
+            $this->commande->updateMotifAnnulation($id, $data);
             $this->changerStatut($id, 'annulee', $modifiePar, "Annulation : $motif");
 
             $this->pdo->commit();

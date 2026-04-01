@@ -181,9 +181,20 @@ class Commande
         $stmt->execute(['menu_id' => $menuId]);
     }
 
-    public function updateMotifAnnulation(int $id, string $motif): bool
+    public function updateMotifAnnulation(int $id, array $data): bool
     {
-        $stm = $this->pdo->prepare("UPDATE commandes SET motif_annulation = :motif WHERE id = :id");
-        return $stm->execute([':motif' => $motif, ':id' => $id]);
+        $stm = $this->pdo->prepare("
+            UPDATE commandes 
+            SET motif_annulation = :motif_annulation,
+                mode_contact     = :mode_contact,
+                user_id          = :user_id
+            WHERE id = :id
+        ");
+        return $stm->execute([
+            'id'                            => $id,
+            'motif_annulation'              => $data['motif_annulation'], 
+            'mode_contact'                  => $data['mode_contact'],
+            'user_id'                       => $data['modifie_par']
+        ]);
     }
 }

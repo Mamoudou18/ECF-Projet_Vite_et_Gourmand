@@ -410,8 +410,7 @@ async function handleConfirmCancel() {
             body: JSON.stringify({
                 motif_annulation: reason.value.trim(),
                 mode_contact: contactMode ? contactMode.value : null,
-                modifie_par: user.id,
-                commentaire: `Commande annulée, ${reason.value.trim()}`
+                modifie_par: user.id
             })
         });
         const data = await response.json();
