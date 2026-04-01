@@ -10,7 +10,9 @@ export async function init() {
     await loadOrders();
     initEventListeners();
     initModalListeners();
-    loadSidebarBadges();
+    updateDasboardHeader();
+    loadAdminDashboard();
+
 }
 
 // ===================== EVENT LISTENERS =====================
@@ -44,6 +46,9 @@ function initModalListeners() {
 
     const confirmCancelBtn = document.getElementById('confirmCancelBtn');
     if (confirmCancelBtn) confirmCancelBtn.addEventListener('click', handleConfirmCancel);
+
+    const btnModif = document.getElementById('btnConfirmModification');
+    if (btnModif) btnModif.addEventListener('click', handleConfirmModification);
 }
 
 // ===================== NAVIGATION =====================
@@ -59,20 +64,6 @@ function showSection(sectionId, clickedLink) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// Charger les compteurs du sidebar
-function loadSidebarBadges() {
-    // Compteur commandes
-    fetch('http://localhost/api/commande/affiche')
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('badge-commandes').textContent = data.total;
-            }
-        });
-}
-
-
 
 // ===================== CHARGEMENT COMMANDES =====================
 async function loadOrders() {
@@ -90,7 +81,23 @@ async function loadOrders() {
 
 async function refreshCommandes() {
     await loadOrders();
+    loadAdminDashboard();
     resetFilters();
+}
+
+//===============MISE A JOUR HEADER ====================
+function updateDasboardHeader(){
+    const user = getStorage();
+    if(!user) return;
+
+    const avatar = document.getElementById("user-avatar");
+    if(avatar){
+        const initiales = `${user.prenom.charAt(0)}${user.nom.charAt(0)}`.toUpperCase();
+        avatar.textContent = initiales;
+    }
+
+    const nom = document.querySelector('.lead');
+    if(nom) nom.textContent = `Bienvenue, ${user.prenom} ${user.nom}`;
 }
 
 // ===================== RENDU TABLEAU =====================
@@ -188,12 +195,6 @@ function getOrderById(id) {
     return orders.find(c => c.id == id);
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return 'N/A';
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
 // ===================== BOUTONS ACTION =====================
 function getActionButtons(order) {
     let buttons = `
@@ -238,10 +239,12 @@ document.addEventListener('click', function (e) {
     if (!id) return;
 
     if (btn.classList.contains('btn-details')) openDetailsModal(id);
-    else if (btn.classList.contains('btn-status')) openStatusModal(id);
+    else if (btn.classList.contains('btn-status')) openStatusModal(id, btn.dataset.status);
     else if (btn.classList.contains('btn-cancel')) openCancelModal(id);
     else if (btn.classList.contains('btn-cancel-reason')) openCancelReasonModal(id);
+    else if (btn.dataset.contact) contactClient(id);
 });
+
 
 // ===================== MODAL DÉTAILS =====================
 function openDetailsModal(orderId) {
@@ -300,7 +303,7 @@ function openDetailsModal(orderId) {
 }
 
 // ===================== MODAL CHANGER STATUT =====================
-function openStatusModal(orderId) {
+function openStatusModal(orderId, preselectStatus = null) {
     const order = getOrderById(orderId);
     if (!order) return;
 
@@ -320,6 +323,10 @@ function openStatusModal(orderId) {
             select.innerHTML += `<option value="${s}">${STATUS_CONFIG[s].label}</option>`;
         });
         document.getElementById('confirmStatusBtn').disabled = false;
+                
+        if (preselectStatus && transitions.includes(preselectStatus)) {
+            select.value = preselectStatus;
+        }
     }
 
     new bootstrap.Modal(document.getElementById('statusModal')).show();
@@ -381,21 +388,28 @@ async function handleConfirmCancel() {
     const btn = document.getElementById('confirmCancelBtn');
     const orderId = btn.getAttribute('data-order-id');
     const reason = document.getElementById('cancelReason');
+    const contactMode = document.getElementById('cancelContactMode');
 
     if (!reason.value.trim()) {
         showToast('Veuillez saisir un motif d\'annulation', 'warning');
         return;
     }
 
+    if (contactMode && !contactMode.value) {
+        showToast('Veuillez choisir un mode de contact', 'warning');
+        return;
+    }
+
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Annulation...';
-    console.log(orderId);
+
     try {
         const response = await fetch(`http://localhost/api/commande/annule-commande?id=${orderId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 motif_annulation: reason.value.trim(),
+                mode_contact: contactMode ? contactMode.value : null,
                 modifie_par: user.id,
                 commentaire: `Commande annulée, ${reason.value.trim()}`
             })
@@ -416,7 +430,6 @@ async function handleConfirmCancel() {
         btn.innerHTML = '<i class="bi bi-x-lg"></i> Confirmer l\'annulation';
     }
 }
-
 
 // ===================== MODAL MOTIF ANNULATION =====================
 function openCancelReasonModal(orderId) {
@@ -483,14 +496,210 @@ window.openModificationModal = function(orderId, menuId) {
     }, 300);
 };
 
-document.getElementById('btnConfirmModification')?.addEventListener('click', function() {
-    const motif = document.getElementById('modifMotif').value.trim();
 
+function handleConfirmModification() {
+    const motif = document.getElementById('modifMotif').value.trim();
     if (!motif) {
         showToast('Veuillez indiquer le motif de la modification', 'warning');
         return;
     }
-
     bootstrap.Modal.getInstance(document.getElementById('modificationModal'))?.hide();
     window.location.href = `/commande?menu=${modificationMenuId}&modifier=${modificationOrderId}`;
-});
+}
+
+// ============================================
+//  SECTION DASHBOARD 
+// ============================================
+
+function loadAdminDashboard() {
+    loadAdminStats();
+    loadUrgentOrders();
+    loadRecentActivity();
+    loadSidebarBadges();
+}
+
+//Stats rapides
+function loadAdminStats() {
+    const commandes = orders;
+    const now = new Date();
+    const moisActuel = now.getMonth();
+
+    const nouvelles = commandes.filter(c => c.statut === 'en_attente').length;
+    const enCours = commandes.filter(c =>
+        ['accepte', 'en_preparation', 'en_cours_livraison', 'livre', 'attente_retour_materiel'].includes(c.statut)
+    ).length;
+    const terminees = commandes.filter(c => c.statut === 'terminee').length;
+    const annulees = commandes.filter(c => c.statut === 'annulee').length;
+
+    const termineesMois = commandes.filter(c => {
+        if (c.statut !== 'terminee') return false;
+        const d = new Date(c.created_at);
+        return d.getMonth() === moisActuel && d.getFullYear() === now.getFullYear();
+    }).length;
+
+    const el = document.getElementById('admin-stats');
+    if (!el) return;
+
+    el.innerHTML = `
+        <div class="stat-card" style="border-left: 4px solid #f3929c;">
+            <div class="stat-number">${nouvelles}</div>
+            <div class="stat-label">Nouvelles commandes (En attente)</div>
+        </div>
+        <div class="stat-card" style="border-left: 4px solid #fd7e14;">
+            <div class="stat-number">${enCours}</div>
+            <div class="stat-label">En cours</div>
+        </div>
+        <div class="stat-card" style="border-left: 4px solid #28a745;">
+            <div class="stat-number">${terminees}</div>
+            <div class="stat-label">Terminées</div>
+        </div>
+        <div class="stat-card" style="border-left: 4px solid #f60707;">
+            <div class="stat-number">${annulees}</div>
+            <div class="stat-label">Annulées</div>
+        </div>
+        <div class="stat-card" style="border-left: 4px solid #007bff;">
+            <div class="stat-number">${termineesMois}</div>
+            <div class="stat-label">Terminées ce mois</div>
+        </div>
+
+    `;
+}
+
+// Commandes urgentes
+function loadUrgentOrders() {
+    const urgentes = orders.filter(c =>
+        ['en_attente', 'en_preparation', 'attente_retour_materiel'].includes(c.statut)
+    );
+
+    const alertEl = document.getElementById('alert-urgent');
+    if (alertEl) {
+        if (urgentes.length > 0) {
+            alertEl.classList.remove('d-none');
+            document.getElementById('urgent-count').textContent = urgentes.length;
+        } else {
+            alertEl.classList.add('d-none');
+        }
+    }
+
+    const tbody = document.getElementById('urgent-orders-body');
+    if (!tbody) return;
+
+    if (urgentes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-success">
+            <i class="bi bi-check-circle"></i> Aucune commande urgente
+        </td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = urgentes.map(c => `
+        <tr>
+            <td><strong>#${c.numero_commande}</strong></td>
+            <td>${c.prenom_client || ''} ${c.nom_client || ''}</td>
+            <td>${c.menu_titre || 'N/A'}</td>
+            <td>${formatDate(c.date_prestation)} - ${c.heure_prestation || ''}</td>
+            <td>${getStatusBadge(c.statut)}</td>
+            <td>${getUrgentActions(c)}</td>
+        </tr>
+    `).join('');
+}
+
+//Activité récente
+function loadRecentActivity() {
+    const recentes = [...orders]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 5);
+
+    const timeline = document.getElementById('timeline-activity');
+    if (!timeline) return;
+
+    if (recentes.length === 0) {
+        timeline.innerHTML = '<p class="text-muted">Aucune activité récente</p>';
+        return;
+    }
+
+    timeline.innerHTML = recentes.map(c => `
+        <div class="timeline-item">
+            <strong>${formatTimeAgo(c.created_at)}</strong>
+            <p class="mb-0">
+                Commande #${c.numero_commande} - ${getActivityLabel(c.statut)}
+                <br><small class="text-muted">${c.prenom_client || ''} ${c.nom_client || ''} · ${c.menu_titre || ''}</small>
+            </p>
+        </div>
+    `).join('');
+}
+
+//Sidebar badges
+function loadSidebarBadges() {
+    const actives = orders.filter(c =>
+        !['terminee', 'annulee'].includes(c.statut)
+    ).length;
+    const badge = document.getElementById('badge-commandes');
+    if (badge) badge.textContent = actives;
+}
+
+function getActivityLabel(statut) {
+    const labels = {
+        'en_attente': 'Nouvelle commande reçue',
+        'accepte': 'Commande acceptée',
+        'en_preparation': 'Passée en préparation',
+        'attente_retour_materiel': 'En attente retour matériel',
+        'en_cours_livraison': 'En cours de livraison',
+        'livre': 'Commande livrée',
+        'terminee': 'Commande terminée',
+        'annulee': 'Commande annulée'
+    };
+    return labels[statut] || statut;
+}
+
+function getUrgentActions(commande) {
+    switch (commande.statut) {
+        case 'en_attente':
+            return `<button class="btn btn-sm btn-success btn-action btn-status" data-id="${commande.id}" data-status="accepte">
+                <i class="bi bi-check"></i> Accepter
+            </button>`;
+        case 'en_preparation':
+            return `<button class="btn btn-sm btn-primary btn-action btn-status" data-id="${commande.id}" data-status="en_cours_livraison">
+                <i class="bi bi-truck"></i> Livrer
+            </button>`;
+        case 'attente_retour_materiel':
+            return `<button class="btn btn-sm btn-info btn-action" data-id="${commande.id}" data-contact="true">
+                <i class="bi bi-telephone"></i> Contacter
+            </button>`;
+        default:
+            return '';
+    }
+}
+
+
+function formatTimeAgo(dateStr) {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now - date;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffH = Math.floor(diffMs / 3600000);
+    const diffJ = Math.floor(diffMs / 86400000);
+
+    if (diffMin < 1) return "À l'instant";
+    if (diffMin < 60) return `Il y a ${diffMin} min`;
+    if (diffH < 24) return `Il y a ${diffH}h`;
+    if (diffJ < 7) return `Il y a ${diffJ} jour(s)`;
+    return formatDate(dateStr);
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return 'N/A';
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+}
+
+// contacter le client
+function contactClient(orderId) {
+    const order = getOrderById(orderId);
+    if (!order) return;
+    
+    // Ouvrir le client mail ou afficher les infos
+    showToast(`Contact : ${order.email_client} / ${order.gsm_client || 'Pas de téléphone'}`, 'info');
+}
+
+

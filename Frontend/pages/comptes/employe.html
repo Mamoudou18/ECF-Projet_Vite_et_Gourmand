@@ -1,55 +1,21 @@
 <!-- Header -->
 <section class="dashboard-header">
     <div class="container">
-        <h1><i class="bi bi-briefcase"></i> Espace Employé</h1>
-        <p class="lead mb-0">Bienvenue, Sophie Martin</p>
-        <span class="employee-badge">
-            <i class="bi bi-shield-check"></i> Employé - Cuisine & Logistique
-        </span>
+        <div class="user-info-card">
+            <div class="user-avatar" id="user-avatar"> </div>
+            <div class="user-details">
+                <h1><i class="bi bi-briefcase"></i> Espace Employé</h1>
+                <p class="lead mb-0">Bienvenue, </p>
+            </div>
+        </div>
     </div>
 </section>
 
 <!-- Stats Cards -->
 <section class="py-4">
     <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon new">
-                    <i class="bi bi-hourglass-split"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>12</h3>
-                    <p>Nouvelles commandes</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon pending">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>8</h3>
-                    <p>En attente</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon progress">
-                    <i class="bi bi-arrow-repeat"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>5</h3>
-                    <p>En préparation</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon completed">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>234</h3>
-                    <p>Terminées ce mois</p>
-                </div>
-            </div>
-        </div>
+        <!-- Stats rapides -->
+        <div class="stats-grid" id="admin-stats"></div>
     </div>
 </section>
 
@@ -116,12 +82,14 @@
                 <div id="dashboard-section" class="section-content active">
                     <div class="content-card">
                         <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
-                        
-                        <div class="alert alert-warning">
+
+                        <!-- Alerte urgente (masquée par défaut) -->
+                        <div class="alert alert-warning d-none" id="alert-urgent">
                             <i class="bi bi-exclamation-triangle"></i>
-                            <strong>Urgent !</strong> 3 commandes nécessitent une action immédiate.
+                            <strong>Urgent !</strong> <span id="urgent-count">0</span> commande(s) nécessitent une action immédiate.
                         </div>
 
+                        <!-- Commandes urgentes -->
                         <h5 class="mt-4 mb-3">Commandes urgentes</h5>
                         <div class="table-responsive">
                             <table class="table order-table">
@@ -135,65 +103,18 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="urgent-orders-body">
                                     <tr>
-                                        <td><strong>#CMD-2024-0045</strong></td>
-                                        <td>Marie Dubois</td>
-                                        <td>Menu Noël Premium</td>
-                                        <td>25/12/2024 - 19h00</td>
-                                        <td><span class="badge-status badge-nouveau">Nouveau</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-success btn-action" onclick="acceptOrder(45)">
-                                                <i class="bi bi-check"></i> Accepter
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>#CMD-2024-0044</strong></td>
-                                        <td>Thomas Martin</td>
-                                        <td>Menu Végétarien</td>
-                                        <td>20/12/2024 - 12h30</td>
-                                        <td><span class="badge-status badge-preparation">En préparation</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary btn-action" onclick="updateOrderStatus(44, 'livraison')">
-                                                <i class="bi bi-truck"></i> Livrer
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>#CMD-2024-0043</strong></td>
-                                        <td>Sophie Bernard</td>
-                                        <td>Menu Classique</td>
-                                        <td>18/12/2024 - 20h00</td>
-                                        <td><span class="badge-status badge-attente-materiel">Attente matériel</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info btn-action" onclick="contactClient(43)">
-                                                <i class="bi bi-telephone"></i> Contacter
-                                            </button>
-                                        </td>
+                                        <td colspan="6" class="text-center text-muted">Chargement...</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
+                        <!-- Activité récente -->
                         <h5 class="mt-4 mb-3">Activité récente</h5>
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <strong>Il y a 5 minutes</strong>
-                                <p class="mb-0">Nouvelle commande #CMD-2024-0045 reçue</p>
-                            </div>
-                            <div class="timeline-item">
-                                <strong>Il y a 1 heure</strong>
-                                <p class="mb-0">Commande #CMD-2024-0044 passée en préparation</p>
-                            </div>
-                            <div class="timeline-item">
-                                <strong>Il y a 3 heures</strong>
-                                <p class="mb-0">Avis de Jean Dupont validé et publié</p>
-                            </div>
-                            <div class="timeline-item">
-                                <strong>Hier à 16h30</strong>
-                                <p class="mb-0">Menu "Pâques 2025" créé avec succès</p>
-                            </div>
+                        <div class="timeline" id="timeline-activity">
+                            <p class="text-muted">Chargement...</p>
                         </div>
                     </div>
                 </div>
@@ -868,155 +789,6 @@
         </div>
     </div>
 </section>
-
-<!-- MODAL: Détails Commande -->
-<div class="modal fade" id="orderModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-box-seam"></i> Détails de la commande #CMD-2024-0045</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Client -->
-                <h6 class="text-primary mb-3"><i class="bi bi-person"></i> Informations client</h6>
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <p><strong>Nom :</strong> Marie Dubois</p>
-                        <p><strong>Email :</strong> marie.dubois@email.fr</p>
-                        <p><strong>Téléphone :</strong> 06 12 34 56 78</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Adresse :</strong><br>15 Rue des Lilas<br>33000 Bordeaux</p>
-                    </div>
-                </div>
-
-                <!-- Prestation -->
-                <h6 class="text-primary mb-3"><i class="bi bi-calendar-event"></i> Prestation</h6>
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <p><strong>Date :</strong> 25/12/2024</p>
-                        <p><strong>Heure :</strong> 19h00</p>
-                        <p><strong>Lieu :</strong> 15 Rue des Lilas, Bordeaux</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Menu :</strong> Menu Noël Premium</p>
-                        <p><strong>Nombre de personnes :</strong> 12</p>
-                        <p><strong>Prix total :</strong> 600,00 €</p>
-                    </div>
-                </div>
-
-                <!-- Menu détails -->
-                <h6 class="text-primary mb-3"><i class="bi bi-card-list"></i> Composition du menu</h6>
-                <ul>
-                    <li><strong>Entrée :</strong> Foie gras mi-cuit aux figues</li>
-                    <li><strong>Plat :</strong> Chapon fermier rôti, légumes de saison</li>
-                    <li><strong>Dessert :</strong> Bûche glacée passion-fruits rouges</li>
-                </ul>
-
-                <!-- Suivi -->
-                <h6 class="text-primary mb-3 mt-4"><i class="bi bi-truck"></i> Suivi de commande</h6>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <strong>Commande reçue</strong><br>
-                        <small class="text-muted">15/12/2024 à 14:32</small>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-success" onclick="acceptOrder(45)">
-                    <i class="bi bi-check-circle"></i> Accepter la commande
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- MODAL: Modifier statut -->
-<div class="modal fade" id="statusModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Modifier le statut</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="updateOrderStatus(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="orderIdStatus" value="">
-                    
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Nouveau statut</strong></label>
-                        <select class="form-select" id="newStatus" required>
-                            <option value="accepte">Accepté</option>
-                            <option value="preparation">En préparation</option>
-                            <option value="livraison">En cours de livraison</option>
-                            <option value="livre">Livré</option>
-                            <option value="attente-materiel">En attente du retour de matériel</option>
-                            <option value="termine">Terminé</option>
-                        </select>
-                    </div>
-
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i>
-                        Le client sera automatiquement notifié par email du changement de statut.
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check"></i> Valider
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: Annuler commande -->
-<div class="modal fade" id="cancelModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="bi bi-x-circle"></i> Annuler la commande</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="cancelOrder(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="orderIdCancel" value="">
-
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Attention !</strong> Vous devez contacter le client avant d'annuler sa commande.
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Mode de contact utilisé *</strong></label>
-                        <select class="form-select" id="contactMode" required>
-                            <option value="">-- Sélectionner --</option>
-                            <option value="telephone">Téléphone</option>
-                            <option value="email">Email</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Motif d'annulation *</strong></label>
-                        <textarea class="form-control" id="cancelReason" rows="4" required 
-                                  placeholder="Expliquez le motif de l'annulation..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-x-circle"></i> Confirmer l'annulation
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- MODAL: Créer/Modifier Menu -->
 <div class="modal fade" id="menuModal" tabindex="-1">
