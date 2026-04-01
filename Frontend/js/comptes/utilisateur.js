@@ -598,9 +598,9 @@ window.annulerCommande = async function(id) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                motif_annulation: "Annulée par le client",
+                motif_annulation: "Commande annulée par le client depuis son espace",
                 modifie_par: user.id,
-                commentaire: "Commande annulée par le client depuis l'espace client"
+                mode_contact: " Annulation du client"
             })
         });
 
