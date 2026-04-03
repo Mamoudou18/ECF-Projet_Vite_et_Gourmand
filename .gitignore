@@ -26,3 +26,7 @@ ViteGourmandFrontEnd/node_modules
 
 #vendor
 .vendor
+
+backend/public/uploads/**
+!backend/public/uploads/.gitkeep
+!backend/public/uploads/menus/.gitkeep

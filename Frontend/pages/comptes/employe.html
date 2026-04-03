@@ -184,376 +184,98 @@
                     </div>
                 </div>
 
-                <!-- ===================== MODALES ===================== -->
-
-                <!-- Modal: Changer le statut -->
-                <div class="modal fade" id="statusModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Mettre à jour le statut</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="statusOrderId">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Commande</label>
-                                    <p id="statusOrderRef" class="text-muted"></p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Statut actuel</label>
-                                    <p><span id="statusCurrentBadge"></span></p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Nouveau statut</label>
-                                    <select class="form-select" id="newStatusSelect">
-                                        <!-- Options remplies dynamiquement selon le statut actuel -->
-                                    </select>
-                                </div>
-                                <!-- Champ matériel prêté (visible si statut = livree) -->
-                                <div class="mb-3 d-none" id="materielPretGroup">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="materielPrete">
-                                        <label class="form-check-label" for="materielPrete">
-                                            Du matériel a été prêté au client
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="button" class="btn btn-success" id="confirmStatusBtn">
-                                    <i class="bi bi-check-lg"></i> Confirmer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal: Annuler une commande -->
-                <div class="modal fade" id="cancelModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title"><i class="bi bi-x-octagon"></i> Annuler la commande</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="cancelOrderId">
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                    <strong>Attention :</strong> Vous devez avoir contacté le client avant d'annuler.
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Commande</label>
-                                    <p id="cancelOrderRef" class="text-muted"></p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Mode de contact utilisé <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="cancelContactMode" required>
-                                        <option value="">-- Sélectionner --</option>
-                                        <option value="telephone">Appel téléphonique (GSM)</option>
-                                        <option value="email">Email</option>
-                                    </select>
-                                    <div class="invalid-feedback">Veuillez indiquer le mode de contact.</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Motif d'annulation <span class="text-danger">*</span></label>
-                                    <textarea class="form-control" id="cancelReason" rows="3"
-                                            placeholder="Expliquez le motif de l'annulation..." required></textarea>
-                                    <div class="invalid-feedback">Le motif est obligatoire.</div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
-                                <button type="button" class="btn btn-danger" id="confirmCancelBtn">
-                                    <i class="bi bi-x-lg"></i> Confirmer l'annulation
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal: Détails commande -->
-                <div class="modal fade" id="detailsModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title"><i class="bi bi-eye"></i> Détails de la commande</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body" id="detailsModalBody">
-                                <!-- Rempli dynamiquement -->
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal Modification -->
-                <div class="modal fade" id="modificationModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-warning text-dark">
-                                <h5 class="modal-title">
-                                    <i class="bi bi-pencil-square"></i> Modifier la commande
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Mode de contact avec le client</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactTel" value="telephone">
-                                        <label class="form-check-label" for="modifContactTel">
-                                            <i class="bi bi-telephone"></i> Téléphone
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactEmail" value="email" checked>
-                                        <label class="form-check-label" for="modifContactEmail">
-                                            <i class="bi bi-envelope"></i> Email
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="modifMotif" class="form-label fw-bold">Motif de la modification</label>
-                                    <textarea class="form-control" id="modifMotif" rows="3" 
-                                        placeholder="Ex: Le client souhaite changer la date..." required></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <button type="button" class="btn btn-warning" id="btnConfirmModification">
-                                    <i class="bi bi-pencil-square"></i> Continuer vers la modification
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal: Motif d'annulation (lecture seule) -->
-                <div class="modal fade" id="cancelReasonModal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-secondary text-white">
-                                <h5 class="modal-title"><i class="bi bi-info-circle"></i> Motif d'annulation</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body" id="cancelReasonBody">
-                                <!-- Rempli dynamiquement -->
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
                 <!-- SECTION: Menus -->
                 <div id="menus-section" class="section-content">
                     <div class="content-card">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="mb-0"><i class="bi bi-card-list"></i> Gestion des menus</h4>
-                            <button class="btn btn-success" onclick="openMenuModal('add')">
+                            <button class="btn btn-success" id="btnCreerMenu">
                                 <i class="bi bi-plus-circle"></i> Créer un menu
                             </button>
+
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/d4af37/ffffff?text=Menu+Noel" alt="Menu Noël" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Noël Premium</h5>
-                                                <span class="badge bg-danger mb-2">Noël</span>
-                                                <span class="badge bg-secondary mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 1)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(1)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 10 personnes
-                                        </p>
-                                        <div class="menu-price">50,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 25</span>
-                                            <span class="text-muted small">234 vendus</span>
-                                        </div>
-                                    </div>
+                        <!-- Filtres -->
+                        <div class="filters-bar mb-4 p-3 rounded border bg-light">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold"><i class="bi bi-search"></i> Titre</label>
+                                    <input type="text" class="form-control form-control-sm" id="filterTitre" placeholder="Rechercher...">
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/28a745/ffffff?text=Menu+Vegan" alt="Menu Vegan" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Vegan Délice</h5>
-                                                <span class="badge bg-success mb-2">Vegan</span>
-                                                <span class="badge bg-info mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 2)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(2)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 8 personnes
-                                        </p>
-                                        <div class="menu-price">45,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 18</span>
-                                            <span class="text-muted small">156 vendus</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-calendar-event"></i> Thème</label>
+                                    <select class="form-select form-select-sm" id="filterTheme">
+                                        <option value="">Tous</option>
+                                        <option value="noel">Noël</option>
+                                        <option value="paques">Pâques</option>
+                                        <option value="classique">Classique</option>
+                                        <option value="evenement">Événement</option>
+                                    </select>
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/ffc107/ffffff?text=Menu+Paques" alt="Menu Pâques" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Pâques Tradition</h5>
-                                                <span class="badge bg-warning text-dark mb-2">Pâques</span>
-                                                <span class="badge bg-secondary mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 3)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(3)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 12 personnes
-                                        </p>
-                                        <div class="menu-price">42,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> Stock: 5</span>
-                                            <span class="text-muted small">89 vendus</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-heart-pulse"></i> Régime</label>
+                                    <select class="form-select form-select-sm" id="filterRegime">
+                                        <option value="">Tous</option>
+                                        <option value="vegan">Vegan</option>
+                                        <option value="vegetarien">Végétarien</option>
+                                        <option value="hallal">Hallal</option>
+                                        <option value="sans-gluten">Sans gluten</option>
+                                    </select>
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/17a2b8/ffffff?text=Menu+Vegetarien" alt="Menu Végétarien" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Végétarien</h5>
-                                                <span class="badge bg-info mb-2">Végétarien</span>
-                                                <span class="badge bg-secondary mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 4)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(4)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 10 personnes
-                                        </p>
-                                        <div class="menu-price">40,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 30</span>
-                                            <span class="text-muted small">178 vendus</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-1">
+                                    <label class="form-label small fw-bold"><i class="bi bi-currency-euro"></i> Prix max</label>
+                                    <input type="number" class="form-control form-control-sm" id="filterPrixMax" placeholder="€" min="0" step="5">
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/6c757d/ffffff?text=Menu+Classique" alt="Menu Classique" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Classique</h5>
-                                                <span class="badge bg-secondary mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 5)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(5)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 8 personnes
-                                        </p>
-                                        <div class="menu-price">38,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 45</span>
-                                            <span class="text-muted small">312 vendus</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-1">
+                                    <label class="form-label small fw-bold"><i class="bi bi-people"></i> Pers. min</label>
+                                    <input type="number" class="form-control form-control-sm" id="filterPersonnes" placeholder="Nb" min="1">
                                 </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-4">
-                                <div class="menu-card">
-                                    <img src="https://via.placeholder.com/400x200/007bff/ffffff?text=Menu+Pro" alt="Menu Pro" class="menu-image">
-                                    <div class="menu-body">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h5 class="menu-title">Menu Événement Pro</h5>
-                                                <span class="badge bg-primary mb-2">Événement</span>
-                                                <span class="badge bg-secondary mb-2">Classique</span>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#" onclick="openMenuModal('edit', 6)"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteMenu(6)"><i class="bi bi-trash"></i> Supprimer</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted small mb-2">
-                                            <i class="bi bi-people"></i> Min. 30 personnes
-                                        </p>
-                                        <div class="menu-price">48,00 € / pers.</div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> En stock: 12</span>
-                                            <span class="text-muted small">67 vendus</span>
-                                        </div>
-                                    </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-box-seam"></i> Stock</label>
+                                    <select class="form-select form-select-sm" id="filterStock">
+                                        <option value="">Tous</option>
+                                        <option value="ok">En stock (≥10)</option>
+                                        <option value="low">Stock faible (&lt;10)</option>
+                                        <option value="0">Rupture</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-sort-down"></i> Tri</label>
+                                    <select class="form-select form-select-sm" id="filterSort">
+                                        <option value="id-desc">Plus récent</option>
+                                        <option value="id-asc">Plus ancien</option>
+                                        <option value="prix-asc">Prix croissant</option>
+                                        <option value="prix-desc">Prix décroissant</option>
+                                        <option value="titre-asc">Titre A-Z</option>
+                                        <option value="titre-desc">Titre Z-A</option>
+                                        <option value="stock-asc">Stock croissant</option>
+                                        <option value="stock-desc">Stock décroissant</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm w-100" id="btnResetFilters">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                                    </button>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Compteur + info page -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span id="employeeMenusCount" class="text-muted small"></span>
+                            <span id="employeeMenusPageInfo" class="text-muted small"></span>
+                        </div>
+
+                        <!-- Grille des menus -->
+                        <div class="row" id="employeeMenusGrid">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2 text-muted">Chargement des menus...</p>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center mt-4" id="employeeMenusPagination"></div>
                     </div>
                 </div>
 
@@ -790,191 +512,169 @@
     </div>
 </section>
 
-<!-- MODAL: Créer/Modifier Menu -->
-<div class="modal fade" id="menuModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="menuModalTitle">
-                    <i class="bi bi-plus-circle"></i> Créer un nouveau menu
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="saveMenu(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="menuId" value="">
+<!-- ===================== MODALES ===================== -->
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>Titre du menu *</strong></label>
-                            <input type="text" class="form-control" id="menuTitre" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>Thème *</strong></label>
-                            <select class="form-select" id="menuTheme" required>
-                                <option value="noel">Noël</option>
-                                <option value="paques">Pâques</option>
-                                <option value="classique">Classique</option>
-                                <option value="evenement">Événement</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Description *</strong></label>
-                        <textarea class="form-control" id="menuDescription" rows="3" required></textarea>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Régime *</strong></label>
-                            <select class="form-select" id="menuRegime" required>
-                                <option value="classique">Classique</option>
-                                <option value="vegetarien">Végétarien</option>
-                                <option value="vegan">Vegan</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Nombre de personnes min. *</strong></label>
-                            <input type="number" class="form-control" id="menuPersonnes" min="1" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Prix (pour le nb min) *</strong></label>
-                            <input type="number" class="form-control" id="menuPrix" step="0.01" min="0" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Stock disponible *</strong></label>
-                        <input type="number" class="form-control" id="menuStock" min="0" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Conditions particulières</strong></label>
-                        <textarea class="form-control" id="menuConditions" rows="2" 
-                                  placeholder="Ex: Commander 7 jours avant la prestation..."></textarea>
-                    </div>
-
-                    <hr class="my-4">
-                    <h6 class="mb-3">Composition du menu</h6>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Entrée *</strong></label>
-                            <select class="form-select" required>
-                                <option value="1">Foie gras mi-cuit</option>
-                                <option value="2">Saumon fumé maison</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Plat *</strong></label>
-                            <select class="form-select" required>
-                                <option value="3">Chapon fermier rôti</option>
-                                <option value="4">Filet de bœuf sauce morilles</option>
-                                <option value="5">Risotto aux légumes</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label"><strong>Dessert *</strong></label>
-                            <select class="form-select" required>
-                                <option value="6">Bûche glacée</option>
-                                <option value="7">Mousse au chocolat</option>
-                                <option value="8">Tarte citron</option>
-                            </select>
+<!-- Modal: Changer le statut -->
+                <div class="modal fade" id="statusModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Mettre à jour le statut</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="statusOrderId">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Commande</label>
+                                    <p id="statusOrderRef" class="text-muted"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Statut actuel</label>
+                                    <p><span id="statusCurrentBadge"></span></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nouveau statut</label>
+                                    <select class="form-select" id="newStatusSelect">
+                                        <!-- Options remplies dynamiquement selon le statut actuel -->
+                                    </select>
+                                </div>
+                                <!-- Champ matériel prêté (visible si statut = livree) -->
+                                <div class="mb-3 d-none" id="materielPretGroup">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="materielPrete">
+                                        <label class="form-check-label" for="materielPrete">
+                                            Du matériel a été prêté au client
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-success" id="confirmStatusBtn">
+                                    <i class="bi bi-check-lg"></i> Confirmer
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Enregistrer
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<!-- MODAL: Créer/Modifier Plat -->
-<div class="modal fade" id="platModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="platModalTitle">
-                    <i class="bi bi-plus-circle"></i> Créer un nouveau plat
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form onsubmit="savePlat(event)">
-                <div class="modal-body">
-                    <input type="hidden" id="platId" value="">
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Nom du plat *</strong></label>
-                        <input type="text" class="form-control" id="platNom" required>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>Type *</strong></label>
-                            <select class="form-select" id="platType" required>
-                                <option value="entree">Entrée</option>
-                                <option value="plat">Plat</option>
-                                <option value="dessert">Dessert</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label"><strong>Régime *</strong></label>
-                            <select class="form-select" id="platRegime" required>
-                                <option value="classique">Classique</option>
-                                <option value="vegetarien">Végétarien</option>
-                                <option value="vegan">Vegan</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Allergènes</strong></label>
-                        <div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="gluten" id="allerGluten">
-                                <label class="form-check-label" for="allerGluten">Gluten</label>
+                <!-- Modal: Annuler une commande -->
+                <div class="modal fade" id="cancelModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title"><i class="bi bi-x-octagon"></i> Annuler la commande</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="lactose" id="allerLactose">
-                                <label class="form-check-label" for="allerLactose">Lactose</label>
+                            <div class="modal-body">
+                                <input type="hidden" id="cancelOrderId">
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>Attention :</strong> Vous devez avoir contacté le client avant d'annuler.
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Commande</label>
+                                    <p id="cancelOrderRef" class="text-muted"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mode de contact utilisé <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="cancelContactMode" required>
+                                        <option value="">-- Sélectionner --</option>
+                                        <option value="telephone">Appel téléphonique (GSM)</option>
+                                        <option value="email">Email</option>
+                                    </select>
+                                    <div class="invalid-feedback">Veuillez indiquer le mode de contact.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Motif d'annulation <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="cancelReason" rows="3"
+                                            placeholder="Expliquez le motif de l'annulation..." required></textarea>
+                                    <div class="invalid-feedback">Le motif est obligatoire.</div>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="oeufs" id="allerOeufs">
-                                <label class="form-check-label" for="allerOeufs">Œufs</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="poisson" id="allerPoisson">
-                                <label class="form-check-label" for="allerPoisson">Poisson</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="fruits-a-coque" id="allerFruits">
-                                <label class="form-check-label" for="allerFruits">Fruits à coque</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" value="sulfites" id="allerSulfites">
-                                <label class="form-check-label" for="allerSulfites">Sulfites</label>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                                <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+                                    <i class="bi bi-x-lg"></i> Confirmer l'annulation
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Description</strong></label>
-                        <textarea class="form-control" id="platDescription" rows="3"></textarea>
+                <!-- Modal: Détails commande -->
+                <div class="modal fade" id="detailsModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title"><i class="bi bi-eye"></i> Détails de la commande</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="detailsModalBody">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Enregistrer
-                    </button>
+                <!-- Modal Modification -->
+                <div class="modal fade" id="modificationModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-pencil-square"></i> Modifier la commande
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Mode de contact avec le client</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactTel" value="telephone">
+                                        <label class="form-check-label" for="modifContactTel">
+                                            <i class="bi bi-telephone"></i> Téléphone
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactEmail" value="email" checked>
+                                        <label class="form-check-label" for="modifContactEmail">
+                                            <i class="bi bi-envelope"></i> Email
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="modifMotif" class="form-label fw-bold">Motif de la modification</label>
+                                    <textarea class="form-control" id="modifMotif" rows="3" 
+                                        placeholder="Ex: Le client souhaite changer la date..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-warning" id="btnConfirmModification">
+                                    <i class="bi bi-pencil-square"></i> Continuer vers la modification
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
+
+                <!-- Modal: Motif d'annulation (lecture seule) -->
+                <div class="modal fade" id="cancelReasonModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-secondary text-white">
+                                <h5 class="modal-title"><i class="bi bi-info-circle"></i> Motif d'annulation</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="cancelReasonBody">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>

@@ -4,19 +4,150 @@ const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");
 const themeSelect = document.getElementById("themeSelect");
 
-btnAjouterMenu.addEventListener("click", ajouterMenu);
+// ── Mode édition ? ──
+const urlParams = new URLSearchParams(window.location.search);
+const editIdFromUrl = urlParams.get("id");
+
+if (editIdFromUrl) {
+    chargerMenuParId(editIdFromUrl).then(() => {
+        btnAjouterMenu.classList.add("d-none");
+        btnSave.innerHTML = '<i class="bi bi-pencil-square"></i> Modifier';
+        document.querySelectorAll(".btnAjouterPlat").forEach(btn => btn.classList.add("d-none"));
+    });
+}
+
+btnAjouterMenu.addEventListener("click", () => ajouterMenu());
 btnSave.addEventListener("click", enregistrer);
 
-// ───────────────────────────────────────────
-// AJOUTER UN MENU
-// ───────────────────────────────────────────
-function ajouterMenu() {
+async function chargerMenuParId(id) {
+    try {
+        const res = await fetch(`http://localhost/api/menu/detail?id=${id}`);
+        const data = await res.json();
+        if (!data.success) return showError("Menu introuvable.");
+
+        document.getElementById("menusContainer").innerHTML = "";
+
+        const menu = data.menu;
+        themeSelect.value = menu.themes || "classique";
+
+        const entrees = menu.plats.filter(p => p.type_id === 1);
+        const plats = menu.plats.filter(p => p.type_id === 2);
+        const desserts = menu.plats.filter(p => p.type_id === 3);
+        const nbTriplets = Math.max(entrees.length, plats.length, desserts.length);
+
+        const menuDiv = ajouterMenu(menu.id);
+
+        menuDiv.querySelector(".titreMenu").value = menu.titre || "";
+        menuDiv.querySelector(".description").value = menu.description || "";
+        menuDiv.querySelector(".condition").value = menu.conditions || "";
+        menuDiv.querySelector(".stock").value = menu.stock || 0;
+        menuDiv.querySelector(".prix").value = menu.prix_base || 0;
+        menuDiv.querySelector(".nbPersonnes").value = menu.nb_personnes_min || 1;
+
+        const regimesSelect = menuDiv.querySelector(".regimes");
+        const regimesList = (menu.regimes || "").split(",").map(r => r.trim());
+        Array.from(regimesSelect.options).forEach(opt => {
+            opt.selected = regimesList.includes(opt.value);
+        });
+
+        const imgs = menu.images ? menu.images.split(",").map(x => x.trim()) : [];
+        console.log("Images splittées:", imgs);
+
+        // Image principale = index 0
+        if (imgs[0]) {
+            const preview = menuDiv.querySelector(".previewImgPrincipale");
+            preview.src = `http://localhost${imgs[0]}`;
+            preview.classList.remove("d-none");
+        }
+
+        for (let i = 0; i < nbTriplets; i++) {
+            const platDiv = ajouterPlatDansMenu(menuDiv);
+
+            const idxEntree  = 1 + (i * 3);
+            const idxPlat    = 2 + (i * 3);
+            const idxDessert = 3 + (i * 3);
+
+            if (entrees[i]) {
+                platDiv.querySelector(".entree-nom").value = entrees[i].nom || "";
+                platDiv.querySelector(".entree-desc").value = entrees[i].description || "";
+                remplirAllergenes(platDiv.querySelector(".section-entree"), entrees[i].allergenes);
+
+                if (imgs[idxEntree]) {
+                    const preview = platDiv.querySelector(".section-entree .previewImgPlat");
+                    if (preview) {
+                        preview.src = `http://localhost${imgs[idxEntree]}`;
+                        preview.classList.remove("d-none");
+                    }
+                }
+            }
+
+            if (plats[i]) {
+                platDiv.querySelector(".plat-nom").value = plats[i].nom || "";
+                platDiv.querySelector(".plat-desc").value = plats[i].description || "";
+                remplirAllergenes(platDiv.querySelector(".section-plat"), plats[i].allergenes);
+
+                if (imgs[idxPlat]) {
+                    const preview = platDiv.querySelector(".section-plat .previewImgPlat");
+                    if (preview) {
+                        preview.src = `http://localhost${imgs[idxPlat]}`;
+                        preview.classList.remove("d-none");
+                    }
+                }
+            }
+
+            if (desserts[i]) {
+                platDiv.querySelector(".dessert-nom").value = desserts[i].nom || "";
+                platDiv.querySelector(".dessert-desc").value = desserts[i].description || "";
+                remplirAllergenes(platDiv.querySelector(".section-dessert"), desserts[i].allergenes);
+
+                if (imgs[idxDessert]) {
+                    const preview = platDiv.querySelector(".section-dessert .previewImgPlat");
+                    if (preview) {
+                        preview.src = `http://localhost${imgs[idxDessert]}`;
+                        preview.classList.remove("d-none");
+                    }
+                }
+            }
+        }
+
+        menuDiv.querySelectorAll(".btnAjouterPlat").forEach(btn => btn.classList.add("d-none"));
+
+
+        // Bouton Modifier en pleine largeur
+        const btnSave = document.getElementById("btnSave");
+        btnSave.classList.remove("w-50");
+        btnSave.classList.add("w-100");
+
+        showSuccess(`Menu "${menu.titre}" chargé pour modification.`);
+    } catch (e) {
+        console.error(e);
+        showError("Erreur lors du chargement du menu.");
+    }
+}
+
+
+function remplirAllergenes(section, allergenesStr) {
+    if (!allergenesStr) return;
+    const liste = section.querySelector(".allergenes-liste");
+    allergenesStr.split(",").map(a => a.trim()).filter(Boolean).forEach(a => {
+        const badge = document.createElement("span");
+        badge.className = "badge bg-warning text-dark me-1 mb-1";
+        badge.dataset.valeur = a;
+        badge.innerHTML = `${a} <i class="bi bi-x-circle ms-1 btnSupprimerAllergene" style="cursor:pointer"></i>`;
+        badge.querySelector(".btnSupprimerAllergene").addEventListener("click", () => badge.remove());
+        liste.appendChild(badge);
+    });
+}
+
+function ajouterMenu(editId = null) {
     const menuDiv = document.createElement("div");
     menuDiv.className = "menu card mb-4 shadow-sm";
+    if (editId) menuDiv.dataset.editId = editId;
+
     menuDiv.innerHTML = `
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0 btnToggleMenu" style="cursor:pointer">
-                <i class="bi bi-journal-richtext"></i> Menu
+                <i class="bi bi-journal-richtext"></i> Menu ${editId ? '(Modification #' + editId + ')' : ''}
                 <i class="bi bi-chevron-up ms-2 iconToggleMenu"></i>
             </h5>
             <button type="button" class="btn btn-sm btn-light btnSupprimerMenu">
@@ -24,22 +155,18 @@ function ajouterMenu() {
             </button>
         </div>
         <div class="card-body corpsMenu">
-
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-fonts"></i> Titre</label>
                 <input type="text" class="titreMenu form-control" placeholder="Titre du menu">
             </div>
-
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-text-left"></i> Description</label>
                 <textarea class="description form-control" rows="2" placeholder="Description du menu"></textarea>
             </div>
-
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-info-circle-fill"></i> Conditions</label>
                 <textarea class="condition form-control" rows="2" placeholder="Conditions du menu"></textarea>
             </div>
-
             <div class="row mb-3">
                 <div class="col-12 col-lg-4 mb-3">
                     <label class="form-label"><i class="bi bi-box-seam-fill"></i> Stock</label>
@@ -54,8 +181,6 @@ function ajouterMenu() {
                     <input type="number" class="nbPersonnes form-control" min="1" placeholder="1">
                 </div>
             </div>
-
-            <!-- RÉGIMES -->
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-heart-fill"></i> Régimes</label>
                 <select multiple class="regimes form-select">
@@ -67,238 +192,149 @@ function ajouterMenu() {
                 </select>
                 <small class="text-muted">Maintenez Ctrl pour sélectionner plusieurs régimes</small>
             </div>
-
-            <!-- Conteneur des plats -->
-            <div class="plats"></div>
-
             <div class="mb-3">
                 <label class="form-label"><i class="bi bi-images"></i> Image principale du menu</label>
                 <input type="file" class="form-control imgPrincipale" accept="image/*">
                 <img class="previewImgPrincipale mt-2 img-fluid rounded d-none" alt="Aperçu image principale">
             </div>
-
+            <div class="plats"></div>
             <button type="button" class="btn btn-register w-100 btnAjouterPlat mt-2">
                 <i class="bi bi-plus-circle-fill"></i> Ajouter un plat
             </button>
-
         </div>
     `;
 
-    // Toggle menu
-    menuDiv.querySelector('.btnToggleMenu').addEventListener('click', () => {
-        const corps = menuDiv.querySelector('.corpsMenu');
-        const icon  = menuDiv.querySelector('.iconToggleMenu');
-        const ouvert = !corps.classList.contains('d-none');
-        corps.classList.toggle('d-none', ouvert);
-        icon.classList.toggle('bi-chevron-up', !ouvert);
-        icon.classList.toggle('bi-chevron-down', ouvert);
+    document.getElementById("menusContainer").appendChild(menuDiv);
+
+    menuDiv.querySelector(".btnSupprimerMenu").addEventListener("click", () => menuDiv.remove());
+    menuDiv.querySelector(".btnToggleMenu").addEventListener("click", () => {
+        const corps = menuDiv.querySelector(".corpsMenu");
+        const icon = menuDiv.querySelector(".iconToggleMenu");
+        corps.classList.toggle("d-none");
+        icon.classList.toggle("bi-chevron-up");
+        icon.classList.toggle("bi-chevron-down");
+    });
+    menuDiv.querySelector(".btnAjouterPlat").addEventListener("click", () => ajouterPlatDansMenu(menuDiv));
+    menuDiv.querySelector(".imgPrincipale").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const preview = menuDiv.querySelector(".previewImgPrincipale");
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.classList.remove("d-none");
+        }
     });
 
-    menuDiv.querySelector('.btnSupprimerMenu').addEventListener('click', () => menuDiv.remove());
-    menuDiv.querySelector('.btnAjouterPlat').addEventListener('click', () => ajouterPlat(menuDiv));
-
-    activerPrevisualisations(menuDiv);
-    document.getElementById("menusContainer").appendChild(menuDiv);
-    ajouterPlat(menuDiv);
+    return menuDiv;
 }
 
-// ───────────────────────────────────────────
-// AJOUTER UN PLAT
-// ───────────────────────────────────────────
-function ajouterPlat(menuDiv) {
+function ajouterPlatDansMenu(menuDiv) {
     const platDiv = document.createElement("div");
-    platDiv.className = "plat card mb-3 border border-primary";
+    platDiv.className = "plat card mb-3 border-secondary";
     platDiv.innerHTML = `
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="btnTogglePlat" style="cursor:pointer">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 btnTogglePlat" style="cursor:pointer">
                 <i class="bi bi-egg-fried"></i> Plat
                 <i class="bi bi-chevron-up ms-2 iconTogglePlat"></i>
-            </span>
-            <button type="button" class="btn btn-sm btn-outline-danger btnSupprimerPlat">
-                <i class="bi bi-x-lg"></i> Supprimer
+            </h6>
+            <button type="button" class="btn btn-sm btn-light btnSupprimerPlat">
+                <i class="bi bi-trash-fill"></i>
             </button>
         </div>
         <div class="card-body corpsPlat">
-
-            <!-- ENTRÉE -->
-            <div class="card mb-3 border border-secondary section-entree">
-                <div class="card-header"><i class="bi bi-arrow-right-circle"></i> Entrée</div>
-                <div class="card-body">
-                    <input type="text" class="entree-nom form-control mb-2" placeholder="Nom de l'entrée">
-                    <textarea class="entree-desc form-control mb-2" rows="1" placeholder="Description"></textarea>
-                    <div class="input-group mb-2">
-                        <input type="text" class="allergeneInput form-control mb-2 rounded" placeholder="Allergène...">
-                        <button type="button" class="btn btn-register rounded btnAjouterAllergene">
-                            <i class="bi bi-plus-lg"></i>
-                        </button>
-                    </div>
-                    <div class="allergenes-liste d-flex flex-wrap gap-2 mb-2"></div>
-                    <label class="form-label"><i class="bi bi-image"></i> Image entrée</label>
-                    <input type="file" class="form-control imgEntreePlat" accept="image/*">
-                    <img class="previewImgEntreePlat mt-2 img-fluid rounded d-none" alt="Aperçu entrée">
-                </div>
-            </div>
-
-            <!-- PLAT PRINCIPAL -->
-            <div class="card mb-3 border border-secondary section-plat">
-                <div class="card-header"><i class="bi bi-fire"></i> Plat principal</div>
-                <div class="card-body">
-                    <input type="text" class="plat-nom form-control mb-2" placeholder="Nom du plat">
-                    <textarea class="plat-desc form-control mb-2" rows="1" placeholder="Description"></textarea>
-                    <div class="input-group mb-2">
-                        <input type="text" class="allergeneInput form-control mb-2 rounded" placeholder="Allergène...">
-                        <button type="button" class="btn btn-register rounded btnAjouterAllergene">
-                            <i class="bi bi-plus-lg"></i>
-                        </button>
-                    </div>
-                    <div class="allergenes-liste d-flex flex-wrap gap-2 mb-2"></div>
-                    <label class="form-label"><i class="bi bi-image"></i> Image plat</label>
-                    <input type="file" class="form-control imgPlatPlat" accept="image/*">
-                    <img class="previewImgPlatPlat mt-2 img-fluid rounded d-none" alt="Aperçu plat">
-                </div>
-            </div>
-
-            <!-- DESSERT -->
-            <div class="card mb-3 border border-secondary section-dessert">
-                <div class="card-header"><i class="bi bi-cup-straw"></i> Dessert</div>
-                <div class="card-body">
-                    <input type="text" class="dessert-nom form-control mb-2" placeholder="Nom du dessert">
-                    <textarea class="dessert-desc form-control mb-2" rows="1" placeholder="Description"></textarea>
-                    <div class="input-group mb-2">
-                        <input type="text" class="allergeneInput form-control mb-2 rounded" placeholder="Allergène...">
-                        <button type="button" class="btn btn-register rounded btnAjouterAllergene">
-                            <i class="bi bi-plus-lg"></i>
-                        </button>
-                    </div>
-                    <div class="allergenes-liste d-flex flex-wrap gap-2 mb-2"></div>
-                    <label class="form-label"><i class="bi bi-image"></i> Image dessert</label>
-                    <input type="file" class="form-control imgDessertPlat" accept="image/*">
-                    <img class="previewImgDessertPlat mt-2 img-fluid rounded d-none" alt="Aperçu dessert">
-                </div>
-            </div>
-
+            ${sectionPlat("entree", "Entrée", "bi-cup-hot-fill")}
+            ${sectionPlat("plat", "Plat principal", "bi-fire")}
+            ${sectionPlat("dessert", "Dessert", "bi-cake2-fill")}
         </div>
     `;
 
-    // Toggle plat
-    platDiv.querySelector('.btnTogglePlat').addEventListener('click', () => {
-        const corps = platDiv.querySelector('.corpsPlat');
-        const icon  = platDiv.querySelector('.iconTogglePlat');
-        const ouvert = !corps.classList.contains('d-none');
-        corps.classList.toggle('d-none', ouvert);
-        icon.classList.toggle('bi-chevron-up', !ouvert);
-        icon.classList.toggle('bi-chevron-down', ouvert);
+    menuDiv.querySelector(".plats").appendChild(platDiv);
+
+    platDiv.querySelector(".btnSupprimerPlat").addEventListener("click", () => platDiv.remove());
+    platDiv.querySelector(".btnTogglePlat").addEventListener("click", () => {
+        const corps = platDiv.querySelector(".corpsPlat");
+        const icon = platDiv.querySelector(".iconTogglePlat");
+        corps.classList.toggle("d-none");
+        icon.classList.toggle("bi-chevron-up");
+        icon.classList.toggle("bi-chevron-down");
     });
 
-    // Supprimer le plat
-    platDiv.querySelector('.btnSupprimerPlat').addEventListener('click', () => platDiv.remove());
-
-    // Allergènes pour chaque sous-section
-    platDiv.querySelectorAll('.card.border-secondary').forEach(section => {
-        const input = section.querySelector('.allergeneInput');
-        const btn   = section.querySelector('.btnAjouterAllergene');
-        const liste = section.querySelector('.allergenes-liste');
-
-        function ajouterAllergene() {
-            const valeur = input.value.trim();
-            if (!valeur) return;
-
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-warning text-dark d-flex align-items-center gap-1';
-            badge.dataset.valeur = valeur;
-            badge.innerHTML = `
-                <i class="bi bi-exclamation-circle-fill"></i>
-                ${valeur}
-                <span class="btnRetirerAllergene" style="cursor:pointer">
-                    <i class="bi bi-x-lg"></i>
-                </span>
-            `;
-            badge.querySelector('.btnRetirerAllergene').addEventListener('click', () => badge.remove());
+    platDiv.querySelectorAll(".btnAjouterAllergene").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const section = btn.closest(".section-allergenes");
+            const input = section.querySelector(".inputAllergene");
+            const val = input.value.trim();
+            if (!val) return;
+            const liste = section.querySelector(".allergenes-liste");
+            const badge = document.createElement("span");
+            badge.className = "badge bg-warning text-dark me-1 mb-1";
+            badge.dataset.valeur = val;
+            badge.innerHTML = `${val} <i class="bi bi-x-circle ms-1 btnSupprimerAllergene" style="cursor:pointer"></i>`;
+            badge.querySelector(".btnSupprimerAllergene").addEventListener("click", () => badge.remove());
             liste.appendChild(badge);
-            input.value = '';
-            input.focus();
-        }
-
-        btn.addEventListener('click', ajouterAllergene);
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') { e.preventDefault(); ajouterAllergene(); }
+            input.value = "";
         });
     });
 
-    // Prévisualisations images dans le plat
-    activerPrevisualisationsPlat(platDiv);
-
-    menuDiv.querySelector('.plats').appendChild(platDiv);
-}
-
-// ───────────────────────────────────────────
-// PRÉVISUALISATIONS
-// ───────────────────────────────────────────
-function activerPrevisualisations(menuDiv) {
-    const inputEl   = menuDiv.querySelector('.imgPrincipale');
-    const previewEl = menuDiv.querySelector('.previewImgPrincipale');
-    inputEl.addEventListener('change', () => {
-        const file = inputEl.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            previewEl.src = e.target.result;
-            previewEl.classList.remove('d-none');
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function activerPrevisualisationsPlat(platDiv) {
-    const config = [
-        { input: '.imgEntreePlat',  preview: '.previewImgEntreePlat'  },
-        { input: '.imgPlatPlat',    preview: '.previewImgPlatPlat'    },
-        { input: '.imgDessertPlat', preview: '.previewImgDessertPlat' },
-    ];
-    config.forEach(({ input, preview }) => {
-        const inputEl   = platDiv.querySelector(input);
-        const previewEl = platDiv.querySelector(preview);
-        if (!inputEl || !previewEl) return;
-        inputEl.addEventListener('change', () => {
-            const file = inputEl.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                previewEl.src = e.target.result;
-                previewEl.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
+    platDiv.querySelectorAll("input[type='file']").forEach(inp => {
+        inp.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            const preview = inp.nextElementSibling;
+            if (file && preview) {
+                preview.src = URL.createObjectURL(file);
+                preview.classList.remove("d-none");
+            }
         });
     });
+
+    return platDiv;
 }
 
-// ───────────────────────────────────────────
-// ENREGISTRER
-// ───────────────────────────────────────────
+function sectionPlat(type, label, icon) {
+    const imgClass = type === "entree" ? "imgEntreePlat" : type === "plat" ? "imgPlatPlat" : "imgDessertPlat";
+    return `
+        <div class="section-${type} mb-4">
+            <h6><i class="bi ${icon}"></i> ${label}</h6>
+            <input type="text" class="${type}-nom form-control mb-2" placeholder="Nom ${label.toLowerCase()}">
+            <textarea class="${type}-desc form-control mb-2" rows="1" placeholder="Description ${label.toLowerCase()}"></textarea>
+            <div class="section-allergenes mb-2">
+                <div class="input-group mb-1">
+                    <input type="text" class="inputAllergene form-control" placeholder="Allergène">
+                    <button type="button" class="btn btn-outline-warning btnAjouterAllergene">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="allergenes-liste"></div>
+            </div>
+            <input type="file" class="form-control ${imgClass}" accept="image/*">
+            <img class="previewImgPlat preview mt-2 img-fluid rounded d-none" alt="Aperçu">
+        </div>
+    `;
+}
+
 function enregistrer() {
-    const theme = themeSelect.value;
-    const themeIdMap = { noel: 1, paques: 2, classique: 3, evenement: 4 };
-    const themeId = themeIdMap[theme];
+    const menus = document.querySelectorAll("#menusContainer .menu");
+    if (menus.length === 0) return showError("Ajoutez au moins un menu.");
 
+    const themeIdMap = { noel: 1, paques: 2, classique: 3, evenement: 4 };
+    const regimeIdMap = { classique: 1, vegetarien: 2, vegan: 3, "sans-gluten": 4, hallal: 5 };
     const promises = [];
 
-    document.querySelectorAll("#menusContainer .menu").forEach(menu => {
-        const titre            = menu.querySelector(".titreMenu")?.value.trim();
-        const description      = menu.querySelector(".description")?.value.trim();
-        const conditions       = menu.querySelector(".condition")?.value.trim();
-        const stock            = parseInt(menu.querySelector(".stock")?.value) || 0;
-        const prix_base        = parseFloat(menu.querySelector(".prix")?.value) || 0;
-        const nb_personnes_min = parseInt(menu.querySelector(".nbPersonnes")?.value) || 1;
-
-        const images = {
-            principale: menu.querySelector(".imgPrincipale")?.files[0] || null,
-        };
-
-        const plats = [];
+    menus.forEach(menu => {
+        const editId = menu.dataset.editId || null;
+        const titre = menu.querySelector(".titreMenu").value.trim();
+        const description = menu.querySelector(".description").value.trim();
+        const conditions = menu.querySelector(".condition").value.trim();
+        const stock = menu.querySelector(".stock").value;
+        const prix_base = menu.querySelector(".prix").value;
+        const nb_personnes_min = menu.querySelector(".nbPersonnes").value;
+        const themeId = themeIdMap[themeSelect.value] ?? 3;
         const regimes = new Set();
-        const regimeIdMap = { classique: 1, vegetarien: 2, vegan: 3, "sans-gluten": 4, hallal: 5 };
+        const plats = [];
+        const images = {};
 
-        // ── Régimes au niveau du menu ──
+        const imgFile = menu.querySelector(".imgPrincipale")?.files[0];
+        if (imgFile) images.principale = imgFile;
+
         menu.querySelectorAll(".regimes option:checked").forEach(opt => {
             regimes.add(regimeIdMap[opt.value] ?? 1);
         });
@@ -310,71 +346,74 @@ function enregistrer() {
                 return arr;
             };
 
-            const entreeSection  = p.querySelector('.section-entree');
-            const platSection    = p.querySelector('.section-plat');
+            const entreeSection = p.querySelector('.section-entree');
+            const platSection = p.querySelector('.section-plat');
             const dessertSection = p.querySelector('.section-dessert');
 
             plats.push({
-                entree:  { nom: entreeSection.querySelector('.entree-nom').value.trim(),   description: entreeSection.querySelector('.entree-desc').value.trim(),   allergenes: allergenes(entreeSection)  },
-                plat:    { nom: platSection.querySelector('.plat-nom').value.trim(),       description: platSection.querySelector('.plat-desc').value.trim(),       allergenes: allergenes(platSection)    },
+                entree: { nom: entreeSection.querySelector('.entree-nom').value.trim(), description: entreeSection.querySelector('.entree-desc').value.trim(), allergenes: allergenes(entreeSection) },
+                plat: { nom: platSection.querySelector('.plat-nom').value.trim(), description: platSection.querySelector('.plat-desc').value.trim(), allergenes: allergenes(platSection) },
                 dessert: { nom: dessertSection.querySelector('.dessert-nom').value.trim(), description: dessertSection.querySelector('.dessert-desc').value.trim(), allergenes: allergenes(dessertSection) },
             });
 
-            // Images par plat
-            const imgEntree  = entreeSection.querySelector('.imgEntreePlat')?.files[0]   || null;
-            const imgPlat    = platSection.querySelector('.imgPlatPlat')?.files[0]       || null;
+            const imgEntree = entreeSection.querySelector('.imgEntreePlat')?.files[0] || null;
+            const imgPlat = platSection.querySelector('.imgPlatPlat')?.files[0] || null;
             const imgDessert = dessertSection.querySelector('.imgDessertPlat')?.files[0] || null;
 
-            if (imgEntree)  images[`img_entree_${index}`]  = imgEntree;
-            if (imgPlat)    images[`img_plat_${index}`]    = imgPlat;
+            if (imgEntree) images[`img_entree_${index}`] = imgEntree;
+            if (imgPlat) images[`img_plat_${index}`] = imgPlat;
             if (imgDessert) images[`img_dessert_${index}`] = imgDessert;
         });
 
-        // Construction du FormData
         const fd = new FormData();
-        fd.append('titre',            titre);
-        fd.append('description',      description);
-        fd.append('conditions',       conditions);
-        fd.append('stock',            stock);
-        fd.append('prix_base',        prix_base);
+        fd.append('titre', titre);
+        fd.append('description', description);
+        fd.append('conditions', conditions);
+        fd.append('stock', stock);
+        fd.append('prix_base', prix_base);
         fd.append('nb_personnes_min', nb_personnes_min);
-        fd.append('theme_id',         themeId);
-        fd.append('regime_ids',       JSON.stringify(Array.from(regimes)));
-        fd.append('plats',            JSON.stringify(plats));
+        fd.append('theme_id', themeId);
+        fd.append('regime_ids', JSON.stringify(Array.from(regimes)));
+        fd.append('plats', JSON.stringify(plats));
 
         if (images.principale) fd.append('img_principale', images.principale);
-
         Object.entries(images).forEach(([key, file]) => {
             if (key !== 'principale') fd.append(key, file);
         });
 
+        const url = editId
+            ? `http://localhost/api/menu/update?id=${editId}`
+            : 'http://localhost/api/menu/create';
+
+        const actionLabel = editId ? "modifié" : "créé";
+
+        const method = 'POST';
+
+        if (editId) fd.append('_method', 'PUT');
+
         promises.push(
-            fetch('http://localhost/api/menu/create', {
-                method: 'POST',
-                body: fd
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccess(`✅ Menu "${titre}" créé avec succès !`);
-                } else {
-                    showError(`❌ Erreur pour le menu "${titre}" : ${data.message || 'Erreur inconnue'}`);
-                }
-                return data;
-            })
-            .catch(err => {
-                console.error('Erreur :', err);
-                showError(`❌ Erreur réseau pour le menu "${titre}" : ${err.message}`);
-            })
+            fetch(url, { method, body: fd })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess(`✅ Menu "${titre}" ${actionLabel} avec succès !`);
+                    } else {
+                        showError(`❌ Erreur pour le menu "${titre}" : ${data.message || 'Erreur inconnue'}`);
+                    }
+                    return data;
+                })
+                .catch(err => {
+                    console.error('Erreur :', err);
+                    showError(`❌ Erreur réseau pour le menu "${titre}" : ${err.message}`);
+                })
         );
     });
 
     Promise.all(promises).then(results => {
         const success = results.filter(r => r?.success).length;
-        const failed  = results.filter(r => !r?.success).length;
+        const failed = results.filter(r => !r?.success).length;
         if (failed === 0) {
             showSuccess(`✅ Tous les menus (${success}) ont été enregistrés avec succès !`);
-            // ── RESET ──
             document.getElementById("menusContainer").innerHTML = "";
             themeSelect.value = themeSelect.options[0].value;
         } else {

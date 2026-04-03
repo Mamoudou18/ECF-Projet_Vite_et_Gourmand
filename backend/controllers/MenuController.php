@@ -197,7 +197,12 @@ class MenuController
         $themeId          = isset($data['theme_id'])           ? (int) $data['theme_id']                               : null;
         $imagesASupprimer = isset($data['images_a_supprimer']) ? (json_decode($data['images_a_supprimer'], true) ?? []) : [];
 
+        //passer les valeurs décodées à $data avant la validation
+        if (isset($data['regime_ids'])) $data['regime_ids'] = $regimeIds;
+        if (isset($data['plats']))      $data['plats']      = $plats;
+
         $errors = $this->validator->validateMenuUpdate($data);
+
         if (!empty($errors)) {
             $this->response->error('Données invalides.', 422, $errors);
             return;
@@ -265,63 +270,86 @@ class MenuController
                 }
             }
 
-            // ── Images à supprimer : suppression ciblée par ID
+            // ── Images ──────────────────────────────────────────────────────────
             $urlsASupprimer = [];
-            if (!empty($imagesASupprimer)) {
-                $stmtImg = $this->pdo->prepare("SELECT url FROM menu_images WHERE id = :id AND menu_id = :menu_id");
-                $delImg  = $this->pdo->prepare("DELETE FROM menu_images WHERE id = :id");
 
-                foreach ($imagesASupprimer as $imageId) {
-                    $stmtImg->execute([':id' => $imageId, ':menu_id' => $id]);
-                    $row = $stmtImg->fetch(PDO::FETCH_ASSOC);
-                    if ($row) {
-                        $urlsASupprimer[] = $row['url'];
-                        $delImg->execute([':id' => $imageId]);
-                    }
+            // ── Image principale : auto-remplacement
+            if (!empty($files['img_principale']['name'])) {
+                $stmtOld = $this->pdo->prepare("SELECT id, url FROM menu_images WHERE menu_id = :id AND ordre = 0");
+                $stmtOld->execute([':id' => $id]);
+                $oldImages = $stmtOld->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($oldImages as $oldImg) {
+                    $this->pdo->prepare("DELETE FROM menu_images WHERE id = :id")->execute([':id' => $oldImg['id']]);
+                    $urlsASupprimer[] = $oldImg['url'];
                 }
+
+                $url = $this->uploadImage([
+                    'tmp_name' => $files['img_principale']['tmp_name'],
+                    'name'     => $files['img_principale']['name'],
+                    'type'     => mime_content_type($files['img_principale']['tmp_name']),
+                    'size'     => filesize($files['img_principale']['tmp_name'])
+                ]);
+
+                if (!$url) {
+                    $this->pdo->rollBack();
+                    $this->response->error("Erreur upload image principale", 422);
+                    return;
+                }
+                $this->menu->ajouterImage($id, $url, 0);
             }
 
-            // ── Nouvelles images : on ajoute seulement si envoyées
-            $imageKeys = [
-                'img_principale' => 0,
-                'img_entree'     => 1,
-                'img_plat'       => 2,
-                'img_dessert'    => 3,
+            // ── Images entree/plat/dessert (clés dynamiques : img_entree_0, img_plat_1, etc.)
+            $imageTypeOrdre = [
+                'img_entree'  => 1,
+                'img_plat'    => 2,
+                'img_dessert' => 3,
             ];
 
-            foreach ($imageKeys as $key => $ordre) {
-                if (empty($files[$key]['name'])) continue;
+            foreach ($files as $fileKey => $fileData) {
+                if (empty($fileData['name'])) continue;
 
-                $names        = (array) $files[$key]['name'];
-                $tmps         = (array) $files[$key]['tmp_name'];
-                $uploadErrors = (array) $files[$key]['error'];
+                foreach ($imageTypeOrdre as $prefix => $ordre) {
+                    if (strpos($fileKey, $prefix) === 0) {
+                        // Supprimer l'ancienne image en base + marquer pour suppression fichier
+                        $stmtOld = $this->pdo->prepare("SELECT id, url FROM menu_images WHERE menu_id = :id AND ordre = :ordre");
+                        $stmtOld->execute([':id' => $id, ':ordre' => $ordre]);
+                        $oldImages = $stmtOld->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($oldImages as $oldImg) {
+                            $this->pdo->prepare("DELETE FROM menu_images WHERE id = :id")->execute([':id' => $oldImg['id']]);
+                            $urlsASupprimer[] = $oldImg['url'];
+                        }
 
-                foreach ($names as $i => $name) {
-                    if ($uploadErrors[$i] !== UPLOAD_ERR_OK) continue;
 
-                    $url = $this->uploadImage([
-                        'tmp_name' => $tmps[$i],
-                        'name'     => $name,
-                        'type'     => mime_content_type($tmps[$i]),
-                        'size'     => filesize($tmps[$i])
-                    ]);
+                        $url = $this->uploadImage([
+                            'tmp_name' => $fileData['tmp_name'],
+                            'name'     => $fileData['name'],
+                            'type'     => mime_content_type($fileData['tmp_name']),
+                            'size'     => filesize($fileData['tmp_name'])
+                        ]);
 
-                    if (!$url) {
-                        $this->pdo->rollBack();
-                        $this->response->error("Erreur upload image : $key", 422);
-                        return;
+                        if (!$url) {
+                            $this->pdo->rollBack();
+                            $this->response->error("Erreur upload image : $fileKey", 422);
+                            return;
+                        }
+                        $this->menu->ajouterImage($id, $url, $ordre);
+                        break;
                     }
-                    $this->menu->ajouterImage($id, $url, $ordre);
                 }
             }
 
             $this->pdo->commit();
 
-            // ── Suppression fichiers physiques APRÈS commit
-            foreach ($urlsASupprimer as $url) {
-                $chemin = __DIR__ . '/../../' . ltrim($url, '/');
-                if (file_exists($chemin)) unlink($chemin);
+            // suppression physique
+            foreach ($urlsASupprimer as $oldUrl) {
+                $filePath = __DIR__ . '/../public' . $oldUrl;
+                error_log("Suppression tentée : $filePath | exists: " . (file_exists($filePath) ? 'OUI' : 'NON'));
+                if (file_exists($filePath)) {
+                    $result = unlink($filePath);
+                    error_log("unlink result: " . ($result ? 'OK' : 'ECHEC'));
+                }
             }
+
 
             $this->response->success(['message' => 'Menu mis à jour avec succès.', 'id' => $id]);
 

@@ -167,7 +167,7 @@ class Menu
 
     public function getTous(): array
     {
-        return $this->pdo->query("SELECT * FROM vue_menus_complets ORDER BY id DESC")
+        return $this->pdo->query("SELECT * FROM vue_menus_complets WHERE is_active=1 ORDER BY id DESC")
             ->fetchAll(PDO::FETCH_ASSOC);
     }
 

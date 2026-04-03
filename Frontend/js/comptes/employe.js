@@ -4,6 +4,10 @@ import { getStorage } from "../script.js";
 let orders = [];
 let modificationOrderId = null;
 let modificationMenuId = null;
+let allEmployeeMenus = [];
+let filteredEmployeeMenus = [];
+let empMenusCurrentPage = 1;
+const EMP_MENUS_PER_PAGE = 9;
 
 // ===================== INIT =====================
 export async function init() {
@@ -13,6 +17,12 @@ export async function init() {
     updateDasboardHeader();
     loadAdminDashboard();
 
+}
+
+// ===== INITIALISATION =====
+async function initEmployeeMenus() {
+    await loadAllEmployeeMenus();
+    applyFilters();
 }
 
 // ===================== EVENT LISTENERS =====================
@@ -701,4 +711,288 @@ function contactClient(orderId) {
     showToast(`Contact : ${order.email_client} / ${order.gsm_client || 'Pas de téléphone'}`, 'info');
 }
 
+// ========== GESTION MENUS EMPLOYÉ ==========
 
+// ===== CHARGEMENT =====
+async function loadAllEmployeeMenus() {
+    const container = document.getElementById("employeeMenusGrid");
+    container.innerHTML = `
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Chargement...</p>
+        </div>
+    `;
+
+    try {
+        const response = await fetch('http://localhost/api/menu/list');
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        const data = await response.json();
+        allEmployeeMenus = data.menus || [];
+    } catch (error) {
+        console.error('Erreur:', error);
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Erreur de chargement.
+                    <button class="btn btn-sm btn-outline-danger ms-3" onclick="initEmployeeMenus()">Réessayer</button>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// ===== FILTRAGE =====
+function applyFilters() {
+    const titre = document.getElementById('filterTitre')?.value.trim().toLowerCase() || '';
+    const theme = document.getElementById('filterTheme')?.value || '';
+    const regime = document.getElementById('filterRegime')?.value || '';
+    const prixMax = parseFloat(document.getElementById('filterPrixMax')?.value);
+    const personnes = parseInt(document.getElementById('filterPersonnes')?.value);
+    const stock = document.getElementById('filterStock')?.value || '';
+    const sort = document.getElementById('filterSort')?.value || 'id-desc';
+
+    filteredEmployeeMenus = allEmployeeMenus.filter(menu => {
+        if (titre && !menu.titre.toLowerCase().includes(titre)) return false;
+        if (theme && menu.themes?.toLowerCase() !== theme.toLowerCase()) return false;
+        if (regime && (!menu.regimes || !menu.regimes.toLowerCase().includes(regime.toLowerCase()))) return false;
+        if (!isNaN(prixMax) && menu.prix_base > prixMax) return false;
+        if (!isNaN(personnes) && menu.nb_personnes_min < personnes) return false;
+        if (stock === '0' && menu.stock !== 0) return false;
+        if (stock === 'low' && (menu.stock === 0 || menu.stock >= 10)) return false;
+        if (stock === 'ok' && menu.stock < 10) return false;
+        return true;
+    });
+
+    if (sort) {
+        const [field, order] = sort.split('-');
+        filteredEmployeeMenus.sort((a, b) => {
+            let valA, valB;
+            switch (field) {
+                case 'prix': valA = a.prix_base; valB = b.prix_base; break;
+                case 'titre': valA = a.titre.toLowerCase(); valB = b.titre.toLowerCase(); break;
+                case 'stock': valA = a.stock; valB = b.stock; break;
+                default: valA = a.id; valB = b.id; break;
+            }
+            if (valA < valB) return order === 'asc' ? -1 : 1;
+            if (valA > valB) return order === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+
+    empMenusCurrentPage = 1;
+    renderCurrentPage();
+}
+
+// ===== PAGINATION + RENDU =====
+function renderCurrentPage() {
+    const totalPages = Math.ceil(filteredEmployeeMenus.length / EMP_MENUS_PER_PAGE) || 1;
+    const start = (empMenusCurrentPage - 1) * EMP_MENUS_PER_PAGE;
+    const pageMenus = filteredEmployeeMenus.slice(start, start + EMP_MENUS_PER_PAGE);
+
+    displayEmployeeMenus(pageMenus);
+    updateEmployeeMenusCount(totalPages);
+    renderEmployeeMenusPagination(totalPages);
+}
+
+// ===== AFFICHAGE CARTES =====
+function displayEmployeeMenus(menus) {
+    const container = document.getElementById("employeeMenusGrid");
+    container.innerHTML = '';
+
+    if (menus.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                <h5 class="mt-3 text-muted">Aucun menu trouvé</h5>
+                <p class="text-muted">Modifiez vos filtres ou créez un nouveau menu</p>
+            </div>
+        `;
+        return;
+    }
+
+    menus.forEach(menu => {
+        const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
+        const imagePrincipale = images.length > 0
+            ? `http://localhost${images[0]}`
+            : 'https://via.placeholder.com/400x200/6c757d/ffffff?text=Pas+d%27image';
+
+        let stockBadge;
+        if (menu.stock === 0) {
+            stockBadge = '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Rupture</span>';
+        } else if (menu.stock < 10) {
+            stockBadge = `<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> Stock: ${menu.stock}</span>`;
+        } else {
+            stockBadge = `<span class="badge bg-success"><i class="bi bi-check"></i> En stock: ${menu.stock}</span>`;
+        }
+
+        const themeBadge = menu.themes
+            ? `<span class="badge ${getThemeBadgeColor(menu.themes)} me-1">${capitalize(menu.themes)}</span>`
+            : '';
+
+        const regimesBadges = menu.regimes
+            ? menu.regimes.split(',').map(r =>
+                `<span class="badge bg-secondary mb-1 me-1">${r.trim()}</span>`
+            ).join('')
+            : '';
+
+        container.innerHTML += `
+            <div class="col-md-6 col-lg-4 mb-4" id="menu-card-${menu.id}">
+                <div class="menu-card h-100">
+                    <img src="${imagePrincipale}" alt="${menu.titre}" class="menu-image"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%3C%2Ftext%3E%3C%2Fsvg%3E'">
+                    <div class="menu-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="menu-title mb-1">${menu.titre}</h5>
+                                <div class="mb-2">${themeBadge}${regimesBadges}</div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item btn-edit-menu" href="#" data-id="${menu.id}">
+                                        <i class="bi bi-pencil"></i> Modifier</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger btn-toggle-menu" href="#" data-id="${menu.id}">
+                                        <i class="bi bi-trash"></i> Désactiver</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-people"></i> Min. ${menu.nb_personnes_min} pers.
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="menu-price mb-0">${parseFloat(menu.prix_base).toFixed(2)} € / pers.</div>
+                            ${stockBadge}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ===== PAGINATION =====
+function renderEmployeeMenusPagination(totalPages) {
+    const container = document.getElementById("employeeMenusPagination");
+    container.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    let html = '<nav><ul class="pagination pagination-sm">';
+
+    html += `<li class="page-item ${empMenusCurrentPage === 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${empMenusCurrentPage - 1}"><i class="bi bi-chevron-left"></i></a>
+    </li>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<li class="page-item ${i === empMenusCurrentPage ? 'active' : ''}">
+            <a class="page-link" href="#" data-page="${i}">${i}</a>
+        </li>`;
+    }
+
+    html += `<li class="page-item ${empMenusCurrentPage === totalPages ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${empMenusCurrentPage + 1}"><i class="bi bi-chevron-right"></i></a>
+    </li>`;
+
+    html += '</ul></nav>';
+    container.innerHTML = html;
+
+    container.querySelectorAll('.page-link[data-page]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = parseInt(link.dataset.page);
+            if (page >= 1 && page <= totalPages && page !== empMenusCurrentPage) {
+                empMenusCurrentPage = page;
+                renderCurrentPage();
+                document.getElementById('employeeMenusGrid').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// ===== COMPTEUR =====
+function updateEmployeeMenusCount(totalPages) {
+    document.getElementById("employeeMenusCount").innerHTML =
+        `<i class="bi bi-card-text"></i> ${filteredEmployeeMenus.length} menu(s)`;
+
+    document.getElementById("employeeMenusPageInfo").textContent =
+        totalPages > 1 ? `Page ${empMenusCurrentPage} sur ${totalPages}` : '';
+}
+
+// ===== SUPPRESSION =====
+async function toggleMenu(id) {
+    if (!confirm('Désactiver ce menu ?')) return;
+    try {
+        const response = await fetch(`http://localhost/api/menu/toggle?id=${id}`, { method: 'PATCH' });
+        const data = await response.json();
+        if (data.success) {
+            allEmployeeMenus = allEmployeeMenus.filter(m => m.id != id);
+            applyFilters();
+            showToast('Menu désactivé !', 'success');
+        } else {
+            showToast(data.message || 'Erreur', 'danger');
+        }
+    } catch (error) {
+        showToast('Erreur réseau', 'danger');
+    }
+}
+
+// ===== UTILITAIRES =====
+function capitalize(str) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+
+function getThemeBadgeColor(theme) {
+    const colors = {
+        'noel': 'bg-danger',
+        'paques': 'bg-warning text-dark',
+        'classique': 'bg-secondary',
+        'evenement': 'bg-primary'
+    };
+    return colors[theme?.toLowerCase()] || 'bg-secondary';
+}
+
+// ===== DÉLÉGATION D'ÉVÉNEMENTS =====
+document.addEventListener('click', function (e) {
+    const editBtn = e.target.closest('.btn-edit-menu');
+    if (editBtn) {
+        e.preventDefault();
+        window.location.href = `/edit-menu?id=${editBtn.dataset.id}`;
+    }
+
+    const toggleBtn = e.target.closest('.btn-toggle-menu');
+    if (toggleBtn) {
+        e.preventDefault();
+        toggleMenu(toggleBtn.dataset.id);
+    }
+});
+
+// ===== EVENT LISTENERS FILTRES =====
+document.getElementById('btnResetFilters')?.addEventListener('click', () => {
+    document.getElementById('filterTitre').value = '';
+    document.getElementById('filterTheme').value = '';
+    document.getElementById('filterRegime').value = '';
+    document.getElementById('filterPrixMax').value = '';
+    document.getElementById('filterPersonnes').value = '';
+    document.getElementById('filterStock').value = '';
+    document.getElementById('filterSort').value = 'id-desc';
+    applyFilters();
+});
+
+let searchTimeout;
+document.getElementById('filterTitre')?.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(applyFilters, 300);
+});
+
+['filterTheme', 'filterRegime', 'filterPrixMax', 'filterPersonnes', 'filterStock', 'filterSort'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', applyFilters);
+});
+
+document.getElementById('menus')?.addEventListener('click', initEmployeeMenus);
+
+document.getElementById('btnCreerMenu')?.addEventListener('click', () => {
+    window.location.href = '/edit-menu';
+});
