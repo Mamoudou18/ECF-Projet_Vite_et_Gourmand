@@ -529,6 +529,55 @@ class ValidationService
         return $errors;
     }
 
+    /**
+    * Valider les données de création d'un avis
+    */
+    public function validateAvis(?array $data): array
+    {
+        $errors = [];
+
+        if (empty($data)) {
+            return ['Données JSON invalides ou manquantes'];
+        }
+
+        if (empty($data['user_id'])) {
+            $errors[] = 'user_id est requis';
+        }
+
+        if (empty($data['id_commande'])) {
+            $errors[] = 'id_commande est requis';
+        }
+
+        if (!isset($data['note'])) {
+            $errors[] = 'note est requise';
+        } elseif ((float) $data['note'] < 1 || (float) $data['note'] > 5) {
+            $errors[] = 'La note doit être entre 1 et 5';
+        }
+
+        if (empty($data['commentaire'])) {
+            $errors[] = 'commentaire est requis';
+        }
+
+        return $errors;
+    }
+
+
+    /**
+     * Valider la modération d'un avis
+     */
+    public function validateModerationAvis(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data['statut'])) {
+            $errors['statut'] = 'Le statut est requis.';
+        } elseif (!in_array($data['statut'], ['approuve', 'refuse'])) {
+            $errors['statut'] = 'Le statut doit être "approuve" ou "refuse".';
+        }
+
+        return $errors;
+    }
+
 
 
 }

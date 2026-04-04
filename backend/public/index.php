@@ -65,8 +65,11 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'DELETE /api/commande/delete-commande?id={id}'      => 'Supprimer une commande',
             'PUT /api/commande/annule-commande?id={id}'         => 'Annuler une commande',
             'GET /api/commande/historique?id={id}'              => 'Historique statuts commande',
-
-
+            'POST /api/avis/create'                             => 'Créer un avis',
+            'GET /api/avis/user?id_user={id}'                   => 'Avis d\'un utilisateur',
+            'GET /api/avis/approuves'                           => 'Avis approuvés (public)',
+            'GET /api/avis/list'                                => 'Tous les avis (admin)',
+            'PUT /api/avis/moderer?id={id}'                     => 'Modérer un avis (admin)',
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -607,12 +610,154 @@ switch ($ressource) {
         }
         break;
 
+    case 'avis':
+        $controllerPath = __DIR__ . '/../controllers/AvisController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'AvisController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new AvisController();
+
+        switch ($action) {
+
+            case 'create':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'creerAvis')) {
+                        $controller->creerAvis();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode creerAvis() n\'existe pas dans AvisController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/avis/create',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'user':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getAvisByUser')) {
+                        $controller->getAvisByUser();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getAvisByUser() n\'existe pas dans AvisController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/avis/user?id_user={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'approuves':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getAvisApprouves')) {
+                        $controller->getAvisApprouves();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getAvisApprouves() n\'existe pas dans AvisController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/avis/approuves',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'list':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getAllAvis')) {
+                        $controller->getAllAvis();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getAllAvis() n\'existe pas dans AvisController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/avis/list',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'moderer':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'modererAvis')) {
+                        $id = $_GET['id'] ?? null;
+                        if ($id) {
+                            $controller->modererAvis($id);
+                        } else {
+                            http_response_code(400);
+                            echo json_encode([
+                                'error'   => 'Paramètre manquant',
+                                'details' => 'id requis dans l\'URL : /api/avis/moderer?id={id}'
+                            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                        }
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode modererAvis() n\'existe pas dans AvisController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez PUT pour /api/avis/moderer?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour avis",
+                    'actions_disponibles' => ['create', 'user', 'approuves', 'list', 'moderer']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
+
     default:
         http_response_code(404);
         echo json_encode([
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

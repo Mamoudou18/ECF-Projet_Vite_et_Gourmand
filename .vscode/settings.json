@@ -4,5 +4,6 @@
   "phpserver.port": 3000,
   "phpserver.browser": "chrome",
   "phpserver.autoOpenOnReload": true,
-  "phpserver.router": "./frontend/router.php"
+  "phpserver.router": "./frontend/router.php",
+  "intelephense.diagnostics.undefinedTypes": false
 }
