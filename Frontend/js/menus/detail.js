@@ -3,7 +3,7 @@
 // ============================================
 
 import { getStorage } from "../script.js";
-import {showToast } from "../utils/util.js";
+import { showToast } from "../utils/util.js";
 
 let currentMenu = null;
 let commanderHandler = null;
@@ -377,7 +377,7 @@ function attachCommanderListener(menu) {
         const currentUser = getStorage();
 
         if (!currentUser) {
-            showToast('Vous devez être connecté pour commander ce menu', 'warning');
+            showToast('Vous devez être connecté pour commander ce menu', 'danger');
             setTimeout(() =>{
                 window.location.href = `/signin?redirect=/commande?menu=${menu.id}`;
             }, 2000);

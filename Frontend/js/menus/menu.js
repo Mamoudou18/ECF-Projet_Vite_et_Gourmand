@@ -1,4 +1,3 @@
-import { showError } from "../utils/util.js";
 
     // ========== VARIABLES GLOBALES ==========
     let menus = []
