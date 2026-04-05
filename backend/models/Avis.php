@@ -25,7 +25,7 @@ class Avis
             'commentaire'      => trim($data['commentaire']),
             'statut'           => 'en_attente', // modération obligatoire
             'created_at'       => new MongoDB\BSON\UTCDateTime(),
-            'updated_at'       => new null
+            'updated_at'       => null
         ];
 
         $result = $this->collection->insertOne($avis);
@@ -95,8 +95,9 @@ class Avis
             'note'             => $doc['note'],
             'commentaire'      => $doc['commentaire'],
             'statut'           => $doc['statut'],
-            'created_at'       => $doc['created_at']->toDateTime()->setTimezone($parisTimezone)->format('Y-m-d H:i:s'),
-            'updated_at'       => $doc['updated_at']->toDateTime()->setTimezone($parisTimezone)->format('Y-m-d H:i:s')
+            'created_at'       => isset($doc['created_at']) ? $doc['created_at']->toDateTime()->setTimezone($parisTimezone)->format('Y-m-d H:i:s') : null,
+            'updated_at'       => isset($doc['updated_at']) ? $doc['updated_at']->toDateTime()->setTimezone($parisTimezone)->format('Y-m-d H:i:s') : null,
+
         ];
     }
 }

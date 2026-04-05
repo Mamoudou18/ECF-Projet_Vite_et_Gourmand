@@ -8,6 +8,24 @@ import {
     showConfirm 
 } from "../utils/util.js";
 
+//Constante API
+const API_BASE = 'http://localhost/api';
+
+let cachedCommandes = null;
+
+async function getCommandes(userId) {
+    if (cachedCommandes) return cachedCommandes;
+    const response = await fetch(`${API_BASE}/commande/user-commande?id=${userId}`);
+    if (!response.ok) return [];
+    const data = await response.json();
+    cachedCommandes = Array.isArray(data.commandes) ? data.commandes : [];
+    return cachedCommandes;
+}
+
+function invalidateCommandesCache() {
+    cachedCommandes = null;
+}
+
 // Initialisation 
 export async function init() {
     console.log('Initialisation page mon compte');
@@ -268,7 +286,7 @@ function formModifyProfilUser(e){
         body: raw,
     };
 
-    fetch(`http://localhost/api/auth/user?id=${user.id}`, requestOptions)
+    fetch(`${API_BASE}/auth/user?id=${user.id}`, requestOptions)
         .then((response) => {
             if(response.ok){
                return response.json()
@@ -342,7 +360,7 @@ async function handleInitPassword(event) {
     initPasswordBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Réinitialisation...';
 
     try {
-        const response = await fetch(`http://localhost/api/auth/password?id=${user.id}`, {
+        const response = await fetch(`${API_BASE}/auth/password?id=${user.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ old_password, new_password, confirm_password })
@@ -360,7 +378,7 @@ async function handleInitPassword(event) {
             initPasswordBtn.disabled = false;
             initPasswordBtn.innerHTML = 'Réinitialiser';
         } else {
-                console.log(error);
+                console.log('Échec:', data.message);
                 showError(data.message || 'Une erreur est survenue.');
                 initPasswordBtn.disabled = false;
                 initPasswordBtn.innerHTML = 'Réinitialiser';
@@ -401,13 +419,8 @@ async function loadDashboard() {
     if (!user) return;
 
     try {
-        const response = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
+        const liste = await getCommandes(user.id);
 
-        const data = await response.json();
-        const allCommandes = data.commandes;
-        const liste = Array.isArray(allCommandes) ? allCommandes : [];
-
-        // Stats
         const total = liste.length;
         const enCours = liste.filter(c => ['en_attente', 'accepte', 'en_preparation', 'en_cours_livraison', 'livre', 'attente_retour_materiel'].includes(c.statut)).length;
         const terminees = liste.filter(c => c.statut === 'terminee').length;
@@ -416,7 +429,6 @@ async function loadDashboard() {
         const statsGrid = document.querySelector('.stats-grid');
         if (statsGrid) {
             statsGrid.innerHTML = `
-
                 <div class="stat-card">
                     <i class="bi bi-cart-check-fill"></i>
                     <h3>${total}</h3>
@@ -434,13 +446,12 @@ async function loadDashboard() {
                 </div>
                 <div class="stat-card">
                     <i class="bi bi-x-circle"></i>
-                        <h3>${annulees}</h3>
-                        <p>Annulées</p>
+                    <h3>${annulees}</h3>
+                    <p>Annulées</p>
                 </div>
             `;
         }
 
-        // Commandes récentes (3 dernières)
         const recentList = document.getElementById('recentOrdersList');
         if (recentList) {
             const recentes = liste.slice(0, 3);
@@ -456,18 +467,14 @@ async function loadDashboard() {
     }
 }
 
-// ==================== MES COMMANDES ====================
 
+// ==================== MES COMMANDES ====================
 async function loadCommandes() {
     const user = getStorage();
     if (!user) return;
 
     try {
-        const response = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
-
-        const data = await response.json();
-        const allCommandes = data.commandes;
-        const liste = Array.isArray(allCommandes) ? allCommandes : [];
+        const liste = await getCommandes(user.id);
 
         const container = document.getElementById('ordersList');
         const noOrders = document.getElementById('noOrdersFound');
@@ -523,9 +530,6 @@ function renderOrderCard(commande) {
     }
 
     if (commande.statut === 'terminee') {
-        actions += `<button class="btn btn-sm btn-outline-warning" onclick="laisserAvis(${commande.id})">
-            <i class="bi bi-star"></i> Laisser un avis
-        </button>`;
         actions += `<button class="btn btn-sm btn-outline-success" onclick="recommander(${commande.id})">
             <i class="bi bi-arrow-repeat"></i> Recommander
         </button>`;
@@ -577,9 +581,7 @@ function renderOrderCard(commande) {
     `;
 }
 
-
 // Actions commandes (globales pour onclick)
-
 window.annulerCommande = async function(id) {
     const confirmed = await showConfirm({
         title: 'Annuler la commande ?',
@@ -594,7 +596,7 @@ window.annulerCommande = async function(id) {
     const user = getStorage();
 
     try {
-        const response = await fetch(`http://localhost/api/commande/annule-commande?id=${id}`, {
+        const response = await fetch(`${API_BASE}/commande/annule-commande?id=${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -605,6 +607,7 @@ window.annulerCommande = async function(id) {
         });
 
         if (response.ok) {
+            invalidateCommandesCache();
             showSuccess('Commande annulée avec succès.');
             loadDashboard();
             loadCommandes();
@@ -617,10 +620,10 @@ window.annulerCommande = async function(id) {
     }
 };
 
-
 window.modifierCommande = async function(id) {
     try {
-        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
+
         const data = await response.json();
 
         if (data.success && data.commande) {
@@ -648,7 +651,7 @@ window.suivreCommande = function(id) {
 
 window.voirDetail = async function(id) {
     try {
-        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
         const data = await response.json();
 
         if (data.success) {
@@ -663,25 +666,12 @@ window.voirDetail = async function(id) {
     }
 };
 
-window.laisserAvis = function(commandeId) {
-    const avisLink = document.querySelector('.sidebar-menu a[data-section="avis-section"]');
-    showSection("avis-section", avisLink);
-    // Pré-sélectionner la commande dans le formulaire d'avis
-    const selectCommande = document.getElementById('avis-commande-select');
-    if (selectCommande) {
-        selectCommande.value = commandeId;
-        selectCommande.dispatchEvent(new Event('change'));
-    }
-};
-
 window.recommander = async function(id) {
 
-    //Définir un nouveau numéro de commande > année + mois + jour + heure + minute + seconde: CMD-250419183020
     const now = new Date();
     const pad = (n) => String(n).padStart(2, '0');
     const timestamp = String(now.getFullYear()).slice(2) + pad(now.getMonth()+1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
     const newNumCommande = 'CMD-' + timestamp;
-
 
     const confirmed = await showConfirm({
         title: 'Recommander ?',
@@ -694,8 +684,7 @@ window.recommander = async function(id) {
     if (!confirmed) return;
 
     try {
-        // 1. Récupérer l'ancienne commande
-        const detailRes = await fetch(`http://localhost/api/commande/detail-commande?id=${id}`);
+        const detailRes = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
         const detailData = await detailRes.json();
 
         if (!detailData.success) {
@@ -726,8 +715,7 @@ window.recommander = async function(id) {
             commentaire: old.commentaire
         };
 
-        // 2. Créer une nouvelle commande avec les mêmes données
-        const createRes = await fetch(`http://localhost/api/commande/create-commande`, {
+        const createRes = await fetch(`${API_BASE}/commande/create-commande`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(lisOld)
@@ -736,6 +724,7 @@ window.recommander = async function(id) {
         const createData = await createRes.json();
 
         if (createData.success) {
+            invalidateCommandesCache();
             showSuccess('Nouvelle commande créée avec succès !');
             loadDashboard();
             loadCommandes();
@@ -748,11 +737,10 @@ window.recommander = async function(id) {
     }
 };
 
-
 // Charger le suivi d'une commande
 async function loadSuiviCommande(id) {
     try {
-        const response = await fetch(`http://localhost/api/commande/historique?id=${id}`);
+        const response = await fetch(`${API_BASE}/commande/historique?id=${id}`);
         const data = await response.json();
 
         if (data.success) {
@@ -928,55 +916,26 @@ function afficherSuiviCommande(historique) {
 }
 
 // ==================== MES AVIS ====================
-
 async function loadAvis() {
     const user = getStorage();
     if (!user) return;
 
     try {
-        // Charger les avis de l'utilisateur
-        const responseAvis = await fetch(`http://localhost/api/avis?id_user=${user.id}`);
+        const responseAvis = await fetch(`${API_BASE}/avis/user?user_id=${user.id}`);
+        if (!responseAvis.ok) return;
         const avis = await responseAvis.json();
-        const listeAvis = Array.isArray(avis) ? avis : [];
+        const listeAvis = Array.isArray(avis.avis) ? avis.avis : [];
 
-        // Charger les commandes terminées (pour proposer de laisser un avis)
-        const responseCmd = await fetch(`http://localhost/api/commande/user-commande?id=${user.id}`);
-        const commandes = await responseCmd.json();
-        const listeCmd = Array.isArray(commandes) ? commandes : [];
+        const listeCmd = await getCommandes(user.id);
 
-        // Commandes terminées sans avis
         const commandesTerminees = listeCmd.filter(c => c.statut === 'terminee');
         const commandesAvecAvis = listeAvis.map(a => a.id_commande);
         const commandesSansAvis = commandesTerminees.filter(c => !commandesAvecAvis.includes(c.id));
 
-        // Avis publiés
-        const avisPublies = listeAvis.filter(a => a.statut === 'publie' || a.statut === 'approuve');
+        const avisPublies = listeAvis.filter(a => a.statut === 'approuve');
         const avisEnAttente = listeAvis.filter(a => a.statut === 'en_attente');
 
-        // Remplir la section "À évaluer"
-        const pendingContainer = document.getElementById('pendingReviewsList');
-        if (pendingContainer) {
-            if (commandesSansAvis.length === 0) {
-                pendingContainer.innerHTML = '<p class="text-muted">Aucune commande à évaluer pour le moment.</p>';
-            } else {
-                pendingContainer.innerHTML = commandesSansAvis.map(c => `
-                    <div class="review-card mb-3 p-3 border rounded">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Commande #${c.id}</strong>
-                                <span class="text-muted ms-2">${new Date(c.date_commande).toLocaleDateString('fr-FR')}</span>
-                            </div>
-                            <button class="btn btn-sm btn-warning" onclick="laisserAvis(${c.id})">
-                                <i class="bi bi-star"></i> Évaluer
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Remplir les avis publiés
-        const publishedContainer = document.getElementById('publishedReviewsList');
+        const publishedContainer = document.getElementById('avisPubliesList');
         if (publishedContainer) {
             if (avisPublies.length === 0) {
                 publishedContainer.innerHTML = '<p class="text-muted">Aucun avis publié.</p>';
@@ -985,8 +944,7 @@ async function loadAvis() {
             }
         }
 
-        // Remplir les avis en attente
-        const awaitingContainer = document.getElementById('awaitingReviewsList');
+        const awaitingContainer = document.getElementById('avisEnAttenteList');
         if (awaitingContainer) {
             if (avisEnAttente.length === 0) {
                 awaitingContainer.innerHTML = '<p class="text-muted">Aucun avis en attente de modération.</p>';
@@ -995,22 +953,55 @@ async function loadAvis() {
             }
         }
 
+        const evalContainer = document.getElementById('commandesAEvaluerList');
+        const evalAlert = document.getElementById('commandesAEvaluerAlert');
+        if (evalContainer) {
+            if (commandesSansAvis.length === 0) {
+                evalContainer.innerHTML = '<p class="text-muted">Aucune commande à évaluer pour le moment.</p>';
+                if (evalAlert) evalAlert.innerHTML = '';
+            } else {
+                if (evalAlert) {
+                    evalAlert.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> 
+                            Vous avez ${commandesSansAvis.length} commande(s) à évaluer.
+                        </div>
+                    `;
+                }
+                evalContainer.innerHTML = commandesSansAvis.map(c => `
+                    <div class="review-card mb-3 p-3 border rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Commande #${c.numero_commande}</strong>
+                                <span class="text-muted ms-2">${new Date(c.created_at).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <button class="btn btn-sm btn-warning" onclick="ouvrirFormulaireAvis(${c.id})">
+                                <i class="bi bi-star"></i> Évaluer
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
     } catch (error) {
         console.error('Erreur chargement avis:', error);
     }
 }
 
+
 function renderAvisCard(avis, statusClass) {
     const date = new Date(avis.date_avis || avis.created_at).toLocaleDateString('fr-FR');
     const statusLabel = statusClass === 'published' ? 'Publié' : 'En attente';
+    const badgeClass = statusClass === 'published' ? 'bg-success' : 'bg-warning text-dark';
 
     return `
         <div class="review-card mb-3 p-3 border rounded">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Commande #${avis.id_commande}</strong>
-                <span class="review-status ${statusClass}">${statusLabel}</span>
+                <strong>Commande #${avis.numero_commande}</strong>
+                <span class="badge ${badgeClass}">${statusLabel}</span>
             </div>
-            <div class="stars mb-2">${renderStars(avis.note)}</div>
+            <div class="mb-2">${renderStars(avis.note)}</div>
             <p class="mb-1">${avis.commentaire || ''}</p>
             <small class="text-muted">${date}</small>
         </div>
@@ -1020,7 +1011,141 @@ function renderAvisCard(avis, statusClass) {
 function renderStars(note) {
     let stars = '';
     for (let i = 1; i <= 5; i++) {
-        stars += `<i class="bi ${i <= note ? 'bi-star-fill text-warning' : 'bi-star text-muted'}"></i>`;
+        if (i <= note) {
+            stars += '<i class="bi bi-star-fill text-warning"></i>';
+        } else if (i - 0.5 <= note) {
+            stars += '<i class="bi bi-star-half text-warning"></i>';
+        } else {
+            stars += '<i class="bi bi-star text-muted"></i>';
+        }
     }
     return stars;
 }
+
+
+// ===== Formulaire d'avis (modale) =====
+window.ouvrirFormulaireAvis = function(commandeId) {
+    // Vérifier si la modale existe déjà
+    let modal = document.getElementById('modalAvis');
+    if (!modal) {
+        document.body.insertAdjacentHTML('beforeend', `
+            <div class="modal fade" id="modalAvis" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Laisser un avis</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="avisCommandeId">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Note</label>
+                                <div id="avisStarsInput" class="fs-3">
+                                    <div id="avisStarsInput" class="fs-3 d-flex gap-1">
+                                        ${[1,2,3,4,5].map(i => `<i class="bi bi-star text-muted" data-note="${i}" style="cursor:pointer"></i>`).join('')}
+                                    </div>
+                                    <small class="text-muted">Clic = note entière, double-clic = demi-étoile</small>
+                                    <input type="hidden" id="avisNoteValue" value="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="avisCommentaire" class="form-label fw-bold">Commentaire</label>
+                                <textarea id="avisCommentaire" class="form-control" rows="4" placeholder="Partagez votre expérience..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-warning" onclick="envoyerAvis()">
+                                <i class="bi bi-send"></i> Envoyer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        modal = document.getElementById('modalAvis');
+
+        // Gestion des étoiles cliquables
+        let currentNote = 0;
+        document.querySelectorAll('#avisStarsInput i').forEach(star => {
+            // Simple clic = note entière
+            star.addEventListener('click', function() {
+                const note = parseInt(this.dataset.note);
+                // Si on clique sur la même étoile entière, passer en demi
+                if (currentNote === note) {
+                    currentNote = note - 0.5;
+                } else {
+                    currentNote = note;
+                }
+                document.getElementById('avisNoteValue').value = currentNote;
+                updateStarsDisplay(currentNote);
+            });
+        });
+
+        function updateStarsDisplay(note) {
+            document.querySelectorAll('#avisStarsInput i').forEach((s, idx) => {
+                const starNum = idx + 1;
+                if (starNum <= Math.floor(note)) {
+                    s.className = 'bi bi-star-fill text-warning fs-3';
+                } else if (starNum === Math.ceil(note) && note % 1 !== 0) {
+                    s.className = 'bi bi-star-half text-warning fs-3';
+                } else {
+                    s.className = 'bi bi-star text-muted fs-3';
+                }
+            });
+        }
+    }
+
+    // Reset
+    document.getElementById('avisCommandeId').value = commandeId;
+    document.getElementById('avisNoteValue').value = 0;
+    document.getElementById('avisCommentaire').value = '';
+    document.querySelectorAll('#avisStarsInput i').forEach(s => s.className = 'bi bi-star text-muted');
+    document.querySelector('#modalAvis .modal-title').textContent = `Avis — Commande #${commandeId}`;
+
+    new bootstrap.Modal(modal).show();
+}
+
+window.envoyerAvis = async function() {
+    const user = getStorage();
+    if (!user) return;
+
+    const id_commande = document.getElementById('avisCommandeId').value;
+    const note = parseFloat(document.getElementById('avisNoteValue').value);
+    const commentaire = document.getElementById('avisCommentaire').value.trim();
+
+    if (!note || note < 1 || note > 5) {
+        alert('Veuillez sélectionner une note entre 1 et 5.');
+        return;
+    }
+    if (!commentaire) {
+        alert('Veuillez écrire un commentaire.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/avis/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: user.id,
+                id_commande: parseInt(id_commande),
+                note,
+                commentaire
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            bootstrap.Modal.getInstance(document.getElementById('modalAvis')).hide();
+            alert('Merci pour votre avis ! Il sera visible après modération.');
+            loadAvis();
+        } else {
+            alert(result.message || 'Erreur lors de l\'envoi de l\'avis.');
+        }
+    } catch (error) {
+        console.error('Erreur envoi avis:', error);
+        alert('Erreur de connexion.');
+    }
+}
+
