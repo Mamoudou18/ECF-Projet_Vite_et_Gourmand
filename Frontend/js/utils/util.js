@@ -89,35 +89,6 @@ export function checkPasswordMatch(inputPassword, inputPasswordConfirm) {
     return false;
 }
 
-
-// Afficher erreur
-export function showError(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const errorText = document.getElementById('errorText');
-    const successMessage = document.getElementById('successMessage');
-
-    successMessage.style.display = 'none';
-    errorText.textContent = message;
-    errorMessage.style.display = 'block';
-
-    setTimeout(() => {
-        errorMessage.style.display = 'none';
-    }, 5000);
-}
-
-// Afficher succès
-export function showSuccess(message) {
-    const errorMessage = document.getElementById('errorMessage');
-    const successMessage = document.getElementById('successMessage');
-    const successText = document.getElementById('successText');
-
-    errorMessage.style.display = 'none';
-    successText.textContent = message;
-    successMessage.style.display = 'block';
-}
-
-
-
 // Modal de confirmation
 let modalInstance = null;
 export function showConfirm({ title, message, icon, iconColor, btnText, btnClass }) {
