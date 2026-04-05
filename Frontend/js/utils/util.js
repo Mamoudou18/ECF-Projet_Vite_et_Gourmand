@@ -167,6 +167,13 @@ export function showConfirm({ title, message, icon, iconColor, btnText, btnClass
 }
 
 export function showToast(message, type = 'success') {
+
+    // Si c'est un tableau d'erreurs de validation
+    if (type === 'validation' && Array.isArray(message)) {
+        alert('Erreurs de validation :\n\n' + message.join('\n'));
+        return;
+    }
+
     const container = document.querySelector('.toast-container') || createToastContainer();
     const toast = document.createElement('div');
     toast.className = `toast align-items-center text-bg-${type} border-0`;
@@ -178,6 +185,31 @@ export function showToast(message, type = 'success') {
         </div>
     `;
     container.appendChild(toast);
-    new bootstrap.Toast(toast, { delay: 4000 }).show();
+    new bootstrap.Toast(toast, { delay: 5000 }).show();
     toast.addEventListener('hidden.bs.toast', () => toast.remove());
 }
+
+export function formatDate(dateStr, style = 'short') {
+    if (!dateStr) return 'N/A';
+    const options = style === 'long'
+        ? { day: 'numeric', month: 'long', year: 'numeric' }
+        : { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(dateStr).toLocaleDateString('fr-FR', options);
+}
+
+
+// Générer des étoiles
+export function renderStars(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(rating)) {
+            stars += '<i class="bi bi-star-fill text-warning"></i>';
+        } else if (i - 0.5 <= rating) {
+            stars += '<i class="bi bi-star-half text-warning"></i>';
+        } else {
+            stars += '<i class="bi bi-star text-warning"></i>';
+        }
+    }
+    return stars;
+}
+

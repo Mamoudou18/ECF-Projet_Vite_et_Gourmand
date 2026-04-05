@@ -1,5 +1,5 @@
 import { getStorage, setStorage} from "../script.js";
-import { showError, showSuccess } from "../utils/util.js";
+import { showToast } from "../utils/util.js";
 
 // ============================================
 // INITIALISATION
@@ -17,9 +17,6 @@ export async function init() {
     
     // Initialiser les éléments
     initElements();
-    
-    // Vérifier paramètre redirect
-    checkRedirectParam();
 }
 
 export function cleanup() {
@@ -62,7 +59,7 @@ async function handleLogin(event) {
 
     // Validation
     if (!email || !password) {
-        showError('Veuillez remplir tous les champs');
+        showToast('Veuillez remplir tous les champs', 'danger');
         return;
     }
 
@@ -91,7 +88,7 @@ async function handleLogin(event) {
             return response.json()
         }else{
             console.error('Erreur de connexion :', error);
-            showError('Erreur lors de la connexion. Veuillez réessayer.');
+            showToast('Erreur lors de la connexion. Veuillez réessayer.', 'danger');
             loginBtn.disabled = false;
             loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
         }
@@ -114,7 +111,7 @@ async function handleLogin(event) {
             setStorage(userData);
 
             // Message succès
-            showSuccess('Connexion réussie ! Redirection...');
+            showToast('Connexion réussie ! Redirection...', 'success');
             
             // Redirection selon paramètre ou page d'accueil
             setTimeout(() => {
@@ -128,7 +125,7 @@ async function handleLogin(event) {
     })
     .catch((error) => {
             console.error('Erreur de connexion :', error);
-            showError('Email ou mot de passe incorrect');
+            showToast('Email ou mot de passe incorrect', 'warning');
             loginBtn.disabled = false;
             loginBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Se connecter';
 });
@@ -176,15 +173,4 @@ async function handleForgotPassword(event) {
         messageDiv.textContent = 'Une erreur est survenue.';
     }
 
-}
-
-// ============================================
-// VÉRIFIER REDIRECT
-// ============================================
-function checkRedirectParam() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirect = urlParams.get('redirect');
-    if (redirect) {
-        showError('Vous devez être connecté pour accéder à cette page');
-    }
 }

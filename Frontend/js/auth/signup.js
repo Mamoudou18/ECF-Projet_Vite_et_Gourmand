@@ -1,4 +1,4 @@
-import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showError, showSuccess } from "../utils/util.js";
+import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showToast } from "../utils/util.js";
 
 // ****************************************
 // GESTION DE L'INSCRIPTION D'UN UTILISATEUR
@@ -49,27 +49,27 @@ async function handleRegister(event) {
 
     // Vérifications
     if (!checkPasswordStrength(inputPassword)) {
-        showError('Le mot de passe ne respecte pas tous les critères de sécurité');
+        showToast('Le mot de passe ne respecte pas tous les critères de sécurité', 'danger');
         return;
     }
 
     if (password !== passwordConfirm) {
-        showError('Les mots de passe ne correspondent pas');
+        showToast('Les mots de passe ne correspondent pas', 'danger');
         return;
     }
 
     if (!rgpd) {
-        showError('Vous devez accepter la politique de confidentialité et les CGV');
+        showToast('Vous devez accepter la politique de confidentialité et les CGV', 'danger');
         return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showError('Le mail saisi n\'est pas au bon format');
+        showToast('Le mail saisi n\'est pas au bon format', 'danger');
         return;
     }
 
     if (!/^[0-9]{10}$/.test(gsm.replace(/\s/g, ''))) {
-        showError('Le numéro de téléphone doit contenir 10 chiffres');
+        showToast('Le numéro de téléphone doit contenir 10 chiffres', 'danger');
         return;
     }
 
@@ -105,12 +105,12 @@ async function handleRegister(event) {
         try{
             data = JSON.parse(texte);
         } catch(e){
-            showError('Erreur réseau ou serveur');
+            showToast('Erreur réseau ou serveur', 'danger');
             registerBtn.disabled = false;
             registerBtn.innerHTML = 'Créer mon compte';
             return;
         }
-        showError(data.error || 'Echec de l\'inscription');
+        showToast(data.error || 'Echec de l\'inscription', 'danger');
         registerBtn.disabled = false;
         registerBtn.innerHTML = 'Créer mon compte';
         return;
@@ -120,7 +120,7 @@ async function handleRegister(event) {
     const data = JSON.parse(texte);
 
     // Succès
-    showSuccess(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`);
+    showToast(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`, 'success');
 
     // Rédirection vers la page de connexion
     window.location.href = '/signin';

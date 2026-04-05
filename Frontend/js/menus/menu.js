@@ -24,7 +24,7 @@ import { showError } from "../utils/util.js";
             const data = await response.json();
             menus = data.menus;
             filteredMenus = [...menus];
-            console.log('Menus chargés:', filteredMenus.length);
+            
         } catch (error) {
             console.error('Erreur de chargment des menus:', error);
             document.getElementById("menusGrid").innerHTML=`

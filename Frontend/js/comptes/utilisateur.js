@@ -3,9 +3,9 @@ import {
     showPassword, 
     checkPasswordStrength, 
     checkPasswordMatch, 
-    showSuccess, 
-    showError, 
-    showConfirm 
+    showConfirm,
+    renderStars,
+    showToast 
 } from "../utils/util.js";
 
 //Constante API
@@ -106,7 +106,6 @@ if(!targetSection){
     return;
 }
 targetSection.classList.add("active");
-console.log('Section affichée:',sectionId);
 
 // Mettre à jour le menu latéral
 document.querySelectorAll(".sidebar-menu a").forEach(link => {
@@ -241,7 +240,7 @@ function validateFormModifyProfil(){
     }
 
     if(errors.length > 0){
-        alert('Erreurs de validation :\n\n' + errors.join('\n'));
+        showToast('errors', 'validation');
         return false;
     }
     return true;  
@@ -291,19 +290,19 @@ function formModifyProfilUser(e){
             if(response.ok){
                return response.json()
             }else{
-                showError('Erreur lors de la mise du profil.');
+                showToast('Erreur lors de la mise du profil.', 'danger');
             }
         })
 
         .then((result) => {
             if(result){
                 setStorage(updateUser);
-                showSuccess('Profil mis à jour avec succès !');
+                showToast('Profil mis à jour avec succès !', 'success');
             }
         })
         .catch((error) => {
             console.error("Erreur réseau :", error);
-            showError('Erreur réseau, veuillez réessayer.');
+            showToast('Erreur réseau, veuillez réessayer.', 'danger');
         })
 
 }
@@ -345,12 +344,12 @@ async function handleInitPassword(event) {
 
     // Vérifications
     if (!checkPasswordStrength(inputPassword)) {
-        showError('Le mot de passe ne respecte pas tous les critères de sécurité');
+        showToast('Le mot de passe ne respecte pas tous les critères de sécurité', 'warning');
         return;
     }
 
     if (new_password !== confirm_password) {
-        showError('Les mots de passe ne correspondent pas');
+        showToast('Les mots de passe ne correspondent pas', 'warning');
         return;
     }
 
@@ -373,20 +372,20 @@ async function handleInitPassword(event) {
         msg.classList.remove('hidden');
 
         if (data.success) {
-            showSuccess('Mot de passe mis à jour avec succès !');
+            showToast('Mot de passe mis à jour avec succès !', 'success');
             setTimeout(() => window.location.reload(), 2000);
             initPasswordBtn.disabled = false;
             initPasswordBtn.innerHTML = 'Réinitialiser';
         } else {
                 console.log('Échec:', data.message);
-                showError(data.message || 'Une erreur est survenue.');
+                showToast(data.message || 'Une erreur est survenue.', 'danger');
                 initPasswordBtn.disabled = false;
                 initPasswordBtn.innerHTML = 'Réinitialiser';
         }
 
     } catch (error) {
         console.log(error);
-        showError('Erreur réseau, veuillez réessayer.');
+        showToast('Erreur réseau, veuillez réessayer.', 'danger');
         initPasswordBtn.disabled = false;
         initPasswordBtn.innerHTML = 'Réinitialiser';
     }
@@ -608,15 +607,15 @@ window.annulerCommande = async function(id) {
 
         if (response.ok) {
             invalidateCommandesCache();
-            showSuccess('Commande annulée avec succès.');
+            showToast('Commande annulée avec succès.', 'success');
             loadDashboard();
             loadCommandes();
         } else {
-            showError('Erreur lors de l\'annulation.');
+            showToast('Erreur lors de l\'annulation.', 'danger');
         }
     } catch (error) {
         console.error(error);
-        showError('Erreur réseau.');
+        showToast('Erreur réseau.', 'danger');
     }
 };
 
@@ -630,11 +629,11 @@ window.modifierCommande = async function(id) {
             const menuId = data.commande.menu_id;
             window.location.href = `/commande?menu=${menuId}&modifier=${id}`;
         } else {
-            showError("Commande introuvable.");
+            showToast("Commande introuvable.", 'danger');
         }
     } catch (error) {
         console.error(error);
-        showError("Erreur réseau.");
+        showToast("Erreur réseau.", 'danger');
     }
 };
 
@@ -658,11 +657,11 @@ window.voirDetail = async function(id) {
             afficherDetailCommande(data.commande);
             new bootstrap.Modal(document.getElementById('detailCommandeModal')).show();
         } else {
-            showError('Impossible de charger le détail.');
+            showToast('Impossible de charger le détail.', 'danger');
         }
     } catch (error) {
         console.error(error);
-        showError('Erreur réseau.');
+        showToast('Erreur réseau.', 'danger');
     }
 };
 
@@ -688,7 +687,7 @@ window.recommander = async function(id) {
         const detailData = await detailRes.json();
 
         if (!detailData.success) {
-            showError('Impossible de récupérer la commande.');
+            showToast('Impossible de récupérer la commande.', 'danger');
             return;
         }
 
@@ -725,15 +724,15 @@ window.recommander = async function(id) {
 
         if (createData.success) {
             invalidateCommandesCache();
-            showSuccess('Nouvelle commande créée avec succès !');
+            showToast('Nouvelle commande créée avec succès !','success');
             loadDashboard();
             loadCommandes();
         } else {
-            showError(createData.message || 'Impossible de recommander.');
+            showToast(createData.message || 'Impossible de recommander.', 'danger');
         }
     } catch (error) {
         console.error(error);
-        showError('Erreur réseau.');
+        showToast('Erreur réseau.', 'danger');
     }
 };
 
@@ -1008,21 +1007,6 @@ function renderAvisCard(avis, statusClass) {
     `;
 }
 
-function renderStars(note) {
-    let stars = '';
-    for (let i = 1; i <= 5; i++) {
-        if (i <= note) {
-            stars += '<i class="bi bi-star-fill text-warning"></i>';
-        } else if (i - 0.5 <= note) {
-            stars += '<i class="bi bi-star-half text-warning"></i>';
-        } else {
-            stars += '<i class="bi bi-star text-muted"></i>';
-        }
-    }
-    return stars;
-}
-
-
 // ===== Formulaire d'avis (modale) =====
 window.ouvrirFormulaireAvis = function(commandeId) {
     // Vérifier si la modale existe déjà
@@ -1114,11 +1098,11 @@ window.envoyerAvis = async function() {
     const commentaire = document.getElementById('avisCommentaire').value.trim();
 
     if (!note || note < 1 || note > 5) {
-        alert('Veuillez sélectionner une note entre 1 et 5.');
+        showToast('Veuillez sélectionner une note entre 1 et 5.', 'warning');
         return;
     }
     if (!commentaire) {
-        alert('Veuillez écrire un commentaire.');
+        showToast('Veuillez écrire un commentaire.', 'warning');
         return;
     }
 
@@ -1138,14 +1122,14 @@ window.envoyerAvis = async function() {
 
         if (response.ok) {
             bootstrap.Modal.getInstance(document.getElementById('modalAvis')).hide();
-            alert('Merci pour votre avis ! Il sera visible après modération.');
+            showToast('Merci pour votre avis ! Il sera visible après modération.', 'success');
             loadAvis();
         } else {
-            alert(result.message || 'Erreur lors de l\'envoi de l\'avis.');
+            showToast(result.message || 'Erreur lors de l\'envoi de l\'avis.', 'danger');
         }
     } catch (error) {
         console.error('Erreur envoi avis:', error);
-        alert('Erreur de connexion.');
+        showToast('Erreur de connexion.','danger');
     }
 }
 

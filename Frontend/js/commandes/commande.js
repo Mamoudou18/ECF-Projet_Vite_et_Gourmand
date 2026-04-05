@@ -1,5 +1,5 @@
 import { getStorage } from "../script.js";
-import { showError, showSuccess } from "../utils/util.js";
+import {showToast } from "../utils/util.js";
 
 //Variables globales
 let selectedMenu = null;
@@ -266,7 +266,7 @@ async function loadMenuCommande() {
     const menuId = getMenuIdFromURL();
 
     if(!menuId || isNaN(menuId)){
-        showError("Menu introuvable. Redirection...");
+        showToast('Menu introuvable. Redirection...', 'danger');
         window.location.href = '/menu';
         return;
     }
@@ -286,7 +286,7 @@ async function loadMenuCommande() {
         selectedMenu = data.menu;
 
         if(!selectedMenu){
-            showError('Menu introuvable. Redirection...');
+            showToast('Menu introuvable. Redirection...', 'danger');
             setTimeout(() => {
                 window.location.href = '/menu';
             },2000);
@@ -315,7 +315,7 @@ async function loadMenuCommande() {
 
     } catch (error) {
         console.error('Erreur chargement menus:', error);
-        showError('Erreur lors du chargement des données');
+        showToast('Erreur lors du chargement des données', 'danger');
         setTimeout(() => {
             window.location.href = '/menu';
         },2000);
@@ -473,7 +473,7 @@ async function checkModification() {
         const data = await response.json();
 
         if (!data.success || !data.commande) {
-            showError("Commande introuvable.");
+            showToast('Commande introuvable.', 'danger');
             return;
         }
 
@@ -481,7 +481,7 @@ async function checkModification() {
 
         // Vérifier le statut
         if (cmd.statut !== 'en_attente') {
-            showError("Cette commande ne peut plus être modifiée (statut : " + cmd.statut + ").");
+            showToast('Cette commande ne peut plus être modifiée (statut : " + cmd.statut + ").', 'danger');
             setTimeout(() => {
                 window.location.href = '/utilisateur';
             }, 2000);
@@ -528,7 +528,7 @@ async function checkModification() {
 
     } catch (error) {
         console.error('Erreur chargement commande:', error);
-        showError("Impossible de charger la commande à modifier.");
+        showToast('Impossible de charger la commande à modifier.', 'danger');
     }
 }
 
@@ -558,7 +558,7 @@ async function checkModification() {
         }
 
         if(errors.length > 0){
-            showError('Erreurs de validation :\n\n' + errors.join('\n'));
+            showToast('errors', 'validation');
             return false;
         }
         return true;
@@ -573,7 +573,7 @@ async function formCommandeMenu(e) {
     if (!validateForm()) return;
 
     if (!document.getElementById('acceptCGV').checked) {
-        showError('Veuillez accepter les conditions générales de vente');
+        showToast('Veuillez accepter les conditions générales de vente', 'warning');
         return;
     }
 
@@ -582,7 +582,7 @@ async function formCommandeMenu(e) {
 
     if (datePrestation < dateMin) {
         const delaiJours = minPersons >= 20 ? 14 : 7;
-        showError(`La date de prestation doit être au minimum ${delaiJours} jours après aujourd'hui`);
+        showToast(`La date de prestation doit être au minimum ${delaiJours} jours après aujourd'hui`, 'warning');
         return;
     }
 
@@ -634,7 +634,7 @@ async function formCommandeMenu(e) {
         const checkData = await checkResp.json();
 
         if (!checkData.success || checkData.commande.statut !== 'en_attente') {
-            showError("Cette commande ne peut plus être modifiée.");
+            showToast('Cette commande ne peut plus être modifiée.', 'warning');
             return;
         }
     }
@@ -654,7 +654,7 @@ async function formCommandeMenu(e) {
     .then((result) => {
         if (result.success) {
             if (modifierId) {
-                showSuccess('Commande modifiée avec succès !');
+                showToast('Commande modifiée avec succès !', 'success');
                 setTimeout(() => {
                     const role = currentUser.role;
                     if (role === 'administrateur') {
@@ -672,12 +672,12 @@ async function formCommandeMenu(e) {
                 modal.show();
             }
         } else {
-            showError(result.message || 'Une erreur est survenue');
+            showToast(result.message || 'Une erreur est survenue', 'danger');
         }
     })
     .catch((error) => {
         console.error('Erreur :', error);
-        showError('Une erreur réseau est survenue. Veuillez réessayer');
+        showToast('Une erreur réseau est survenue. Veuillez réessayer', 'danger');
     });
 
 }

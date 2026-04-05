@@ -1,12 +1,12 @@
 import { getStorage } from "../script.js";
-import { showToast } from "../utils/util.js";
+import { showToast, formatDate, renderStars } from "../utils/util.js";
 
 // ===================== VARIABLES =====================
 let orders = [];
 let modificationOrderId = null;
 let modificationMenuId = null;
 let allEmployeeMenus = [];
-let filteredEmployeeMenus = [];
+let filteredEmployeeMenus = []; 
 let empMenusCurrentPage = 1;
 const EMP_MENUS_PER_PAGE = 9;
 
@@ -684,13 +684,6 @@ function formatTimeAgo(dateStr) {
     return formatDate(dateStr);
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return 'N/A';
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    });
-}
-
 // contacter le client
 function contactClient(orderId) {
     const order = getOrderById(orderId);
@@ -1018,22 +1011,6 @@ async function loadAvis() {
     } catch {
         document.getElementById('avis-pending-container').innerHTML = '<p class="text-danger">Erreur de chargement.</p>';
     }
-}
-
-
-// rendu des étoiles
-function renderStars(note) {
-    let html = '';
-    for (let i = 1; i <= 5; i++) {
-        if (note >= i) {
-            html += '<i class="bi bi-star-fill"></i>';
-        } else if (note >= i - 0.5) {
-            html += '<i class="bi bi-star-half"></i>';
-        } else {
-            html += '<i class="bi bi-star"></i>';
-        }
-    }
-    return html;
 }
 
 // rendu

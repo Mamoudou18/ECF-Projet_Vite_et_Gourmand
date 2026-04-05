@@ -3,7 +3,7 @@
 // ============================================
 
 import { getStorage } from "../script.js";
-import { showError } from "../utils/util.js";
+import {showToast } from "../utils/util.js";
 
 let currentMenu = null;
 let commanderHandler = null;
@@ -307,18 +307,6 @@ function displayMenuDetail(menu) {
 
             ${btnCommanderHTML}
 
-            <!-- Message d'erreur (masqué par défaut) -->
-            <div id="errorMessage" class="alert alert-danger" style="display: none;">
-                 <i class="bi bi-exclamation-triangle-fill"></i>
-                <span id="errorText"></span>
-            </div>
-
-            <!-- Message de succès (masqué par défaut) -->
-            <div id="successMessage" class="alert alert-success" style="display: none;">
-                <i class="bi bi-check-circle-fill"></i>
-                <span id="successText"></span>
-            </div>
-
             <a href="/menu" class="btn btn-secondary w-100">
                 <i class="bi bi-arrow-left"></i> Retour aux menus
             </a>
@@ -389,7 +377,7 @@ function attachCommanderListener(menu) {
         const currentUser = getStorage();
 
         if (!currentUser) {
-            showError('Vous devez être connecté pour commander ce menu');
+            showToast('Vous devez être connecté pour commander ce menu', 'warning');
             setTimeout(() =>{
                 window.location.href = `/signin?redirect=/commande?menu=${menu.id}`;
             }, 2000);
@@ -397,7 +385,7 @@ function attachCommanderListener(menu) {
         }
 
         if (menu.stock <= 0) {
-            showError('Désolé, ce menu n\'est plus disponible')
+            showToast('Désolé, ce menu n\'est plus disponible', 'danger');
             return;
         }
 

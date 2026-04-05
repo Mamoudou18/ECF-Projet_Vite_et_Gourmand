@@ -1,3 +1,5 @@
+import { renderStars } from "../utils/util.js";
+
 function init() {
     chargerAvisAccueil();
 }
@@ -32,7 +34,7 @@ function chargerAvisAccueil() {
             }
 
             container.innerHTML = avisAffiches.map(a => {
-                const stars = genererEtoiles(a.note);
+                const stars = renderStars(a.note);
                 const prenom = a.prenom_client || 'Anonyme';
                 const initiale = a.nom_client ? a.nom_client.charAt(0).toUpperCase() + '.' : '';
                 return `
@@ -53,21 +55,6 @@ function chargerAvisAccueil() {
                 </div>
             `;
         });
-}
-
-
-function genererEtoiles(note) {
-    let html = '';
-    for (let i = 1; i <= 5; i++) {
-        if (note >= i) {
-            html += '<i class="bi bi-star-fill"></i>';
-        } else if (note >= i - 0.5) {
-            html += '<i class="bi bi-star-half"></i>';
-        } else {
-            html += '<i class="bi bi-star"></i>';
-        }
-    }
-    return html;
 }
 
 init();

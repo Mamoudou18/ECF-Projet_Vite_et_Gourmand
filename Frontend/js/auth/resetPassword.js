@@ -1,4 +1,4 @@
-import { showPassword, checkPasswordStrength, checkPasswordMatch, showSuccess, showError } from "../utils/util.js";
+import { showPassword, checkPasswordStrength, checkPasswordMatch, showToast } from "../utils/util.js";
 
 
 // Récupération des inputs du formulaire
@@ -39,12 +39,12 @@ async function handleResetPassword(event) {
 
     // Vérifications
     if (!checkPasswordStrength(inputPassword)) {
-        showError('Le mot de passe ne respecte pas tous les critères de sécurité');
+        showToast('Le mot de passe ne respecte pas tous les critères de sécurité', 'warning');
         return;
     }
 
     if (new_password !== confirm_password) {
-        showError('Les mots de passe ne correspondent pas');
+        showToast('Les mots de passe ne correspondent pas', 'warning');
         return;
     }
 
@@ -66,16 +66,16 @@ async function handleResetPassword(event) {
         msg.classList.remove('hidden');
 
         if (data.success) {
-            showSuccess('Votre mot de passe à été mis à jour avec succès.')
+            showToast('Votre mot de passe à été mis à jour avec succès.', 'success');
             setTimeout(() => window.location.href = '/signin', 2000);
         } else {
-            showError(data.message || 'Une erreur est survenue.');
+            showToast(data.message || 'Une erreur est survenue.', 'danger');
             resetPasswordBtn.disabled = false;
             resetPasswordBtn.innerHTML = 'Réinitialiser';
         }
 
     } catch (error) {
-        showError('Erreur réseau, veuillez réessayer.');
+        showToast('Erreur réseau, veuillez réessayer.', 'danger');
         resetPasswordBtn.disabled = false;
         resetPasswordBtn.innerHTML = 'Réinitialiser';
     }

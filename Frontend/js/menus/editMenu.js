@@ -1,4 +1,4 @@
-import { showError, showSuccess } from "../utils/util.js";
+import {showToast } from "../utils/util.js";
 
 const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");
@@ -23,7 +23,7 @@ async function chargerMenuParId(id) {
     try {
         const res = await fetch(`http://localhost/api/menu/detail?id=${id}`);
         const data = await res.json();
-        if (!data.success) return showError("Menu introuvable.");
+        if (!data.success) return showToast("Menu introuvable.", 'danger');
 
         document.getElementById("menusContainer").innerHTML = "";
 
@@ -118,10 +118,10 @@ async function chargerMenuParId(id) {
         btnSave.classList.remove("w-50");
         btnSave.classList.add("w-100");
 
-        showSuccess(`Menu "${menu.titre}" chargé pour modification.`);
+        showToast(`Menu "${menu.titre}" chargé pour modification.`, 'success');
     } catch (e) {
         console.error(e);
-        showError("Erreur lors du chargement du menu.");
+        showToast('Erreur lors du chargement du menu.', 'danger');
     }
 }
 
@@ -313,7 +313,7 @@ function sectionPlat(type, label, icon) {
 
 function enregistrer() {
     const menus = document.querySelectorAll("#menusContainer .menu");
-    if (menus.length === 0) return showError("Ajoutez au moins un menu.");
+    if (menus.length === 0) return showToast('Ajoutez au moins un menu.', 'warning');
 
     const themeIdMap = { noel: 1, paques: 2, classique: 3, evenement: 4 };
     const regimeIdMap = { classique: 1, vegetarien: 2, vegan: 3, "sans-gluten": 4, hallal: 5 };
@@ -396,15 +396,15 @@ function enregistrer() {
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
-                        showSuccess(`✅ Menu "${titre}" ${actionLabel} avec succès !`);
+                        showToast(`Menu "${titre}" ${actionLabel} avec succès !`, 'success');
                     } else {
-                        showError(`❌ Erreur pour le menu "${titre}" : ${data.message || 'Erreur inconnue'}`);
+                        showToast(`Erreur pour le menu "${titre}" : ${data.message || 'Erreur inconnue'}`, 'danger');
                     }
                     return data;
                 })
                 .catch(err => {
                     console.error('Erreur :', err);
-                    showError(`❌ Erreur réseau pour le menu "${titre}" : ${err.message}`);
+                    showToast(`Erreur réseau pour le menu "${titre}" : ${err.message}`, 'danger');
                 })
         );
     });
@@ -413,11 +413,11 @@ function enregistrer() {
         const success = results.filter(r => r?.success).length;
         const failed = results.filter(r => !r?.success).length;
         if (failed === 0) {
-            showSuccess(`✅ Tous les menus (${success}) ont été enregistrés avec succès !`);
+            showToast(`Tous les menus (${success}) ont été enregistrés avec succès !`, 'success');
             document.getElementById("menusContainer").innerHTML = "";
             themeSelect.value = themeSelect.options[0].value;
         } else {
-            showError(`⚠️ ${success} menu(s) enregistré(s), ${failed} échec(s).`);
+            showToast(`${success} menu(s) enregistré(s), ${failed} échec(s).`, 'danger');
         }
     });
 }
