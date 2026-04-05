@@ -377,12 +377,15 @@ function attachCommanderListener(menu) {
         const currentUser = getStorage();
 
         if (!currentUser) {
-            showToast('Vous devez être connecté pour commander ce menu', 'danger');
-            setTimeout(() =>{
-                window.location.href = `/signin?redirect=/commande?menu=${menu.id}`;
-            }, 2000);
+            // Mettre à jour le lien de connexion avec la redirection
+            const loginLink = document.querySelector('#connexionModal a[href="/signin"]');
+            loginLink.href = `/signin?redirect=/commande?menu=${menu.id}`;
+            
+            const modal = new bootstrap.Modal(document.getElementById('connexionModal'));
+            modal.show();
             return;
         }
+
 
         if (menu.stock <= 0) {
             showToast('Désolé, ce menu n\'est plus disponible', 'danger');
