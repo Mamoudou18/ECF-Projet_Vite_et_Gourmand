@@ -183,3 +183,35 @@
 
     </div>
 </div>
+
+// modal confirmation inscription
+<div class="modal fade" id="inscriptionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill"></i> Inscription réussie !
+                </h5>
+            </div>
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-person-check text-success" style="font-size: 6rem;"></i>
+                </div>
+                <h3 class="mb-4">Bienvenue <strong id="confirmNom"></strong> !</h3>
+                <div class="alert alert-success">
+                    <h5>Votre compte a été créé avec succès</h5>
+                </div>
+                <p class="mb-3">Un email de confirmation a été envoyé à :</p>
+                <p class="fs-5"><strong id="confirmEmailInscription"></strong></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='/menu'">
+                    <i class="bi bi-book"></i> Voir nos menus
+                </button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/signin'">
+                    <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

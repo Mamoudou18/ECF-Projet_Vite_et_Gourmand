@@ -120,10 +120,11 @@ async function handleRegister(event) {
     const data = JSON.parse(texte);
 
     // Succès
-    showToast(`Bienvenue ${prenom} ${nom} ! Votre compte a été créé avec succès. Un email de confirmation vous a été envoyé à ${email}.`, 'success');
+    document.getElementById('confirmNom').textContent = `${prenom} ${nom}`;
+    document.getElementById('confirmEmailInscription').textContent = email;
+    const modal = new bootstrap.Modal(document.getElementById('inscriptionModal'));
+    modal.show();
 
-    // Rédirection vers la page de connexion
-    window.location.href = '/signin';
 }
 
 // Formater le téléphone pendant la saisie

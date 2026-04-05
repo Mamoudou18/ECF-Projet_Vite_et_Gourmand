@@ -14092,4 +14092,7 @@ li {
     transform: translateX(0);
     opacity: 1;
   }
+}
+.bg-accent {
+  background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
 }/*# sourceMappingURL=main.css.map */
