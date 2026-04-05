@@ -14065,4 +14065,31 @@ li {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
   }
+}
+/* Position du conteneur */
+.toast-container {
+  z-index: 9999;
+}
+
+/* Style personnalisé des toasts */
+.toast {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.95rem;
+}
+
+/* Animation d'entrée */
+.toast.showing {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }/*# sourceMappingURL=main.css.map */

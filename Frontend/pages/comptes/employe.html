@@ -368,141 +368,29 @@
                 <!-- SECTION: Avis -->
                 <div id="avis-section" class="section-content">
                     <div class="content-card">
-                        <h4><i class="bi bi-star"></i> Validation des avis clients</h4>
+                        <h4><i class="bi bi-star"></i> Modération des avis clients</h4>
 
-                        <div class="alert alert-warning">
+                        <div id="avis-alert" class="alert alert-warning d-none">
                             <i class="bi bi-exclamation-triangle"></i>
-                            <strong>3 avis</strong> en attente de validation.
+                            <strong id="avis-pending-count">0</strong> avis en attente de validation.
                         </div>
 
                         <!-- Avis en attente -->
                         <h5 class="mt-4 mb-3">Avis en attente</h5>
-
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <h6 class="mb-1"><strong>Marie Lambert</strong></h6>
-                                        <small class="text-muted">
-                                            Commande #CMD-2024-0042 | Menu Noël Premium
-                                        </small>
-                                    </div>
-                                    <div class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </div>
-                                </div>
-                                <p class="mb-3">
-                                    Excellent ! Nous avons adoré le menu de Noël. Les plats étaient délicieux et très bien présentés. 
-                                    L'équipe est arrivée à l'heure et a été très professionnelle. Je recommande vivement !
-                                </p>
-                                <small class="text-muted">Posté le 18/12/2024 à 14:32</small>
-                                <div class="mt-3">
-                                    <button class="btn btn-success btn-sm" onclick="validateAvis(1, true)">
-                                        <i class="bi bi-check-circle"></i> Valider
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(1, false)">
-                                        <i class="bi bi-x-circle"></i> Refuser
-                                    </button>
-                                </div>
-                            </div>
+                        <div id="avis-pending-container">
+                            <p class="text-muted">Chargement...</p>
                         </div>
 
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <h6 class="mb-1"><strong>Jean Dupont</strong></h6>
-                                        <small class="text-muted">
-                                            Commande #CMD-2024-0038 | Menu Végétarien
-                                        </small>
-                                    </div>
-                                    <div class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star"></i>
-                                    </div>
-                                </div>
-                                <p class="mb-3">
-                                    Très bon menu végétarien, varié et savoureux. Dommage que la livraison ait eu 15 minutes de retard, 
-                                    mais la qualité des plats compense largement.
-                                </p>
-                                <small class="text-muted">Posté le 17/12/2024 à 16:45</small>
-                                <div class="mt-3">
-                                    <button class="btn btn-success btn-sm" onclick="validateAvis(2, true)">
-                                        <i class="bi bi-check-circle"></i> Valider
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(2, false)">
-                                        <i class="bi bi-x-circle"></i> Refuser
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <h6 class="mb-1"><strong>Sophie Martin</strong></h6>
-                                        <small class="text-muted">
-                                            Commande #CMD-2024-0035 | Menu Pâques
-                                        </small>
-                                    </div>
-                                    <div class="text-warning">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </div>
-                                </div>
-                                <p class="mb-3">
-                                    Parfait de A à Z ! Menu délicieux, présentation soignée, équipe sympathique. 
-                                    Nous ferons à nouveau appel à vous pour nos prochains événements.
-                                </p>
-                                <small class="text-muted">Posté le 16/12/2024 à 10:22</small>
-                                <div class="mt-3">
-                                    <button class="btn btn-success btn-sm" onclick="validateAvis(3, true)">
-                                        <i class="bi bi-check-circle"></i> Valider
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="validateAvis(3, false)">
-                                        <i class="bi bi-x-circle"></i> Refuser
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Avis validés récemment -->
+                        <!-- Avis validés -->
                         <h5 class="mt-5 mb-3">Avis validés récemment</h5>
+                        <div id="avis-approved-container">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
 
-                        <div class="card mb-3 border-success">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="mb-1"><strong>Pierre Rousseau</strong></h6>
-                                        <small class="text-muted">Commande #CMD-2024-0030 | Menu Classique</small>
-                                    </div>
-                                    <div>
-                                        <span class="badge bg-success">Validé</span>
-                                        <div class="text-warning mt-1">
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star-fill"></i>
-                                            <i class="bi bi-star"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-2">
-                                    Service impeccable, plats de qualité. Je recommande !
-                                </p>
-                                <small class="text-muted">Validé le 15/12/2024</small>
-                            </div>
+                        <!-- Avis refusés -->
+                        <h5 class="mt-5 mb-3">Avis refusés</h5>
+                        <div id="avis-rejected-container">
+                            <p class="text-muted">Chargement...</p>
                         </div>
                     </div>
                 </div>

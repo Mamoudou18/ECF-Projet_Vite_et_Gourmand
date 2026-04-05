@@ -1,4 +1,5 @@
 import { getStorage } from "../script.js";
+import { showToast } from "../utils/util.js";
 
 // ===================== VARIABLES =====================
 let orders = [];
@@ -71,6 +72,8 @@ function showSection(sectionId, clickedLink) {
 
     document.querySelectorAll(".sidebar-menu a").forEach(l => l.classList.remove("active"));
     if (clickedLink) clickedLink.classList.add("active");
+
+    if (sectionId === 'avis-section') loadAvis();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -463,31 +466,6 @@ function openCancelReasonModal(orderId) {
     new bootstrap.Modal(document.getElementById('cancelReasonModal')).show();
 }
 
-// ===================== TOAST =====================
-function showToast(message, type = 'success') {
-    const container = document.querySelector('.toast-container') || createToastContainer();
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-bg-${type} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    container.appendChild(toast);
-    new bootstrap.Toast(toast, { delay: 4000 }).show();
-    toast.addEventListener('hidden.bs.toast', () => toast.remove());
-}
-
-function createToastContainer() {
-    const container = document.createElement('div');
-    container.className = 'toast-container position-fixed top-0 end-0 p-3';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    return container;
-}
-
 window.openModificationModal = function(orderId, menuId) {
     modificationOrderId = orderId;
     modificationMenuId = menuId;
@@ -644,6 +622,17 @@ function loadSidebarBadges() {
     ).length;
     const badge = document.getElementById('badge-commandes');
     if (badge) badge.textContent = actives;
+
+    // Badge avis en attente
+    fetch('http://localhost/api/avis/list')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const enAttente = data.avis.filter(a => a.statut === 'en_attente').length;
+                const badgeAvis = document.getElementById('badge-avis');
+                if (badgeAvis) badgeAvis.textContent = enAttente;
+            }
+        });
 }
 
 function getActivityLabel(statut) {
@@ -713,7 +702,7 @@ function contactClient(orderId) {
 
 // ========== GESTION MENUS EMPLOYÉ ==========
 
-// ===== CHARGEMENT =====
+// chargement
 async function loadAllEmployeeMenus() {
     const container = document.getElementById("employeeMenusGrid");
     container.innerHTML = `
@@ -741,7 +730,7 @@ async function loadAllEmployeeMenus() {
     }
 }
 
-// ===== FILTRAGE =====
+// filtrage
 function applyFilters() {
     const titre = document.getElementById('filterTitre')?.value.trim().toLowerCase() || '';
     const theme = document.getElementById('filterTheme')?.value || '';
@@ -783,7 +772,7 @@ function applyFilters() {
     renderCurrentPage();
 }
 
-// ===== PAGINATION + RENDU =====
+// pagination / rendu
 function renderCurrentPage() {
     const totalPages = Math.ceil(filteredEmployeeMenus.length / EMP_MENUS_PER_PAGE) || 1;
     const start = (empMenusCurrentPage - 1) * EMP_MENUS_PER_PAGE;
@@ -794,7 +783,7 @@ function renderCurrentPage() {
     renderEmployeeMenusPagination(totalPages);
 }
 
-// ===== AFFICHAGE CARTES =====
+// affichage cartes
 function displayEmployeeMenus(menus) {
     const container = document.getElementById("employeeMenusGrid");
     container.innerHTML = '';
@@ -873,7 +862,7 @@ function displayEmployeeMenus(menus) {
     });
 }
 
-// ===== PAGINATION =====
+// pagination
 function renderEmployeeMenusPagination(totalPages) {
     const container = document.getElementById("employeeMenusPagination");
     container.innerHTML = '';
@@ -912,7 +901,7 @@ function renderEmployeeMenusPagination(totalPages) {
     });
 }
 
-// ===== COMPTEUR =====
+// compteur
 function updateEmployeeMenusCount(totalPages) {
     document.getElementById("employeeMenusCount").innerHTML =
         `<i class="bi bi-card-text"></i> ${filteredEmployeeMenus.length} menu(s)`;
@@ -921,7 +910,7 @@ function updateEmployeeMenusCount(totalPages) {
         totalPages > 1 ? `Page ${empMenusCurrentPage} sur ${totalPages}` : '';
 }
 
-// ===== SUPPRESSION =====
+// désactiver un menu
 async function toggleMenu(id) {
     if (!confirm('Désactiver ce menu ?')) return;
     try {
@@ -939,7 +928,7 @@ async function toggleMenu(id) {
     }
 }
 
-// ===== UTILITAIRES =====
+// utilitaires
 function capitalize(str) {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
@@ -954,7 +943,7 @@ function getThemeBadgeColor(theme) {
     return colors[theme?.toLowerCase()] || 'bg-secondary';
 }
 
-// ===== DÉLÉGATION D'ÉVÉNEMENTS =====
+// délégation d'évènements
 document.addEventListener('click', function (e) {
     const editBtn = e.target.closest('.btn-edit-menu');
     if (editBtn) {
@@ -969,7 +958,7 @@ document.addEventListener('click', function (e) {
     }
 });
 
-// ===== EVENT LISTENERS FILTRES =====
+// eventListener sur les filtres
 document.getElementById('btnResetFilters')?.addEventListener('click', () => {
     document.getElementById('filterTitre').value = '';
     document.getElementById('filterTheme').value = '';
@@ -996,3 +985,123 @@ document.getElementById('menus')?.addEventListener('click', initEmployeeMenus);
 document.getElementById('btnCreerMenu')?.addEventListener('click', () => {
     window.location.href = '/edit-menu';
 });
+
+// ==================== AVIS ====================
+
+// chargement
+async function loadAvis() {
+    try {
+        const r = await fetch('http://localhost/api/avis/list');
+        const data = await r.json();
+        if (!data.success) return;
+
+        const pending = data.avis.filter(a => a.statut === 'en_attente');
+        const approved = data.avis.filter(a => a.statut === 'approuve');
+        const rejected = data.avis.filter(a => a.statut === 'refuse');
+
+        const alertEl = document.getElementById('avis-alert');
+        if (pending.length > 0) {
+            alertEl.classList.remove('d-none');
+            document.getElementById('avis-pending-count').textContent = pending.length;
+        } else {
+            alertEl.classList.add('d-none');
+        }
+
+        document.getElementById('avis-pending-container').innerHTML =
+            pending.length ? pending.map(a => renderAvisCard(a, 'pending')).join('') : '<p class="text-muted">Aucun avis en attente.</p>';
+
+        document.getElementById('avis-approved-container').innerHTML =
+            approved.length ? approved.map(a => renderAvisCard(a, 'approved')).join('') : '<p class="text-muted">Aucun avis validé.</p>';
+
+        document.getElementById('avis-rejected-container').innerHTML =
+            rejected.length ? rejected.map(a => renderAvisCard(a, 'rejected')).join('') : '<p class="text-muted">Aucun avis refusé.</p>';
+    } catch {
+        document.getElementById('avis-pending-container').innerHTML = '<p class="text-danger">Erreur de chargement.</p>';
+    }
+}
+
+
+// rendu des étoiles
+function renderStars(note) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (note >= i) {
+            html += '<i class="bi bi-star-fill"></i>';
+        } else if (note >= i - 0.5) {
+            html += '<i class="bi bi-star-half"></i>';
+        } else {
+            html += '<i class="bi bi-star"></i>';
+        }
+    }
+    return html;
+}
+
+// rendu
+function renderAvisCard(avis, type) {
+    const date = new Date(avis.created_at);
+    const dateStr = date.toLocaleDateString('fr-FR') + ' à ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+    let badgeHtml = '';
+    let borderClass = '';
+    let actionsHtml = '';
+
+    if (type === 'approved') {
+        badgeHtml = '<span class="badge bg-success">Validé</span>';
+        borderClass = 'border-success';
+    } else if (type === 'rejected') {
+        badgeHtml = '<span class="badge bg-danger">Refusé</span>';
+        borderClass = 'border-danger';
+    } else {
+        actionsHtml = `
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-success btn-sm w-50" onclick="modererAvis('${avis.id}', 'approuve')">
+                    <i class="bi bi-check-circle"></i> Valider
+                </button>
+                <button class="btn btn-danger btn-sm w-50" onclick="modererAvis('${avis.id}', 'refuse')">
+                    <i class="bi bi-x-circle"></i> Refuser
+                </button>
+            </div>`;
+    }
+
+    return `
+        <div class="card mb-3 ${borderClass}" id="avis-card-${avis.id}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h6 class="mb-1"><strong>${avis.prenom_client} ${avis.nom_client}</strong></h6>
+                        <small class="text-muted">Commande #${avis.numero_commande}</small>
+                    </div>
+                    <div class="text-end">
+                        ${badgeHtml}
+                        <div class="text-warning mt-1">${renderStars(avis.note)}</div>
+                    </div>
+                </div>
+                <p class="mb-3">${avis.commentaire}</p>
+                <small class="text-muted">Posté le ${dateStr}</small>
+                ${actionsHtml}
+            </div>
+        </div>`;
+}
+
+// Modération des avis
+async function modererAvis(id, statut) {
+    try {
+        const r = await fetch(`http://localhost/api/avis/moderer?id=${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ statut: statut })
+        });
+        const data = await r.json();
+        if (data.success) {
+            showToast(`Avis ${statut === 'approuve' ? 'validé' : 'refusé'} avec succès.`, 'success');
+            await loadAvis();
+            loadSidebarBadges();
+        } else {
+            showToast(data.message || 'Erreur lors de la modération.', 'danger');
+        }
+    } catch {
+        showToast('Erreur de connexion.', 'danger');
+    }
+}
+window.modererAvis = modererAvis;
+

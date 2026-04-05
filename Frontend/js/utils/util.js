@@ -156,3 +156,28 @@ export function showConfirm({ title, message, icon, iconColor, btnText, btnClass
         modalInstance.show();
     });
 }
+
+// ===================== TOAST =====================
+ export function createToastContainer() {
+    const container = document.createElement('div');
+    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+    return container;
+}
+
+export function showToast(message, type = 'success') {
+    const container = document.querySelector('.toast-container') || createToastContainer();
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${type} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    container.appendChild(toast);
+    new bootstrap.Toast(toast, { delay: 4000 }).show();
+    toast.addEventListener('hidden.bs.toast', () => toast.remove());
+}
