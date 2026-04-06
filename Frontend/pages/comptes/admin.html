@@ -80,9 +80,7 @@
                 <div id="dashboard-section" class="section-content active">
                     <div class="content-card">
                         <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
-
                         <div class="row g-4 mt-2">
-                            <!-- Mini stats admin -->
                             <div class="col-md-4">
                                 <div class="border rounded p-3 text-center">
                                     <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
@@ -92,24 +90,18 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="border rounded p-3 text-center">
-                                    <i class="bi bi-cash-stack text-success" style="font-size: 2rem;"></i>
-                                    <h3 id="totalCA" class="mt-2 mb-0">-</h3>
-                                    <small class="text-muted">Chiffre d'affaires total</small>
+                                    <i class="bi bi-box-seam text-success" style="font-size: 2rem;"></i>
+                                    <h3 id="countCommandes" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Commandes du jour</small>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="border rounded p-3 text-center">
-                                    <i class="bi bi-bag-check text-info" style="font-size: 2rem;"></i>
-                                    <h3 id="totalCommandes" class="mt-2 mb-0">-</h3>
-                                    <small class="text-muted">Commandes totales</small>
+                                    <i class="bi bi-star text-warning" style="font-size: 2rem;"></i>
+                                    <h3 id="countAvis" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Avis en attente</small>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Graphique rapide -->
-                        <div class="mt-4">
-                            <h5><i class="bi bi-bar-chart"></i> Commandes par menu (aperçu)</h5>
-                            <canvas id="dashboardChart" height="200"></canvas>
                         </div>
                     </div>
                 </div>
@@ -118,33 +110,35 @@
                 <div id="employes-section" class="section-content">
                     <div class="content-card">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="mb-0"><i class="bi bi-people"></i> Gestion des employés</h4>
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createEmployeModal">
-                                <i class="bi bi-person-plus"></i> Créer un employé
+                            <h4><i class="bi bi-people"></i> Gestion des Employés</h4>
+                            <button class="btn btn-primary" id="btnOpenCreateEmploye">
+                                <i class="bi bi-person-plus"></i> Nouvel Employé
                             </button>
                         </div>
 
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i>
-                            Le mot de passe n'est <strong>jamais communiqué par email</strong>. L'employé doit se rapprocher de l'administrateur.
+                        <!-- Recherche -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="searchEmploye"
+                                    placeholder="Rechercher un employé...">
+                            </div>
                         </div>
 
-                        <!-- Liste des employés -->
+                        <!-- Tableau -->
                         <div class="table-responsive">
-                            <table class="table order-table">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Email (identifiant)</th>
                                         <th>Nom</th>
-                                        <th>Date de création</th>
-                                        <th>Statut</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Rôle</th>
+                                        <th>Date création</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="employesTableBody">
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted">Chargement...</td>
-                                    </tr>
+                                <tbody id="employeTableBody">
+                                    <!-- Rempli dynamiquement -->
                                 </tbody>
                             </table>
                         </div>
@@ -154,75 +148,8 @@
                 <!-- SECTION: Statistiques -->
                 <div id="statistiques-section" class="section-content">
                     <div class="content-card">
-                        <h4><i class="bi bi-graph-up"></i> Statistiques & Chiffre d'affaires</h4>
-
-                        <!-- Graphique comparatif commandes/menu -->
-                        <div class="mt-4">
-                            <h5><i class="bi bi-bar-chart-line"></i> Nombre de commandes par menu</h5>
-                            <p class="text-muted small">Données issues de MongoDB — Comparaison entre menus</p>
-                            <canvas id="commandesParMenuChart" height="300"></canvas>
-                        </div>
-
-                        <hr class="my-5">
-
-                        <!-- Chiffre d'affaires -->
-                        <h5><i class="bi bi-cash-coin"></i> Chiffre d'affaires par menu</h5>
-
-                        <!-- Filtres CA -->
-                        <div class="filters-bar mb-4 p-3 rounded border bg-light">
-                            <div class="row g-3 align-items-end">
-                                <div class="col-md-4">
-                                    <label class="form-label small fw-bold"><i class="bi bi-card-list"></i> Menu</label>
-                                    <select class="form-select form-select-sm" id="filterCAMenu">
-                                        <option value="">Tous les menus</option>
-                                        <!-- Rempli dynamiquement -->
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-bold"><i class="bi bi-calendar"></i> Date début</label>
-                                    <input type="date" class="form-control form-control-sm" id="filterCADateDebut">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-bold"><i class="bi bi-calendar"></i> Date fin</label>
-                                    <input type="date" class="form-control form-control-sm" id="filterCADateFin">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-primary btn-sm w-100" id="btnFiltrerCA">
-                                        <i class="bi bi-funnel"></i> Filtrer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Résultat CA -->
-                        <div class="row g-4" id="caResultats">
-                            <div class="col-12 text-center py-4">
-                                <p class="text-muted">Appliquez un filtre pour voir les résultats</p>
-                            </div>
-                        </div>
-
-                        <!-- Tableau détaillé CA -->
-                        <div class="table-responsive mt-4 d-none" id="caTableContainer">
-                            <table class="table order-table">
-                                <thead>
-                                    <tr>
-                                        <th>Menu</th>
-                                        <th>Nb commandes</th>
-                                        <th>CA total</th>
-                                        <th>Panier moyen</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="caTableBody"></tbody>
-                                <tfoot>
-                                    <tr class="fw-bold table-success">
-                                        <td>TOTAL</td>
-                                        <td id="caTotalCommandes">-</td>
-                                        <td id="caTotalMontant">-</td>
-                                        <td id="caTotalMoyen">-</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                        <h4><i class="bi bi-graph-up"></i> Statistiques</h4>
+                        <p class="text-muted">Section à venir...</p>
                     </div>
                 </div>
 
@@ -231,106 +158,233 @@
     </div>
 </section>
 
-<!-- ===================== MODALES ===================== -->
-
-<!-- Modal: Créer un employé -->
-<div class="modal fade" id="createEmployeModal" tabindex="-1">
-    <div class="modal-dialog">
+<!-- ============================== -->
+<!-- MODAL CRÉATION EMPLOYÉ -->
+<!-- ============================== -->
+<div class="modal fade" id="createEmployeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title"><i class="bi bi-person-plus"></i> Créer un compte employé</h5>
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-person-plus"></i> Créer un employé</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form id="formCreateEmploye">
-                    <div class="mb-3">
-                        <label for="employeNom" class="form-label fw-bold">Nom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="employeNom" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="employePrenom" class="form-label fw-bold">Prénom <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="employePrenom" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="employeEmail" class="form-label fw-bold">Email (identifiant) <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="employeEmail" required
-                            placeholder="employe@bonnefourchette.fr">
-                    </div>
-                    <div class="mb-3">
-                        <label for="employePassword" class="form-label fw-bold">Mot de passe <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="employePassword" required minlength="8">
-                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn">
-                                <i class="bi bi-eye"></i>
-                            </button>
+            <form id="formCreateEmploye">
+                <div class="modal-body">
+
+                    <input type="hidden" id="createEmpRole" value="2">
+
+                    <!-- Nom et Prénom -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="createEmpNom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="createEmpNom" placeholder="Nom" required minlength="2">
                         </div>
-                        <small class="text-muted">Minimum 8 caractères. Ne sera pas communiqué par email.</small>
+                        <div class="col-md-6">
+                            <label for="createEmpPrenom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="createEmpPrenom" placeholder="Prénom" required minlength="2">
+                        </div>
                     </div>
+
+                    <!-- Email -->
                     <div class="mb-3">
-                        <label for="employePasswordConfirm" class="form-label fw-bold">Confirmer le mot de passe <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="employePasswordConfirm" required>
+                        <label for="createEmpEmail" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="createEmpEmail" placeholder="email@exemple.com" required>
+                        </div>
+                        <small id="createEmpEmailMessage" class="text-danger" style="display: none;">
+                            L'adresse mail ne respecte pas le format!
+                        </small>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-success" id="btnConfirmCreateEmploye">
-                    <i class="bi bi-check-lg"></i> Créer le compte
-                </button>
-            </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="createEmpGsm" class="form-label">
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="createEmpGsm" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse postale -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="createEmpAdresse" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createEmpCodePostal" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createEmpVille" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill primary"></i> Mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" placeholder="••••••••••" required minlength="10">
+                            <span class="password-toggle" type="button" id="togglePassword">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+
+                        <!-- Barre de force -->
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="strengthBar"></div>
+                        </div>
+
+                        <!-- Exigences -->
+                        <div class="password-requirements mt-2">
+                            <div class="requirement" id="req-length">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Minimum 10 caractères</span>
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 majuscule</span>
+                            </div>
+                            <div class="requirement" id="req-lowercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 minuscule</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 chiffre</span>
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 caractère spécial (!@#$%^&*)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation mot de passe -->
+                    <div class="mb-3">
+                        <label for="passwordConfirm" class="form-label">
+                            <i class="bi bi-shield-lock-fill"></i> Confirmer le mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                            <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+                        <small id="passwordMatchMessage" class="text-danger" style="display: none;">
+                            Les mots de passe ne correspondent pas
+                        </small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-register" id="btnCreateEmploye">
+                        <i class="bi bi-person-plus-fill"></i> Créer l'employé
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Modal: Confirmer désactivation employé -->
-<div class="modal fade" id="disableEmployeModal" tabindex="-1">
-    <div class="modal-dialog">
+
+<!-- ============================== -->
+<!-- MODAL ÉDITION EMPLOYÉ -->
+<!-- ============================== -->
+<div class="modal fade" id="editEmployeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title"><i class="bi bi-person-x"></i> Désactiver le compte</h5>
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Modifier l'employé</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="disableEmployeId">
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <strong>Attention :</strong> L'employé ne pourra plus se connecter.
+            <form id="formEditEmploye">
+                <div class="modal-body">
+                    <input type="hidden" id="editEmpId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="editEmpNom" class="form-label fw-bold">Nom *</label>
+                            <input type="text" class="form-control" id="editEmpNom" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEmpPrenom" class="form-label fw-bold">Prénom *</label>
+                            <input type="text" class="form-control" id="editEmpPrenom" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEmpEmail" class="form-label fw-bold">Email *</label>
+                            <input type="email" class="form-control" id="editEmpEmail" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEmpTelephone" class="form-label fw-bold">Téléphone</label>
+                            <input type="tel" class="form-control" id="editEmpTelephone">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEmpRole" class="form-label fw-bold">Rôle *</label>
+                            <select class="form-select" id="editEmpRole" required>
+                                <option value="employe">Employé</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <p>Voulez-vous vraiment désactiver le compte de :</p>
-                <p class="fs-5 fw-bold" id="disableEmployeName"></p>
-                <div class="mb-3">
-                    <label for="disableMotif" class="form-label fw-bold">Motif (optionnel)</label>
-                    <textarea class="form-control" id="disableMotif" rows="2"
-                        placeholder="Ex: Départ de l'entreprise..."></textarea>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check-lg"></i> Enregistrer
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-warning" id="btnConfirmDisable">
-                    <i class="bi bi-person-x"></i> Désactiver
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Modal: Réactiver un employé -->
-<div class="modal fade" id="enableEmployeModal" tabindex="-1">
-    <div class="modal-dialog">
+<!-- ============================== -->
+<!-- MODAL SUPPRESSION EMPLOYÉ -->
+<!-- ============================== -->
+<div class="modal fade" id="deleteEmployeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title"><i class="bi bi-person-check"></i> Réactiver le compte</h5>
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmer la suppression</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="enableEmployeId">
-                <p>Voulez-vous réactiver le compte de :</p>
-                <p class="fs-5 fw-bold" id="enableEmployeName"></p>
+            <div class="modal-body text-center">
+                <input type="hidden" id="deleteEmpId">
+                <p>Voulez-vous vraiment supprimer cet employé ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-success" id="btnConfirmEnable">
-                    <i class="bi bi-person-check"></i> Réactiver
+                <button type="button" class="btn btn-danger" id="btnConfirmDeleteEmploye">
+                    <i class="bi bi-trash-fill"></i> Supprimer
                 </button>
             </div>
         </div>
