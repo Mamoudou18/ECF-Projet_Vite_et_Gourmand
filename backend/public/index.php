@@ -49,7 +49,7 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'PUT /api/auth/user?id={id}'                        => 'Modification profil utilisateur',
             'PUT /api/auth/password?id={id}'                    => 'Initialisation mot de passe',
             'POST /api/auth/forgot-password'                    => 'Demande réinitialisation mot de passe',
-            'POST /api/auth/reset-password'                     => 'Initialisation mot de passe oublié',
+            'POST /api/auth/reset-password'                     => 'Initialisation mot de passe oublié',              
             'GET /api/menu/list'                                => 'Liste des menus',
             'GET /api/menu/detail?id={id}'                      => 'Détail d\'un menu',
             'POST /api/menu/create'                             => 'Créer un menu',
@@ -69,7 +69,9 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/avis/user?id_user={id}'                   => 'Avis d\'un utilisateur',
             'GET /api/avis/approuves'                           => 'Avis approuvés (public)',
             'GET /api/avis/list'                                => 'Tous les avis (admin)',
-            'PUT /api/avis/moderer?id={id}'                     => 'Modérer un avis (admin)',
+            'PUT /api/avis/moderer?id={id}'                     => 'Modérer un avis (employé et admin)',
+            'POST /api/admin/create-employe'                    => 'créer un compte employé',
+            'PATCH /api/admin/toggle-user'                    => 'Activer ou désactiver un utilisateur'
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -751,6 +753,78 @@ switch ($ressource) {
         }
         break;
 
+    case 'admin':
+        require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+        $middleware = new AuthMiddleware();
+        $middleware->handle();
+        
+        $controllerPath = __DIR__ . '/../controllers/AuthController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'AuthController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new AuthController();
+
+        switch ($action) {
+
+            case 'create-employe':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'createEmploye')) {
+                        $controller->createEmploye();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode createEmploye() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/admin/create-employe',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'toggle-user':
+                if ($method === 'PATCH') {
+                    if (method_exists($controller, 'toggleUserStatus')) {
+                        $controller->toggleUserStatus();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode toggleUserStatus() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/admin/toggle-user',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour admin",
+                    'actions_disponibles' => ['create-employe', 'toggle-user']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
 
     default:
         http_response_code(404);
@@ -758,6 +832,6 @@ switch ($ressource) {
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth','menu', 'commande', 'avis']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

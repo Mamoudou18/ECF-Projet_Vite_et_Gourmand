@@ -27,6 +27,8 @@ class AuthMiddleware
             $this->abort(401, 'Token invalide');
         }
 
+        $_REQUEST['auth_user'] = $user;
+        
         // 3. Retourne l'user → dispo dans la route
         return $user;
     }

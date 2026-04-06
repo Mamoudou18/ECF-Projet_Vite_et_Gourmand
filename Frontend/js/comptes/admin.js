@@ -9,7 +9,7 @@ import {
 } from "../utils/util.js";
 
 // ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'http://localhost/api';
 let allEmployes = [];
 let modalCreateEmploye, modalEditEmploye, modalDeleteEmploye;
 
@@ -163,7 +163,16 @@ async function creerEmploye(e) {
 
     const pwd = document.getElementById('password').value;
     const confirm = document.getElementById('passwordConfirm').value;
+    const nom = document.getElementById('createEmpNom').value.trim();
+    const prenom = document.getElementById('createEmpPrenom').value.trim();
+    const email = document.getElementById('createEmpEmail').value.trim();
+    const telephone = document.getElementById('createEmpGsm').value.trim();
+    const adresse = document.getElementById('createEmpAdresse').value.trim();
+    const code_postal = document.getElementById('createEmpCodePostal').value.trim();
+    const ville = document.getElementById('createEmpVille').value.trim();
+    const role = document.getElementById('createEmpRole').value;
 
+    // Vérifications
     if (!checkPasswordStrength(document.getElementById('password'))) {
         showToast('Le mot de passe ne respecte pas les critères', 'danger');
         return;
@@ -173,23 +182,43 @@ async function creerEmploye(e) {
         showToast('Les mots de passe ne correspondent pas', 'danger');
         return;
     }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Le mail saisi n\'est pas au bon format', 'danger');
+        return;
+    }
 
+    if (!/^[0-9]{10}$/.test(telephone.replace(/\s/g, ''))) {
+        showToast('Le numéro de téléphone doit contenir 10 chiffres', 'danger');
+        return;
+    }
+    // Désactiver le bouton
+    const btnCreateEmploye = document.getElementById('btnCreateEmploye');
+    btnCreateEmploye.disabled = true;
+    btnCreateEmploye.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Création du compte...';
+   
     const data = {
-        nom:        document.getElementById('createEmpNom').value.trim(),
-        prenom:     document.getElementById('createEmpPrenom').value.trim(),
-        email:      document.getElementById('createEmpEmail').value.trim(),
-        telephone:  document.getElementById('createEmpGsm').value.trim(),
-        adresse:    document.getElementById('createEmpAdresse').value.trim(),
-        codePostal: document.getElementById('createEmpCodePostal').value.trim(),
-        ville:      document.getElementById('createEmpVille').value.trim(),
-        password:   pwd,
-        role:       document.getElementById('createEmpRole').value
+        nom:               nom,
+        prenom:            prenom,
+        email:             email,
+        gsm:               telephone.replace(/\s/g, ''),
+        adresse:           adresse,
+        code_postal:       code_postal,
+        ville:             ville,
+        password:          pwd,
+        confirm_password:  confirm,
+        role:              role
     };
 
     try {
-        const res = await fetch(`${API_BASE}/employes`, {
+        const user = getStorage();
+        if (!user) return;
+        const res = await fetch(`${API_BASE}/admin/create-employe`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.api_token}`
+             },
             body: JSON.stringify(data)
         });
 
@@ -202,9 +231,19 @@ async function creerEmploye(e) {
         chargerEmployes();
     } catch (err) {
         showToast(err.message || 'Erreur lors de la création', 'danger');
+    } finally {
+        btnCreateEmploye.disabled = false;
+        btnCreateEmploye.innerHTML = 'Créer l\'employé';
     }
 }
 
+// Formater le téléphone pendant la saisie
+document.getElementById('createEmpGsm').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 10);
+    let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
+    e.target.value = formatted.trim();
+});
 
 // ===== ÉDITER =====
 function openEditEmploye(id) {

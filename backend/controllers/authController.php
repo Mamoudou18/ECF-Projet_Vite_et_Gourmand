@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../mails/WelcomeMail.php';
+require_once __DIR__ . '/../mails/AccountCreateMail.php';
 require_once __DIR__ . '/../mails/ResetPasswordMail.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
@@ -198,7 +199,6 @@ class AuthController
     /**
      * Initialisation mot de passe
      */
-
     public function updatePassword(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
@@ -324,5 +324,102 @@ class AuthController
         }
     }
 
+    /**
+    * Création d'un employé (admin uniquement)
+    */
+    public function createEmploye(): void
+    {
+        // Vérifier que c'est un admin (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        error_log('currentUser: ' . json_encode($currentUser));
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || empty($data)) {
+            $this->response->error('Données invalides.', 400);
+            return;
+        }
+
+        $errors = $this->validator->validateRegister($data);
+
+        if (!empty($errors)) {
+            $this->response->error('Erreur de validation.', 422, $errors);
+            return;
+        }
+
+        if ($this->userModel->emailExists($data['email'])) {
+            $this->response->error('Cet email est déjà utilisé.', 409);
+            return;
+        }
+
+        try {
+            $userId = $this->userModel->creerEmploye($data);
+
+            if (!$userId) {
+                $this->response->error('Erreur lors de la création de l\'employé.', 500);
+                return;
+            }
+
+            AccountCreatedMail::send($data['email'], $data['prenom'], $data['nom']);
+
+            $this->response->success([
+                'message' => 'Employé créé avec succès. Un email de notification lui a été envoyé.',
+                'user_id' => $userId
+            ], 201);
+
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            $this->response->error('Une erreur est survenue.', 500);
+        }
+    }
+
+    /**
+     * Activer/Désactiver un utilisateur (admin uniquement)
+     */
+    public function toggleUserStatus(): void
+    {
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+
+        if (!$id) {
+            $this->response->error('ID invalide.', 400);
+            return;
+        }
+
+        $user = $this->userModel->findById($id);
+
+        if (!$user) {
+            $this->response->error('Utilisateur non trouvé.', 404);
+            return;
+        }
+
+        try {
+            if ($user['is_actif']) {
+                $this->userModel->desactiverUtilisateur($id);
+                $message = 'Utilisateur désactivé.';
+            } else {
+                $this->userModel->activerUtilisateur($id);
+                $message = 'Utilisateur activé.';
+            }
+
+            $this->response->success(['message' => $message], 200);
+
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            $this->response->error('Erreur serveur.', 500);
+        }
+    }
 
 }

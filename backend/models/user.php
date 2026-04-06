@@ -37,12 +37,18 @@ class User
     }
 
     // Pour le middleware
-    public function findByToken( string $token): array|false
-{
-    $stm = $this->pdo->prepare("SELECT * FROM users WHERE api_token= : api_token");
-    $stm-> execute([':api_token' =>$token]);
-    return $stm->fetch();
+    public function findByToken(string $token): array|false
+    {
+        $stm = $this->pdo->prepare("
+            SELECT users.*, roles.libelle AS role 
+            FROM users 
+            JOIN roles ON users.role_id = roles.id 
+            WHERE users.api_token = :api_token
+        ");
+        $stm->execute([':api_token' => $token]);
+        return $stm->fetch();
     }
+
 
     //  Récupère l'id du rôle
     private function getRoleId(string $roleName): int
@@ -82,7 +88,7 @@ class User
             'ville'         => $data['ville'],
             'password'      => password_hash($data['password'], PASSWORD_BCRYPT),
             'role_id'       => $roleId,
-            ':api_token'    => $token
+            'api_token'    => $token
 
         ]);
 
@@ -226,6 +232,34 @@ class User
             WHERE id = :id
         ");
         return $stm->execute(['id' => $id]);
+    }
+
+    public function creerEmploye(array $data): int
+    {
+        $token = bin2hex(random_bytes(32));
+        $roleId = $this->getRoleId('employe');
+
+        $stm = $this->pdo->prepare("
+            INSERT INTO users
+                (nom, prenom, email, gsm, adresse, code_postal, ville, password, role_id, api_token, is_actif, created_at)
+            VALUES
+                (:nom, :prenom, :email, :gsm, :adresse, :code_postal, :ville, :password, :role_id, :api_token, 1, NOW())    
+        ");
+
+        $stm->execute([
+            'nom'         => $data['nom'],
+            'prenom'      => $data['prenom'],
+            'email'       => $data['email'],
+            'gsm'         => $data['gsm'],
+            'adresse'     => $data['adresse'],
+            'code_postal' => $data['code_postal'],
+            'ville'       => $data['ville'],
+            'password'    => password_hash($data['password'], PASSWORD_BCRYPT),
+            'role_id'     => $roleId,
+            'api_token'   => $token
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
     }
 
 }
