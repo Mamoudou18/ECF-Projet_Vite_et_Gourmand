@@ -1,0 +1,338 @@
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <div class="user-info-card">
+            <div class="user-avatar" id="user-avatar"> </div>
+            <div class="user-details">
+                <h1><i class="bi bi-shield-lock"></i> Espace Administrateur</h1>
+                <p class="lead mb-0">Bienvenue, </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Cards -->
+<section class="py-4">
+    <div class="container">
+        <div class="stats-grid" id="admin-stats"></div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="dashboard-sidebar">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-section="employes-section">
+                                <i class="bi bi-people"></i>
+                                <span>Gestion Employés</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-section="statistiques-section">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Statistiques</span>
+                            </a>
+                        </li>
+                        <hr class="my-2">
+                        <li>
+                            <a href="/espace-employe#menus-section">
+                                <i class="bi bi-card-list"></i>
+                                <span>Gestion Menus</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#commandes-section">
+                                <i class="bi bi-box-seam"></i>
+                                <span>Gestion Commandes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#horaires-section">
+                                <i class="bi bi-clock"></i>
+                                <span>Horaires</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#avis-section">
+                                <i class="bi bi-star"></i>
+                                <span>Validation Avis</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+
+                <!-- SECTION: Dashboard -->
+                <div id="dashboard-section" class="section-content active">
+                    <div class="content-card">
+                        <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
+
+                        <div class="row g-4 mt-2">
+                            <!-- Mini stats admin -->
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                                    <h3 id="countEmployes" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Employés actifs</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-cash-stack text-success" style="font-size: 2rem;"></i>
+                                    <h3 id="totalCA" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Chiffre d'affaires total</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-bag-check text-info" style="font-size: 2rem;"></i>
+                                    <h3 id="totalCommandes" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Commandes totales</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphique rapide -->
+                        <div class="mt-4">
+                            <h5><i class="bi bi-bar-chart"></i> Commandes par menu (aperçu)</h5>
+                            <canvas id="dashboardChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Gestion Employés -->
+                <div id="employes-section" class="section-content">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0"><i class="bi bi-people"></i> Gestion des employés</h4>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createEmployeModal">
+                                <i class="bi bi-person-plus"></i> Créer un employé
+                            </button>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Le mot de passe n'est <strong>jamais communiqué par email</strong>. L'employé doit se rapprocher de l'administrateur.
+                        </div>
+
+                        <!-- Liste des employés -->
+                        <div class="table-responsive">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>Email (identifiant)</th>
+                                        <th>Nom</th>
+                                        <th>Date de création</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employesTableBody">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">Chargement...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Statistiques -->
+                <div id="statistiques-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-graph-up"></i> Statistiques & Chiffre d'affaires</h4>
+
+                        <!-- Graphique comparatif commandes/menu -->
+                        <div class="mt-4">
+                            <h5><i class="bi bi-bar-chart-line"></i> Nombre de commandes par menu</h5>
+                            <p class="text-muted small">Données issues de MongoDB — Comparaison entre menus</p>
+                            <canvas id="commandesParMenuChart" height="300"></canvas>
+                        </div>
+
+                        <hr class="my-5">
+
+                        <!-- Chiffre d'affaires -->
+                        <h5><i class="bi bi-cash-coin"></i> Chiffre d'affaires par menu</h5>
+
+                        <!-- Filtres CA -->
+                        <div class="filters-bar mb-4 p-3 rounded border bg-light">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold"><i class="bi bi-card-list"></i> Menu</label>
+                                    <select class="form-select form-select-sm" id="filterCAMenu">
+                                        <option value="">Tous les menus</option>
+                                        <!-- Rempli dynamiquement -->
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold"><i class="bi bi-calendar"></i> Date début</label>
+                                    <input type="date" class="form-control form-control-sm" id="filterCADateDebut">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold"><i class="bi bi-calendar"></i> Date fin</label>
+                                    <input type="date" class="form-control form-control-sm" id="filterCADateFin">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary btn-sm w-100" id="btnFiltrerCA">
+                                        <i class="bi bi-funnel"></i> Filtrer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Résultat CA -->
+                        <div class="row g-4" id="caResultats">
+                            <div class="col-12 text-center py-4">
+                                <p class="text-muted">Appliquez un filtre pour voir les résultats</p>
+                            </div>
+                        </div>
+
+                        <!-- Tableau détaillé CA -->
+                        <div class="table-responsive mt-4 d-none" id="caTableContainer">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Nb commandes</th>
+                                        <th>CA total</th>
+                                        <th>Panier moyen</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="caTableBody"></tbody>
+                                <tfoot>
+                                    <tr class="fw-bold table-success">
+                                        <td>TOTAL</td>
+                                        <td id="caTotalCommandes">-</td>
+                                        <td id="caTotalMontant">-</td>
+                                        <td id="caTotalMoyen">-</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== MODALES ===================== -->
+
+<!-- Modal: Créer un employé -->
+<div class="modal fade" id="createEmployeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-person-plus"></i> Créer un compte employé</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCreateEmploye">
+                    <div class="mb-3">
+                        <label for="employeNom" class="form-label fw-bold">Nom <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="employeNom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="employePrenom" class="form-label fw-bold">Prénom <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="employePrenom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="employeEmail" class="form-label fw-bold">Email (identifiant) <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="employeEmail" required
+                            placeholder="employe@bonnefourchette.fr">
+                    </div>
+                    <div class="mb-3">
+                        <label for="employePassword" class="form-label fw-bold">Mot de passe <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="employePassword" required minlength="8">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Minimum 8 caractères. Ne sera pas communiqué par email.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="employePasswordConfirm" class="form-label fw-bold">Confirmer le mot de passe <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="employePasswordConfirm" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" id="btnConfirmCreateEmploye">
+                    <i class="bi bi-check-lg"></i> Créer le compte
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirmer désactivation employé -->
+<div class="modal fade" id="disableEmployeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="bi bi-person-x"></i> Désactiver le compte</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="disableEmployeId">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Attention :</strong> L'employé ne pourra plus se connecter.
+                </div>
+                <p>Voulez-vous vraiment désactiver le compte de :</p>
+                <p class="fs-5 fw-bold" id="disableEmployeName"></p>
+                <div class="mb-3">
+                    <label for="disableMotif" class="form-label fw-bold">Motif (optionnel)</label>
+                    <textarea class="form-control" id="disableMotif" rows="2"
+                        placeholder="Ex: Départ de l'entreprise..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-warning" id="btnConfirmDisable">
+                    <i class="bi bi-person-x"></i> Désactiver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Réactiver un employé -->
+<div class="modal fade" id="enableEmployeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-person-check"></i> Réactiver le compte</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="enableEmployeId">
+                <p>Voulez-vous réactiver le compte de :</p>
+                <p class="fs-5 fw-bold" id="enableEmployeName"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-success" id="btnConfirmEnable">
+                    <i class="bi bi-person-check"></i> Réactiver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

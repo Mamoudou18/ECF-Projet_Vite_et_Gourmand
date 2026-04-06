@@ -12,6 +12,7 @@ export const allRoutes = [
     new Route("/commande", "Commande", "./pages/commandes/commande.html","/js/commandes/commande.js"),
     new Route("/utilisateur", "Mon compte", "./pages/comptes/utilisateur.html","/js/comptes/utilisateur.js"),
     new Route("/espace-employe", "Espace employe", "./pages/comptes/employe.html","/js/comptes/employe.js"),
+    new Route("/espace-administrateur", "Espace administrateur", "./pages/comptes/admin.html","/js/comptes/admin.js"),
 
 ];
 

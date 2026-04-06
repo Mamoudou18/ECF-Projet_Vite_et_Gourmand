@@ -18,6 +18,14 @@ export async function init() {
     updateDasboardHeader();
     loadAdminDashboard();
 
+    // Redirection via hash
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+        const link = document.querySelector(`.sidebar-menu a[data-section="${hash}"]`);
+        if (link) {
+            showSection(hash, link);
+        }
+    }
 }
 
 // ===== INITIALISATION =====
@@ -74,6 +82,7 @@ function showSection(sectionId, clickedLink) {
     if (clickedLink) clickedLink.classList.add("active");
 
     if (sectionId === 'avis-section') loadAvis();
+    if(sectionId === 'menus-section') initEmployeeMenus();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
