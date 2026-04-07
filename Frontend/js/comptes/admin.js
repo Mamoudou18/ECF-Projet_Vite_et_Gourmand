@@ -110,6 +110,14 @@ function initEmployeEvents() {
         let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
         e.target.value = formatted.trim();
     });
+
+    document.getElementById('editEmpGsm')?.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.slice(0, 10);
+        let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
+        e.target.value = formatted.trim();
+    });
+
 }
 
 // ===== CHARGER =====
@@ -153,7 +161,7 @@ function afficherEmployes(liste) {
             ? `<button class="btn btn-outline-danger btn-xs" onclick="ouvrirToggleUserModal(${emp.id}, true)" title="Désactiver cet utilisateur"><i class="bi bi-person-x"></i></button>`
             : `<button class="btn btn-outline-success btn-xs" onclick="ouvrirToggleUserModal(${emp.id}, false)" title="Réactiver cet utilisateur"><i class="bi bi-person-check"></i></button>`;
 
-        const btnEdit = canEdit
+        const btnEdit = (canEdit && isActif)
             ? `<button class="btn btn-outline-primary btn-xs" onclick="openEditEmploye(${emp.id})" title="Modifier cet utilisateur"><i class="bi bi-pencil"></i></button>`
             : '';
 
@@ -268,7 +276,10 @@ function openEditEmploye(id) {
     document.getElementById('editEmpNom').value = emp.nom;
     document.getElementById('editEmpPrenom').value = emp.prenom;
     document.getElementById('editEmpEmail').value = emp.email;
-    document.getElementById('editEmpTelephone').value = emp.gsm || '';
+    document.getElementById('editEmpGsm').value = emp.gsm || '';
+    document.getElementById('editEmpAdresse').value = emp.adresse || '';
+    document.getElementById('editEmpCodePostal').value = emp.code_postal || '';
+    document.getElementById('editEmpVille').value = emp.ville || '';
     document.getElementById('editEmpRole').value = emp.role || 'employe';
 
     modalEditEmploye.show();
@@ -278,18 +289,35 @@ async function modifierEmploye(e) {
     e.preventDefault();
 
     const id = document.getElementById('editEmpId').value;
+    const nom = document.getElementById('editEmpNom').value.trim();
+    const prenom = document.getElementById('editEmpPrenom').value.trim();
+    const email = document.getElementById('editEmpEmail').value.trim();
+    const gsm = document.getElementById('editEmpGsm').value.trim();
+    const adresse = document.getElementById('editEmpAdresse').value.trim();
+    const code_postal = document.getElementById('editEmpCodePostal').value.trim();
+    const ville = document.getElementById('editEmpVille').value.trim();
+    const role = document.getElementById('editEmpRole').value;
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Le mail saisi n\'est pas au bon format', 'danger');
+        return;
+    }
+
+    if (!/^[0-9]{10}$/.test(gsm.replace(/\s/g, ''))) {
+        showToast('Le numéro de téléphone doit contenir 10 chiffres', 'danger');
+        return;
+    }
+
     const data = {
-        nom: document.getElementById('editEmpNom').value.trim(),
-        prenom: document.getElementById('editEmpPrenom').value.trim(),
-        email: document.getElementById('editEmpEmail').value.trim(),
-        telephone: document.getElementById('editEmpTelephone').value.trim(),
-        role: document.getElementById('editEmpRole').value
+        nom, prenom, email,
+        gsm: gsm.replace(/\s/g, ''),
+        adresse, code_postal, ville, role
     };
 
     try {
         const user = getStorage();
         if (!user) return;
-        const res = await fetch(`${API_BASE}/employes/${id}`, {
+        const res = await fetch(`${API_BASE}/admin/update-employe?id=${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -307,6 +335,7 @@ async function modifierEmploye(e) {
         showToast(err.message || 'Erreur lors de la modification', 'danger');
     }
 }
+
 
 // ====== TOGGLE USER (ACTIVER/DÉSACTIVER) ========
 function ouvrirToggleUserModal(id, isActif) {

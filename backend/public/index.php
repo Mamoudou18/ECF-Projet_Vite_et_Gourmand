@@ -71,8 +71,9 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/avis/list'                                => 'Tous les avis (admin)',
             'PUT /api/avis/moderer?id={id}'                     => 'Modérer un avis (employé et admin)',
             'POST /api/admin/create-employe'                    => 'créer un compte employé',
+            'PUT /api/admin/update-employe'                     => 'Modifier le profil d\'employé',
             'GET /api/admin/affiche-users'                      => 'Récupérer les utilisateurs',
-            'PATCH /api/admin/toggle-user?id={id}'                      => 'Activer ou désactiver un utilisateur'
+            'PATCH /api/admin/toggle-user?id={id}'              => 'Activer ou désactiver un utilisateur'
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -796,6 +797,27 @@ switch ($ressource) {
                 }
                 break;
 
+            case 'update-employe':
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'updateEmploye')) {
+                        $controller->updateEmploye();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode updateEmploye() n\'existe pas dans AuthController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/admin/update-employe?id={id}',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
             case 'affiche-users':
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getUsers')) {
@@ -832,7 +854,7 @@ switch ($ressource) {
                     http_response_code(405);
                     echo json_encode([
                         'error'         => 'Méthode HTTP non autorisée',
-                        'details'       => 'Utilisez GET pour /api/admin/toggle-user',
+                        'details'       => 'Utilisez GET pour /api/admin/toggle-user?id={id}',
                         'methode_recue' => $method
                     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
@@ -843,7 +865,7 @@ switch ($ressource) {
                 echo json_encode([
                     'error'               => 'Action non trouvée',
                     'details'             => "L'action '$action' n'existe pas pour admin",
-                    'actions_disponibles' => ['create-employe', 'toggle-user']
+                    'actions_disponibles' => ['create-employe', 'update-employe', 'affiche-users', 'toggle-user']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;

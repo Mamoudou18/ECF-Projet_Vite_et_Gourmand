@@ -578,6 +578,29 @@ class ValidationService
         return $errors;
     }
 
+    public function validateUpdateEmploye(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data['nom']) || strlen($data['nom']) < 2) {
+            $errors[] = 'Le nom doit contenir au moins 2 caractères.';
+        }
+        if (empty($data['prenom']) || strlen($data['prenom']) < 2) {
+            $errors[] = 'Le prénom doit contenir au moins 2 caractères.';
+        }
+        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email invalide.';
+        }
+        if (!empty($data['gsm']) && !preg_match('/^[0-9]{10}$/', $data['gsm'])) {
+            $errors[] = 'Le GSM doit contenir 10 chiffres.';
+        }
+        if (empty($data['role']) || !in_array($data['role'], ['admin', 'employe'])) {
+            $errors[] = 'Rôle invalide.';
+        }
+
+        return $errors;
+    }
+
 
 
 }

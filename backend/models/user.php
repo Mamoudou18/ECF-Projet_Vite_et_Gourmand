@@ -262,4 +262,34 @@ class User
         return (int) $this->pdo->lastInsertId();
     }
 
+    // Mise à jour d'un employé par l'admin
+    public function updateEmployeByAdmin(int $id, array $data): bool
+    {
+        $stm = $this->pdo->prepare("
+            UPDATE users 
+            SET nom = :nom,
+                prenom = :prenom,
+                email = :email,
+                gsm = :gsm,
+                adresse = :adresse,
+                code_postal = :code_postal,
+                ville = :ville,
+                role_id = :role_id
+            WHERE id = :id
+        ");
+
+        return $stm->execute([
+            'id'          => $id,
+            'nom'         => $data['nom'],
+            'prenom'      => $data['prenom'],
+            'email'       => $data['email'],
+            'gsm'         => $data['gsm'],
+            'adresse'     => $data['adresse'],
+            'code_postal' => $data['code_postal'],
+            'ville'       => $data['ville'],
+            'role_id'     => $data['role'] === 'admin' ? 1 : 2,
+        ]);
+    }
+
+
 }

@@ -446,4 +446,66 @@ class AuthController
         ]);
     }
 
+    /**
+    * Mise à jour d'un employé par l'admin
+    */
+    public function updateEmploye(): void
+    {
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
+
+        if (!$id) {
+            $this->response->error('ID invalide.', 400);
+            return;
+        }
+
+        $user = $this->userModel->findById($id);
+
+        if (!$user) {
+            $this->response->error('Utilisateur non trouvé.', 404);
+            return;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data) || empty($data)) {
+            $this->response->error('Données invalides.', 400);
+            return;
+        }
+
+        $errors = $this->validator->validateUpdateEmploye($data);
+
+        if (!empty($errors)) {
+            $this->response->error('Erreur de validation.', 422, $errors);
+            return;
+        }
+
+        // Vérifier si l'email est pris par un autre utilisateur
+        if ($data['email'] !== $user['email'] && $this->userModel->emailExists($data['email'])) {
+            $this->response->error('Cet email est déjà utilisé.', 409);
+            return;
+        }
+
+        try {
+            $success = $this->userModel->updateEmployeByAdmin($id, $data);
+
+            if (!$success) {
+                $this->response->error('Erreur lors de la mise à jour.', 500);
+                return;
+            }
+
+            $this->response->success(['message' => 'Employé mis à jour avec succès.'], 200);
+
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            $this->response->error('Erreur serveur.', 500);
+        }
+    }
+
 }

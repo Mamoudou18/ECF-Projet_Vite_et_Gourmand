@@ -111,7 +111,7 @@
                     <div class="content-card">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4><i class="bi bi-people"></i> Gestion des Employés</h4>
-                            <button class="btn btn-primary" id="btnOpenCreateEmploye">
+                            <button class="btn bg-accent text-white" id="btnOpenCreateEmploye">
                                 <i class="bi bi-person-plus"></i> Nouvel Employé
                             </button>
                         </div>
@@ -308,7 +308,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i> Annuler
                     </button>
-                    <button type="submit" class="btn btn-register" id="btnCreateEmploye">
+                    <button type="submit" class="btn bg-accent text-white" id="btnCreateEmploye">
                         <i class="bi bi-person-plus-fill"></i> Créer l'employé
                     </button>
                 </div>
@@ -321,46 +321,103 @@
 <!-- ============================== -->
 <!-- MODAL ÉDITION EMPLOYÉ -->
 <!-- ============================== -->
+<!-- ============================== -->
+<!-- MODAL ÉDITION EMPLOYÉ -->
+<!-- ============================== -->
 <div class="modal fade" id="editEmployeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
+            <div class="modal-header bg-accent text-white">
                 <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Modifier l'employé</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formEditEmploye">
                 <div class="modal-body">
+
                     <input type="hidden" id="editEmpId">
-                    <div class="row g-3">
+
+                    <!-- Nom et Prénom -->
+                    <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label for="editEmpNom" class="form-label fw-bold">Nom *</label>
-                            <input type="text" class="form-control" id="editEmpNom" required>
+                            <label for="editEmpNom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="editEmpNom" placeholder="Nom" required minlength="2">
                         </div>
                         <div class="col-md-6">
-                            <label for="editEmpPrenom" class="form-label fw-bold">Prénom *</label>
-                            <input type="text" class="form-control" id="editEmpPrenom" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editEmpEmail" class="form-label fw-bold">Email *</label>
-                            <input type="email" class="form-control" id="editEmpEmail" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editEmpTelephone" class="form-label fw-bold">Téléphone</label>
-                            <input type="tel" class="form-control" id="editEmpTelephone">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editEmpRole" class="form-label fw-bold">Rôle *</label>
-                            <select class="form-select" id="editEmpRole" required>
-                                <option value="employe">Employé</option>
-                                <option value="admin">Administrateur</option>
-                            </select>
+                            <label for="editEmpPrenom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="editEmpPrenom" placeholder="Prénom" required minlength="2">
                         </div>
                     </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="editEmpEmail" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="editEmpEmail" placeholder="email@exemple.com" required>
+                        </div>
+                        <small id="editEmpEmailMessage" class="text-danger" style="display: none;">
+                            L'adresse mail ne respecte pas le format!
+                        </small>
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="editEmpGsm" class="form-label">
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="editEmpGsm" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse postale -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="editEmpAdresse" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editEmpCodePostal" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editEmpVille" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
+                    <!-- Rôle -->
+                    <div class="mb-3">
+                        <label for="editEmpRole" class="form-label">
+                            <i class="bi bi-shield-fill"></i> Rôle <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="editEmpRole" required>
+                            <option value="employe">Employé</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-warning">
-                        <i class="bi bi-check-lg"></i> Enregistrer
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn bg-accent text-white">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
                     </button>
                 </div>
             </form>
