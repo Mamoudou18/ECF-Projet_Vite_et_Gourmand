@@ -111,13 +111,21 @@ function initEmployeEvents() {
 // ===== CHARGER =====
 async function chargerEmployes() {
     try {
-        const res = await fetch(`${API_BASE}/employes`);
+        const user = getStorage();
+        if (!user) return;
+
+        const res = await fetch(`${API_BASE}/admin/affiche-users`, {
+            headers: {
+                'Authorization': `Bearer ${user.api_token}`
+            }
+        });
         allEmployes = await res.json();
-        afficherEmployes(allEmployes);
+        afficherEmployes(allEmployes.users);
     } catch (err) {
         showToast('Erreur chargement employés', 'danger');
     }
 }
+
 
 // ===== AFFICHER =====
 function afficherEmployes(liste) {
@@ -133,9 +141,9 @@ function afficherEmployes(liste) {
         <tr>
             <td>${emp.prenom} ${emp.nom}</td>
             <td>${emp.email}</td>
-            <td>${emp.telephone || '-'}</td>
+            <td>${emp.gsm || '-'}</td>
             <td>${emp.role || 'employe'}</td>
-            <td>${formatDate(emp.createdAt)}</td>
+            <td>${formatDate(emp.created_at)}</td>
             <td>
                 <button class="btn btn-sm btn-outline-primary" onclick="openEditEmploye('${emp._id}')">
                     <i class="bi bi-pencil"></i>
@@ -237,14 +245,6 @@ async function creerEmploye(e) {
     }
 }
 
-// Formater le téléphone pendant la saisie
-document.getElementById('createEmpGsm').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    value = value.slice(0, 10);
-    let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
-    e.target.value = formatted.trim();
-});
-
 // ===== ÉDITER =====
 function openEditEmploye(id) {
     const emp = allEmployes.find(e => e._id === id);
@@ -322,6 +322,14 @@ function resetCreateEmpRequirements() {
     const msg = document.getElementById('passwordMatchMessage');
     if (msg) msg.style.display = 'none';
 }
+
+// Formater le téléphone pendant la saisie
+document.getElementById('createEmpGsm').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    value = value.slice(0, 10);
+    let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
+    e.target.value = formatted.trim();
+});
 
 
 // ===== EXPOSER AU HTML =====

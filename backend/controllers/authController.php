@@ -422,4 +422,28 @@ class AuthController
         }
     }
 
+    public function getUsers(): void
+    {
+        $admin = $_REQUEST['auth_user'];
+
+        if ($admin['role'] !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['message' => 'Accès refusé']);
+            return;
+        }
+
+        $users = $this->userModel->getAllUsers();
+
+        // Retirer les mots de passe
+        $users = array_map(function ($u) {
+            unset($u['password'], $u['api_token'], $u['reset_token'], $u['reset_token_expires_at']);
+            return $u;
+        }, $users);
+
+        echo json_encode([
+            'message' => 'Liste des utilisateurs',
+            'users'   => $users
+        ]);
+    }
+
 }
