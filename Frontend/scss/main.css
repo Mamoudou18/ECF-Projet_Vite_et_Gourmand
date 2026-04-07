@@ -14095,4 +14095,16 @@ li {
 }
 .bg-accent {
   background: linear-gradient(135deg, #6B5847 0%, #d4af37 100%);
+}
+
+/* Boutons extra-petits */
+.btn-xs {
+  padding: 0.15rem 0.35rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+/* Tooltip au survol via title natif + curseur pointer */
+.btn-xs[title] {
+  cursor: pointer;
 }/*# sourceMappingURL=main.css.map */

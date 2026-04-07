@@ -11,16 +11,17 @@ import {
 // ===================== VARIABLES GLOBALES ========
 const API_BASE = 'http://localhost/api';
 let allEmployes = [];
-let modalCreateEmploye, modalEditEmploye, modalDeleteEmploye;
+let modalCreateEmploye, modalEditEmploye, modalToggleUser;
 
 // ===================== INIT =====================
 export async function init() {
     initEventListeners();
     updateDasboardHeader();
 
-    modalCreateEmploye  = new bootstrap.Modal(document.getElementById('createEmployeModal'));
-    modalEditEmploye    = new bootstrap.Modal(document.getElementById('editEmployeModal'));
-    modalDeleteEmploye  = new bootstrap.Modal(document.getElementById('deleteEmployeModal'));
+    // Initialiser les modals
+    modalCreateEmploye = new bootstrap.Modal(document.getElementById('createEmployeModal'));
+    modalEditEmploye   = new bootstrap.Modal(document.getElementById('editEmployeModal'));
+    modalToggleUser    = new bootstrap.Modal(document.getElementById('toggleUserModal'));
 
     initEmployeEvents();
     chargerEmployes();
@@ -74,39 +75,42 @@ function updateDasboardHeader() {
 
 // ===== EVENTS =====
 function initEmployeEvents() {
-    // Toggle password — nouveaux id
     showPassword('togglePassword', 'password');
     showPassword('togglePasswordConfirm', 'passwordConfirm');
 
-
-    // Strength + match
     const pwdInput = document.getElementById('password');
     const confirmInput = document.getElementById('passwordConfirm');
 
-    pwdInput.addEventListener('input', () => {
+    pwdInput?.addEventListener('input', () => {
         checkPasswordStrength(pwdInput);
         checkPasswordMatch(pwdInput, confirmInput);
     });
 
-    confirmInput.addEventListener('input', () => {
+    confirmInput?.addEventListener('input', () => {
         checkPasswordMatch(pwdInput, confirmInput);
     });
 
     document.getElementById('btnOpenCreateEmploye')?.addEventListener('click', () => {
         document.getElementById('formCreateEmploye')?.reset();
         resetCreateEmpRequirements();
-        new bootstrap.Modal(document.getElementById('createEmployeModal')).show();
+        modalCreateEmploye.show();
     });
 
-    // Recherche
     document.getElementById('searchEmploye')?.addEventListener('input', filtrerEmployes);
-
-    // Soumission formulaires
     document.getElementById('formCreateEmploye')?.addEventListener('submit', creerEmploye);
     document.getElementById('formEditEmploye')?.addEventListener('submit', modifierEmploye);
-    document.getElementById('btnConfirmDeleteEmploye')?.addEventListener('click', supprimerEmploye);
-}
 
+    // Toggle user
+    document.getElementById('btnConfirmToggleUser')?.addEventListener('click', confirmerToggleUser);
+
+    // Formater GSM
+    document.getElementById('createEmpGsm')?.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.slice(0, 10);
+        let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
+        e.target.value = formatted.trim();
+    });
+}
 
 // ===== CHARGER =====
 async function chargerEmployes() {
@@ -119,42 +123,57 @@ async function chargerEmployes() {
                 'Authorization': `Bearer ${user.api_token}`
             }
         });
-        allEmployes = await res.json();
-        afficherEmployes(allEmployes.users);
+        const data = await res.json();
+        allEmployes = data.users || [];
+        afficherEmployes(allEmployes);
     } catch (err) {
         showToast('Erreur chargement employés', 'danger');
     }
 }
-
 
 // ===== AFFICHER =====
 function afficherEmployes(liste) {
     const tbody = document.getElementById('employeTableBody');
     if (!tbody) return;
 
-    if (liste.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Aucun employé trouvé</td></tr>`;
+    if (!liste || liste.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Aucun employé trouvé</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = liste.map(emp => `
-        <tr>
+    tbody.innerHTML = liste.map(emp => {
+        const isActif = emp.is_actif == 1;
+        const canEdit = ['employe', 'admin'].includes(emp.role);
+
+        const badgeStatut = isActif
+            ? `<span class="badge bg-success">Actif</span>`
+            : `<span class="badge bg-danger">Inactif</span>`;
+
+        const btnToggle = isActif
+            ? `<button class="btn btn-outline-danger btn-xs" onclick="ouvrirToggleUserModal(${emp.id}, true)" title="Désactiver cet utilisateur"><i class="bi bi-person-x"></i></button>`
+            : `<button class="btn btn-outline-success btn-xs" onclick="ouvrirToggleUserModal(${emp.id}, false)" title="Réactiver cet utilisateur"><i class="bi bi-person-check"></i></button>`;
+
+        const btnEdit = canEdit
+            ? `<button class="btn btn-outline-primary btn-xs" onclick="openEditEmploye(${emp.id})" title="Modifier cet utilisateur"><i class="bi bi-pencil"></i></button>`
+            : '';
+
+        return `
+        <tr class="${!isActif ? 'table-secondary' : ''}">
             <td>${emp.prenom} ${emp.nom}</td>
             <td>${emp.email}</td>
             <td>${emp.gsm || '-'}</td>
             <td>${emp.role || 'employe'}</td>
+            <td>${badgeStatut}</td>
             <td>${formatDate(emp.created_at)}</td>
             <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="openEditEmploye('${emp._id}')">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="openDeleteEmploye('${emp._id}')">
-                    <i class="bi bi-trash"></i>
-                </button>
+                ${btnEdit}
+                ${btnToggle}
             </td>
-        </tr>
-    `).join('');
+        </tr>`;
+    }).join('');
 }
+
+
 
 // ===== FILTRER =====
 function filtrerEmployes() {
@@ -180,7 +199,6 @@ async function creerEmploye(e) {
     const ville = document.getElementById('createEmpVille').value.trim();
     const role = document.getElementById('createEmpRole').value;
 
-    // Vérifications
     if (!checkPasswordStrength(document.getElementById('password'))) {
         showToast('Le mot de passe ne respecte pas les critères', 'danger');
         return;
@@ -190,7 +208,7 @@ async function creerEmploye(e) {
         showToast('Les mots de passe ne correspondent pas', 'danger');
         return;
     }
-    
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         showToast('Le mail saisi n\'est pas au bon format', 'danger');
         return;
@@ -200,22 +218,18 @@ async function creerEmploye(e) {
         showToast('Le numéro de téléphone doit contenir 10 chiffres', 'danger');
         return;
     }
-    // Désactiver le bouton
+
     const btnCreateEmploye = document.getElementById('btnCreateEmploye');
     btnCreateEmploye.disabled = true;
     btnCreateEmploye.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Création du compte...';
-   
+
     const data = {
-        nom:               nom,
-        prenom:            prenom,
-        email:             email,
-        gsm:               telephone.replace(/\s/g, ''),
-        adresse:           adresse,
-        code_postal:       code_postal,
-        ville:             ville,
-        password:          pwd,
-        confirm_password:  confirm,
-        role:              role
+        nom, prenom, email,
+        gsm: telephone.replace(/\s/g, ''),
+        adresse, code_postal, ville,
+        password: pwd,
+        confirm_password: confirm,
+        role
     };
 
     try {
@@ -223,10 +237,10 @@ async function creerEmploye(e) {
         if (!user) return;
         const res = await fetch(`${API_BASE}/admin/create-employe`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.api_token}`
-             },
+            },
             body: JSON.stringify(data)
         });
 
@@ -247,14 +261,14 @@ async function creerEmploye(e) {
 
 // ===== ÉDITER =====
 function openEditEmploye(id) {
-    const emp = allEmployes.find(e => e._id === id);
+    const emp = allEmployes.find(e => e.id === id);
     if (!emp) return;
 
-    document.getElementById('editEmpId').value = emp._id;
+    document.getElementById('editEmpId').value = emp.id;
     document.getElementById('editEmpNom').value = emp.nom;
     document.getElementById('editEmpPrenom').value = emp.prenom;
     document.getElementById('editEmpEmail').value = emp.email;
-    document.getElementById('editEmpTelephone').value = emp.telephone || '';
+    document.getElementById('editEmpTelephone').value = emp.gsm || '';
     document.getElementById('editEmpRole').value = emp.role || 'employe';
 
     modalEditEmploye.show();
@@ -265,17 +279,22 @@ async function modifierEmploye(e) {
 
     const id = document.getElementById('editEmpId').value;
     const data = {
-        nom:       document.getElementById('editEmpNom').value.trim(),
-        prenom:    document.getElementById('editEmpPrenom').value.trim(),
-        email:     document.getElementById('editEmpEmail').value.trim(),
+        nom: document.getElementById('editEmpNom').value.trim(),
+        prenom: document.getElementById('editEmpPrenom').value.trim(),
+        email: document.getElementById('editEmpEmail').value.trim(),
         telephone: document.getElementById('editEmpTelephone').value.trim(),
-        role:      document.getElementById('editEmpRole').value
+        role: document.getElementById('editEmpRole').value
     };
 
     try {
+        const user = getStorage();
+        if (!user) return;
         const res = await fetch(`${API_BASE}/employes/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.api_token}`
+            },
             body: JSON.stringify(data)
         });
 
@@ -289,49 +308,70 @@ async function modifierEmploye(e) {
     }
 }
 
-// ===== SUPPRIMER =====
-function openDeleteEmploye(id) {
-    document.getElementById('deleteEmpId').value = id;
-    modalDeleteEmploye.show();
+// ====== TOGGLE USER (ACTIVER/DÉSACTIVER) ========
+function ouvrirToggleUserModal(id, isActif) {
+    document.getElementById('toggleUserId').value = id;
+
+    const header = document.getElementById('toggleUserHeader');
+    const title = document.getElementById('toggleUserTitle');
+    const message = document.getElementById('toggleUserMessage');
+    const btn = document.getElementById('btnConfirmToggleUser');
+    const action = document.getElementById('toggleUserAction');
+
+    if (isActif) {
+        action.value = 'desactiver';
+        header.className = 'modal-header bg-danger text-dark';
+        title.innerHTML = '<i class="bi bi-person-x"></i> Désactiver le compte';
+        message.textContent = 'Voulez-vous vraiment désactiver cet utilisateur ?';
+        btn.className = 'btn btn-danger';
+        btn.innerHTML = '<i class="bi bi-person-x-fill"></i> Désactiver';
+    } else {
+        action.value = 'activer';
+        header.className = 'modal-header bg-success text-white';
+        title.innerHTML = '<i class="bi bi-person-check"></i> Réactiver le compte';
+        message.textContent = 'Voulez-vous vraiment réactiver cet utilisateur ?';
+        btn.className = 'btn btn-success';
+        btn.innerHTML = '<i class="bi bi-person-check-fill"></i> Réactiver';
+    }
+
+    modalToggleUser.show();
 }
 
-async function supprimerEmploye() {
-    const id = document.getElementById('deleteEmpId').value;
+async function confirmerToggleUser() {
+    const id = document.getElementById('toggleUserId').value;
+    const action = document.getElementById('toggleUserAction').value;
+    const user = getStorage();
+    if (!user) return;
 
     try {
-        const res = await fetch(`${API_BASE}/employes/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/admin/toggle-user?id=${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${user.api_token}`
+            }
+        });
+
         if (!res.ok) throw await res.json();
 
-        showToast('Employé supprimé', 'success');
-        modalDeleteEmploye.hide();
+        showToast(`Utilisateur ${action === 'activer' ? 'réactivé' : 'désactivé'} avec succès`, 'success');
+        modalToggleUser.hide();
         chargerEmployes();
     } catch (err) {
-        showToast(err.message || 'Erreur lors de la suppression', 'danger');
+        showToast(err.message || 'Erreur', 'danger');
     }
 }
 
 function resetCreateEmpRequirements() {
     ['req-length', 'req-uppercase', 'req-lowercase',
-     'req-number', 'req-special'].forEach(id => {
+        'req-number', 'req-special'].forEach(id => {
         updateRequirement(id, false);
     });
     const bar = document.getElementById('strengthBar');
-    if (bar) {
-        bar.className = 'password-strength-bar';
-    }
+    if (bar) bar.className = 'password-strength-bar';
     const msg = document.getElementById('passwordMatchMessage');
     if (msg) msg.style.display = 'none';
 }
 
-// Formater le téléphone pendant la saisie
-document.getElementById('createEmpGsm').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    value = value.slice(0, 10);
-    let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ');
-    e.target.value = formatted.trim();
-});
-
-
 // ===== EXPOSER AU HTML =====
 window.openEditEmploye = openEditEmploye;
-window.openDeleteEmploye = openDeleteEmploye;
+window.ouvrirToggleUserModal = ouvrirToggleUserModal;

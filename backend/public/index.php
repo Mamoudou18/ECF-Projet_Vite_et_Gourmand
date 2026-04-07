@@ -72,7 +72,7 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'PUT /api/avis/moderer?id={id}'                     => 'Modérer un avis (employé et admin)',
             'POST /api/admin/create-employe'                    => 'créer un compte employé',
             'GET /api/admin/affiche-users'                      => 'Récupérer les utilisateurs',
-            'PATCH /api/admin/toggle-user'                      => 'Activer ou désactiver un utilisateur'
+            'PATCH /api/admin/toggle-user?id={id}'                      => 'Activer ou désactiver un utilisateur'
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();

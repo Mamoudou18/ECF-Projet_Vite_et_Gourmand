@@ -131,12 +131,14 @@
                                     <tr>
                                         <th>Nom</th>
                                         <th>Email</th>
-                                        <th>Téléphone</th>
+                                        <th>GSM</th>
                                         <th>Rôle</th>
+                                        <th>Statut</th>
                                         <th>Date création</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
+
                                 <tbody id="employeTableBody">
                                     <!-- Rempli dynamiquement -->
                                 </tbody>
@@ -367,26 +369,25 @@
 </div>
 
 <!-- ============================== -->
-<!-- MODAL SUPPRESSION EMPLOYÉ -->
+<!-- MODAL DÉSACTIVER/ACTIVER USER -->
 <!-- ============================== -->
-<div class="modal fade" id="deleteEmployeModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="toggleUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmer la suppression</h5>
+            <div class="modal-header" id="toggleUserHeader">
+                <h5 class="modal-title" id="toggleUserTitle"></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <input type="hidden" id="deleteEmpId">
-                <p>Voulez-vous vraiment supprimer cet employé ?</p>
-                <p class="text-muted">Cette action est irréversible.</p>
+                <input type="hidden" id="toggleUserId">
+                <input type="hidden" id="toggleUserAction">
+                <p id="toggleUserMessage"></p>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmDeleteEmploye">
-                    <i class="bi bi-trash-fill"></i> Supprimer
-                </button>
+                <button type="button" class="btn" id="btnConfirmToggleUser"></button>
             </div>
         </div>
     </div>
 </div>
+
