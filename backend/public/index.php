@@ -73,7 +73,14 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'POST /api/admin/create-employe'                    => 'créer un compte employé',
             'PUT /api/admin/update-employe'                     => 'Modifier le profil d\'employé',
             'GET /api/admin/affiche-users'                      => 'Récupérer les utilisateurs',
-            'PATCH /api/admin/toggle-user?id={id}'              => 'Activer ou désactiver un utilisateur'
+            'PATCH /api/admin/toggle-user?id={id}'              => 'Activer ou désactiver un utilisateur',
+            'POST /api/stats/sync'                              => 'Synchroniser MySQL → MongoDB',
+            'GET /api/stats/dashboard'                          => 'Dashboard complet',
+            'GET /api/stats/commandes-par-menu'                 => 'Commandes par menu (filtres: date_debut, date_fin)',
+            'GET /api/stats/chiffre-affaires'                   => 'Chiffre d\'affaires (filtres: menu_id, date_debut, date_fin)',
+            'GET /api/stats/top-clients'                        => 'Top clients (filtre: limit)',
+            'GET /api/stats/menus'                              => 'Liste menus pour filtres',
+
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
@@ -870,12 +877,168 @@ switch ($ressource) {
         }
         break;
 
+    // =============================================
+    // STATS (MongoDB)
+    // =============================================
+    case 'stats':
+        $controllerPath = __DIR__ . '/../controllers/StatsController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'StatsController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new StatsController();
+
+        switch ($action) {
+
+            case 'sync':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'sync')) {
+                        $controller->sync();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode sync() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/stats/sync',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'dashboard':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getDashboard')) {
+                        $controller->getDashboard();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getDashboard() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/dashboard',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'commandes-par-menu':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getCommandesParMenu')) {
+                        $controller->getCommandesParMenu();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getCommandesParMenu() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/commandes-par-menu',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'chiffre-affaires':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getChiffreAffaires')) {
+                        $controller->getChiffreAffaires();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getChiffreAffaires() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/chiffre-affaires',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'top-clients':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getTopClients')) {
+                        $controller->getTopClients();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getTopClients() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/top-clients',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'menus':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'getMenusDisponibles')) {
+                        $controller->getMenusDisponibles();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode getMenusDisponibles() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/menus',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour stats",
+                    'actions_disponibles' => ['sync', 'dashboard', 'commandes-par-menu', 'chiffre-affaires', 'top-clients', 'menus']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
     default:
         http_response_code(404);
         echo json_encode([
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

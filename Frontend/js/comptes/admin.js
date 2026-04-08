@@ -12,6 +12,7 @@ import {
 const API_BASE = 'http://localhost/api';
 let allEmployes = [];
 let modalCreateEmploye, modalEditEmploye, modalToggleUser;
+let chartCommandesParMenu, chartCAParMenu;
 
 // ===================== INIT =====================
 export async function init() {
@@ -24,6 +25,7 @@ export async function init() {
     modalToggleUser    = new bootstrap.Modal(document.getElementById('toggleUserModal'));
 
     initEmployeEvents();
+    initStatsEvents();
     chargerEmployes();
 }
 
@@ -399,6 +401,345 @@ function resetCreateEmpRequirements() {
     if (bar) bar.className = 'password-strength-bar';
     const msg = document.getElementById('passwordMatchMessage');
     if (msg) msg.style.display = 'none';
+}
+
+// =====================================================
+// STATISTIQUES (MongoDB via /api/stats)
+// =====================================================
+
+function initStatsEvents() {
+    document.getElementById('btnSyncStats')?.addEventListener('click', syncEtChargerStats);
+    document.getElementById('btnFiltrerCmdMenu')?.addEventListener('click', chargerCommandesParMenu);
+    document.getElementById('btnFiltrerCA')?.addEventListener('click', chargerCA);
+
+    // Charger la liste des menus pour le filtre CA
+    chargerMenusPourFiltre();
+}
+
+// =====================================================
+// SYNC MySQL → MongoDB
+// =====================================================
+async function syncEtChargerStats() {
+    const user = getStorage();
+    if (!user) return;
+
+    const btn = document.getElementById('btnSyncStats');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Synchronisation...';
+
+    try {
+        const res = await fetch(`${API_BASE}/stats/sync`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        showToast(`${data.nb_commandes_synchronisees ?? 0} commandes synchronisées`, 'success');
+
+        // Recharger tous les graphiques
+        await Promise.all([
+            chargerCommandesParMenu(),
+            chargerCA(),
+            chargerTopClients(),
+            chargerMenusPourFiltre()
+        ]);
+
+        document.getElementById('lastSync').textContent = new Date().toLocaleString('fr-FR');
+
+    } catch (err) {
+        showToast(err.message || 'Erreur synchronisation', 'danger');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Synchroniser les données';
+    }
+}
+
+// =====================================================
+// COMMANDES PAR MENU (Bar horizontal) — filtrable par dates
+// =====================================================
+async function chargerCommandesParMenu() {
+    const user = getStorage();
+    if (!user) return;
+
+    const dateDebut = document.getElementById('cmdMenuDateDebut')?.value || '';
+    const dateFin   = document.getElementById('cmdMenuDateFin')?.value || '';
+
+    let url = `${API_BASE}/stats/commandes-par-menu`;
+    const params = new URLSearchParams();
+    if (dateDebut) params.append('date_debut', dateDebut);
+    if (dateFin)   params.append('date_fin', dateFin);
+    if (params.toString()) url += `?${params}`;
+
+    try {
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        renderChartCommandesParMenu(data.commandes_par_menu || []);
+
+    } catch (err) {
+        showToast(err.message || 'Erreur chargement commandes par menu', 'danger');
+    }
+}
+
+function renderChartCommandesParMenu(items) {
+    const ctx = document.getElementById('chartCommandesParMenu');
+    if (!ctx) return;
+    if (chartCommandesParMenu) chartCommandesParMenu.destroy();
+
+    if (!items.length) {
+        chartCommandesParMenu = null;
+        ctx.parentElement.innerHTML = `
+            <canvas id="chartCommandesParMenu"></canvas>
+            <p class="text-center text-muted mt-3">Aucune donnée pour cette période</p>`;
+        return;
+    }
+
+    const labels = items.map(m => m.menu);
+    const values = items.map(m => m.nb_commandes);
+    const colors = [
+        '#f59e0b', '#3b82f6', '#10b981', '#ef4444',
+        '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'
+    ];
+
+    chartCommandesParMenu = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Commandes',
+                data: values,
+                backgroundColor: colors.slice(0, labels.length).map(c => c + 'B3'),
+                borderColor: colors.slice(0, labels.length),
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => `${ctx.raw} commande${ctx.raw > 1 ? 's' : ''}`
+                    }
+                }
+            },
+            scales: {
+                x: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+}
+
+// =====================================================
+// CHIFFRE D'AFFAIRES PAR MENU (Bar) — filtrable par menu + dates
+// =====================================================
+async function chargerCA() {
+    const user = getStorage();
+    if (!user) return;
+
+    const menuId    = document.getElementById('caMenuSelect')?.value || '';
+    const dateDebut = document.getElementById('caDateDebut')?.value || '';
+    const dateFin   = document.getElementById('caDateFin')?.value || '';
+
+    let url = `${API_BASE}/stats/chiffre-affaires`;
+    const params = new URLSearchParams();
+    if (menuId)    params.append('menu_id', menuId);
+    if (dateDebut) params.append('date_debut', dateDebut);
+    if (dateFin)   params.append('date_fin', dateFin);
+    if (params.toString()) url += `?${params}`;
+
+    try {
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        renderChartCA(data);
+
+    } catch (err) {
+        showToast(err.message || 'Erreur chargement CA', 'danger');
+    }
+}
+
+function renderChartCA(data) {
+    const ctx = document.getElementById('chartCAParMenu');
+    if (!ctx) return;
+    if (chartCAParMenu) chartCAParMenu.destroy();
+
+    const details = data.details || [];
+
+    // Mettre à jour les totaux
+    document.getElementById('totalCA').textContent      = `${(data.total_ca ?? 0).toFixed(2)} €`;
+    document.getElementById('totalCmdCA').textContent    = data.total_commandes ?? 0;
+
+    const panierMoyen = data.total_commandes > 0
+        ? (data.total_ca / data.total_commandes).toFixed(2)
+        : '0.00';
+    document.getElementById('panierMoyenCA').textContent = `${panierMoyen} €`;
+
+    if (!details.length) {
+        chartCAParMenu = null;
+        return;
+    }
+
+    const labels = details.map(d => d.menu);
+    const valuesCA = details.map(d => d.ca);
+    const valuesCmd = details.map(d => d.nb_commandes);
+
+    chartCAParMenu = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'CA (€)',
+                    data: valuesCA,
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: '#10b981',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    yAxisID: 'yCA'
+                },
+                {
+                    label: 'Commandes',
+                    data: valuesCmd,
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    borderColor: '#3b82f6',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    yAxisID: 'yCmd'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            if (ctx.dataset.label === 'CA (€)') {
+                                return `CA : ${ctx.raw.toFixed(2)} €`;
+                            }
+                            return `${ctx.raw} commande${ctx.raw > 1 ? 's' : ''}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                yCA: {
+                    type: 'linear',
+                    position: 'left',
+                    beginAtZero: true,
+                    title: { display: true, text: 'CA (€)' }
+                },
+                yCmd: {
+                    type: 'linear',
+                    position: 'right',
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    title: { display: true, text: 'Commandes' },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+}
+
+// =====================================================
+// TOP CLIENTS (Tableau)
+// =====================================================
+async function chargerTopClients() {
+    const user = getStorage();
+    if (!user) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/stats/top-clients?limit=10`, {
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        renderTopClients(data.top_clients || []);
+
+    } catch (err) {
+        showToast(err.message || 'Erreur chargement top clients', 'danger');
+    }
+}
+
+function renderTopClients(clients) {
+    const tbody = document.getElementById('topClientsBody');
+    if (!tbody) return;
+
+    if (!clients.length) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                    <i class="bi bi-inbox me-2"></i>Aucune donnée disponible
+                </td>
+            </tr>`;
+        return;
+    }
+
+    const medals = ['🥇', '🥈', '🥉'];
+
+    tbody.innerHTML = clients.map((c, i) => `
+        <tr>
+            <td class="text-center">
+                ${i < 3
+                    ? `<span class="fs-5">${medals[i]}</span>`
+                    : `<span class="badge bg-light text-dark">${i + 1}</span>`
+                }
+            </td>
+            <td><strong>${c.client}</strong></td>
+            <td class="text-center">${c.nb_commandes}</td>
+            <td class="text-end fw-semibold">${parseFloat(c.ca).toFixed(2)} €</td>
+        </tr>
+    `).join('');
+}
+
+// =====================================================
+// MENUS POUR FILTRE (Select CA)
+// =====================================================
+async function chargerMenusPourFiltre() {
+    const user = getStorage();
+    if (!user) return;
+
+    const select = document.getElementById('caMenuSelect');
+    if (!select) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/stats/menus`, {
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        const menus = data.menus || [];
+
+        // Garder l'option "Tous les menus"
+        select.innerHTML = '<option value="">Tous les menus</option>';
+        menus.forEach(m => {
+            select.innerHTML += `<option value="${m.menu_id}">${m.menu_titre}</option>`;
+        });
+
+    } catch (err) {
+        console.error('Erreur chargement menus filtre:', err);
+    }
 }
 
 // ===== EXPOSER AU HTML =====

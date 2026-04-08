@@ -149,10 +149,133 @@
 
                 <!-- SECTION: Statistiques -->
                 <div id="statistiques-section" class="section-content">
-                    <div class="content-card">
-                        <h4><i class="bi bi-graph-up"></i> Statistiques</h4>
-                        <p class="text-muted">Section à venir...</p>
+
+                    <!-- Bouton sync -->
+                    <div class="content-card mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4><i class="bi bi-graph-up"></i> Statistiques</h4>
+                            <button class="btn bg-accent text-white" id="btnSyncStats">
+                                <i class="bi bi-arrow-repeat"></i> Synchroniser les données
+                            </button>
+                        </div>
+                        <small class="text-muted">Dernière synchronisation : <span id="lastSync">-</span></small>
                     </div>
+
+                    <!-- ===================== -->
+                    <!-- COMMANDES PAR MENU    -->
+                    <!-- ===================== -->
+                    <div class="content-card mb-4">
+                        <h5><i class="bi bi-bar-chart"></i> Commandes par menu</h5>
+
+                        <!-- Filtres dates -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Date début</label>
+                                <input type="date" class="form-control form-control-sm" id="cmdMenuDateDebut">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Date fin</label>
+                                <input type="date" class="form-control form-control-sm" id="cmdMenuDateFin">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-sm bg-accent text-white w-100" id="btnFiltrerCmdMenu">
+                                    <i class="bi bi-funnel"></i> Filtrer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Graphique -->
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="chartCommandesParMenu"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ===================== -->
+                    <!-- CHIFFRE D'AFFAIRES    -->
+                    <!-- ===================== -->
+                    <div class="content-card mb-4">
+                        <h5><i class="bi bi-cash-stack"></i> Chiffre d'affaires</h5>
+
+                        <!-- Filtres menu + dates -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Menu</label>
+                                <select class="form-select form-select-sm" id="caMenuSelect">
+                                    <option value="">Tous les menus</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Date début</label>
+                                <input type="date" class="form-control form-control-sm" id="caDateDebut">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Date fin</label>
+                                <input type="date" class="form-control form-control-sm" id="caDateFin">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-sm bg-accent text-white w-100" id="btnFiltrerCA">
+                                    <i class="bi bi-funnel"></i> Filtrer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Totaux -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-cash-stack text-success" style="font-size: 1.5rem;"></i>
+                                    <h4 id="totalCA" class="mt-2 mb-0">0.00 €</h4>
+                                    <small class="text-muted">CA total</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-receipt text-primary" style="font-size: 1.5rem;"></i>
+                                    <h4 id="totalCmdCA" class="mt-2 mb-0">0</h4>
+                                    <small class="text-muted">Commandes</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-cart-check text-info" style="font-size: 1.5rem;"></i>
+                                    <h4 id="panierMoyenCA" class="mt-2 mb-0">0.00 €</h4>
+                                    <small class="text-muted">Panier moyen</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphique -->
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="chartCAParMenu"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ===================== -->
+                    <!-- TOP CLIENTS           -->
+                    <!-- ===================== -->
+                    <div class="content-card">
+                        <h5><i class="bi bi-people-fill"></i> Top 10 clients</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 60px;">#</th>
+                                        <th>Client</th>
+                                        <th class="text-center">Commandes</th>
+                                        <th class="text-end">Total dépensé</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topClientsBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <i class="bi bi-arrow-repeat me-2"></i>Synchronisez les données pour voir les résultats
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
