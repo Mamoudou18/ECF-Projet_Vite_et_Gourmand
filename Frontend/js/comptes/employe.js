@@ -2,6 +2,7 @@ import { getStorage } from "../script.js";
 import { showToast, formatDate, renderStars } from "../utils/util.js";
 
 // ===================== VARIABLES =====================
+const API_BASE = 'http://localhost/api';
 let orders = [];
 let modificationOrderId = null;
 let modificationMenuId = null;
@@ -90,7 +91,7 @@ function showSection(sectionId, clickedLink) {
 // ===================== CHARGEMENT COMMANDES =====================
 async function loadOrders() {
     try {
-        const response = await fetch('http://localhost/api/commande/affiche');
+        const response = await fetch(`${API_BASE}/commande/affiche`);
         const data = await response.json();
         if (data.success) {
             orders = data.commandes;
@@ -366,7 +367,7 @@ async function handleConfirmStatus() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Traitement...';
 
     try {
-        const response = await fetch(`http://localhost/api/commande/change-statut?id=${orderId}`, {
+        const response = await fetch(`${API_BASE}/commande/change-statut?id=${orderId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ modifie_par: user.id, statut: newStatus })
@@ -426,7 +427,7 @@ async function handleConfirmCancel() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Annulation...';
 
     try {
-        const response = await fetch(`http://localhost/api/commande/annule-commande?id=${orderId}`, {
+        const response = await fetch(`${API_BASE}/commande/annule-commande?id=${orderId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -633,7 +634,7 @@ function loadSidebarBadges() {
     if (badge) badge.textContent = actives;
 
     // Badge avis en attente
-    fetch('http://localhost/api/avis/list')
+    fetch(`${API_BASE}/avis/list`)
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -715,7 +716,7 @@ async function loadAllEmployeeMenus() {
     `;
 
     try {
-        const response = await fetch('http://localhost/api/menu/list');
+        const response = await fetch(`${API_BASE}/menu/list`);
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         const data = await response.json();
         allEmployeeMenus = data.menus || [];
@@ -916,7 +917,7 @@ function updateEmployeeMenusCount(totalPages) {
 async function toggleMenu(id) {
     if (!confirm('Désactiver ce menu ?')) return;
     try {
-        const response = await fetch(`http://localhost/api/menu/toggle?id=${id}`, { method: 'PATCH' });
+        const response = await fetch(`${API_BASE}/menu/toggle?id=${id}`, { method: 'PATCH' });
         const data = await response.json();
         if (data.success) {
             allEmployeeMenus = allEmployeeMenus.filter(m => m.id != id);
@@ -993,7 +994,7 @@ document.getElementById('btnCreerMenu')?.addEventListener('click', () => {
 // chargement
 async function loadAvis() {
     try {
-        const r = await fetch('http://localhost/api/avis/list');
+        const r = await fetch(`${API_BASE}/avis/list`);
         const data = await r.json();
         if (!data.success) return;
 
@@ -1072,7 +1073,7 @@ function renderAvisCard(avis, type) {
 // Modération des avis
 async function modererAvis(id, statut) {
     try {
-        const r = await fetch(`http://localhost/api/avis/moderer?id=${id}`, {
+        const r = await fetch(`${API_BASE}/avis/moderer?id=${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ statut: statut })

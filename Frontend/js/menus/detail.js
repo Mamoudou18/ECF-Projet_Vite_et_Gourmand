@@ -5,6 +5,8 @@
 import { getStorage } from "../script.js";
 import { showToast } from "../utils/util.js";
 
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
 let currentMenu = null;
 let commanderHandler = null;
 let carouselInstance = null;
@@ -88,7 +90,7 @@ async function loadMenuDetail() {
     `;
 
     try {
-        const response = await fetch(`http://localhost/api/menu/detail?id=${menuId}`);
+        const response = await fetch(`${API_BASE}/menu/detail?id=${menuId}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -392,7 +394,6 @@ function attachCommanderListener(menu) {
             return;
         }
 
-        console.log('Utilisateur connecté:', currentUser.prenom);
         window.history.pushState({}, "", `/commande?menu=${menu.id}`);
         window.dispatchEvent(new PopStateEvent('popstate'));
     };

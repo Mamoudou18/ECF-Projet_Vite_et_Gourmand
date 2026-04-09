@@ -1,5 +1,9 @@
 import {showToast } from "../utils/util.js";
 
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
+const IMG_URL  = 'http://localhost';
+
 const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");
 const themeSelect = document.getElementById("themeSelect");
@@ -21,7 +25,7 @@ btnSave.addEventListener("click", enregistrer);
 
 async function chargerMenuParId(id) {
     try {
-        const res = await fetch(`http://localhost/api/menu/detail?id=${id}`);
+        const res = await fetch(`${API_BASE}/menu/detail?id=${id}`);
         const data = await res.json();
         if (!data.success) return showToast("Menu introuvable.", 'danger');
 
@@ -51,12 +55,11 @@ async function chargerMenuParId(id) {
         });
 
         const imgs = menu.images ? menu.images.split(",").map(x => x.trim()) : [];
-        console.log("Images splittées:", imgs);
 
         // Image principale = index 0
         if (imgs[0]) {
             const preview = menuDiv.querySelector(".previewImgPrincipale");
-            preview.src = `http://localhost${imgs[0]}`;
+            preview.src = `${IMG_URL}${imgs[0]}`;
             preview.classList.remove("d-none");
         }
 
@@ -75,7 +78,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxEntree]) {
                     const preview = platDiv.querySelector(".section-entree .previewImgPlat");
                     if (preview) {
-                        preview.src = `http://localhost${imgs[idxEntree]}`;
+                        preview.src = `${IMG_URL}${imgs[idxEntree]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -89,7 +92,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxPlat]) {
                     const preview = platDiv.querySelector(".section-plat .previewImgPlat");
                     if (preview) {
-                        preview.src = `http://localhost${imgs[idxPlat]}`;
+                        preview.src = `${IMG_URL}${imgs[idxPlat]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -103,7 +106,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxDessert]) {
                     const preview = platDiv.querySelector(".section-dessert .previewImgPlat");
                     if (preview) {
-                        preview.src = `http://localhost${imgs[idxDessert]}`;
+                        preview.src = `${IMG_URL}${imgs[idxDessert]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -382,8 +385,8 @@ function enregistrer() {
         });
 
         const url = editId
-            ? `http://localhost/api/menu/update?id=${editId}`
-            : 'http://localhost/api/menu/create';
+            ? `${API_BASE}/menu/update?id=${editId}`
+            : `${API_BASE}/menu/create`;
 
         const actionLabel = editId ? "modifié" : "créé";
 

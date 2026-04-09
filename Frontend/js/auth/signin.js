@@ -1,16 +1,17 @@
 import { getStorage, setStorage} from "../script.js";
 import { showToast } from "../utils/util.js";
 
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
+
 // ============================================
 // INITIALISATION
 // ============================================
 export async function init() {
-    console.log('Initialisation page connexion');
     
     // Vérifier si déjà connecté
     const currentUser = getStorage();
     if (currentUser) {
-        console.log('Déjà connecté, redirection...');
         window.location.href = '/';
         return;
     }
@@ -19,9 +20,7 @@ export async function init() {
     initElements();
 }
 
-export function cleanup() {
-    console.log('Nettoyage page connexion');
-}
+export function cleanup() {}
 
 // Initialisation des inputs
 function initElements() {
@@ -82,7 +81,7 @@ async function handleLogin(event) {
     body: raw,
     };
 
-    fetch("http://localhost/api/auth/login", requestOptions)
+    fetch(`${API_BASE}/auth/login`, requestOptions)
     .then((response) => {
         if(response.ok){
             return response.json()
@@ -146,7 +145,7 @@ async function handleForgotPassword(event) {
     }
 
     try {
-        const response = await fetch('http://localhost/api/auth/forgot-password', {
+        const response = await fetch(`{API_BASE}/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })

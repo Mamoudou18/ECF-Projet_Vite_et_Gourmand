@@ -1,4 +1,13 @@
-import { showPassword, checkPasswordStrength, validateEmail, checkPasswordMatch, showToast } from "../utils/util.js";
+import { 
+    showPassword,
+    checkPasswordStrength, 
+    validateEmail, 
+    checkPasswordMatch, 
+    showToast 
+} from "../utils/util.js";
+
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
 
 // ****************************************
 // GESTION DE L'INSCRIPTION D'UN UTILISATEUR
@@ -90,7 +99,7 @@ async function handleRegister(event) {
         confirm_password :passwordConfirm
     };
 
-    const response = await fetch('http://localhost/api/auth/register', {
+    const response = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)

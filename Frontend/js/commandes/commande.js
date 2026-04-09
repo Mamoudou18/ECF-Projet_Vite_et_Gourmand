@@ -2,6 +2,7 @@ import { getStorage } from "../script.js";
 import {showToast } from "../utils/util.js";
 
 //Variables globales
+const API_BASE = 'http://localhost/api';
 let selectedMenu = null;
 let minPersons = 0;
 let pricePerPerson = 0;
@@ -10,7 +11,6 @@ let map, directionsService, directionsRenderer;
 
 //Initialisation
 export async function init() {
-    console.log('Initialisation commande');
     await loadMenuCommande();
     autoFillUserInfo();
     await initGoogleMaps();
@@ -64,8 +64,6 @@ function addListener(id, event, handler) {
     
 //Cleanup
 export function cleanup() {
-    console.log('Nettoyage commande');
-    
     listeners.forEach(({ el, event, handler }) => {
         el.removeEventListener(event, handler);
     });
@@ -128,8 +126,6 @@ async function initGoogleMaps() {
     // remplissage auto des champs: ville et code postal
       document.getElementById('codePostalLivraison').value = codePostal;
       document.getElementById('villeLivraison').value = ville;
-
-      console.log('Extraction:', { codePostal, ville });
 
       // calcul itinéraire pour les frais de livraison hors bordeaux
       const adresseDepart = "1 Place de la République, 33000 Bordeaux, France";
@@ -275,7 +271,7 @@ async function loadMenuCommande() {
     loader.style.display = 'block';
 
     try {
-        const response = await fetch(`http://localhost/api/menu/detail?id=${menuId}`);
+        const response = await fetch(`${API_BASE}/menu/detail?id=${menuId}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -469,7 +465,7 @@ async function checkModification() {
     if (!modifierId) return;
 
     try {
-        const response = await fetch(`http://localhost/api/commande/detail-commande?id=${modifierId}`);
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${modifierId}`);
         const data = await response.json();
 
         if (!data.success || !data.commande) {
@@ -630,7 +626,7 @@ async function formCommandeMenu(e) {
     }
     // Si modification, re-vérifier le statut
     if (modifierId) {
-        const checkResp = await fetch(`http://localhost/api/commande/detail-commande?id=${modifierId}`);
+        const checkResp = await fetch(`${API_BASE}/commande/detail-commande?id=${modifierId}`);
         const checkData = await checkResp.json();
 
         if (!checkData.success || checkData.commande.statut !== 'en_attente') {
@@ -640,8 +636,8 @@ async function formCommandeMenu(e) {
     }
 
     const url = modifierId
-        ? `http://localhost/api/commande/update-commande?id=${modifierId}`
-        : "http://localhost/api/commande/create-commande";
+        ? `${API_BASE}/commande/update-commande?id=${modifierId}`
+        : `${API_BASE}/commande/create-commande`;
 
     const method = modifierId ? "PUT" : "POST";
 

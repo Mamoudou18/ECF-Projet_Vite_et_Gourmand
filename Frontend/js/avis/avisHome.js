@@ -1,11 +1,14 @@
 import { renderStars } from "../utils/util.js";
 
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
+
 function init() {
     chargerAvisAccueil();
 }
 
 function chargerAvisAccueil() {
-    fetch('http://localhost/api/avis/approuves')
+    fetch(`${API_BASE}/avis/approuves`)
         .then(r => r.json())
         .then(data => {
             const container = document.getElementById('avis-accueil');

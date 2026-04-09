@@ -65,7 +65,7 @@ function showSection(sectionId, clickedLink) {
     }
 
     // Section statistiques : sync immédiate + auto-refresh toutes les 30s
-    if (sectionId === 'statistiques-section') {
+    if (sectionId === 'statistiques-section' || sectionId === 'dashboard-section') {
         syncEtChargerStats();
 
         statsInterval = setInterval(() => {

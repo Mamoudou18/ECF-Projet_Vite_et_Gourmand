@@ -1,5 +1,7 @@
 import { showPassword, checkPasswordStrength, checkPasswordMatch, showToast } from "../utils/util.js";
 
+// ===================== VARIABLES GLOBALES ========
+const API_BASE = 'http://localhost/api';
 
 // Récupération des inputs du formulaire
 const inputPassword = document.getElementById("newPassword");
@@ -54,7 +56,7 @@ async function handleResetPassword(event) {
     resetPasswordBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Réinitialisation...';
 
     try {
-        const response = await fetch('http://localhost/api/auth/reset-password', {
+        const response = await fetch(`${API_BASE}/auth/reset-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token, new_password, confirm_password })
