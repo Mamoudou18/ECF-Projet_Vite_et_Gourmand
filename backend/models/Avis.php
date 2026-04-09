@@ -4,6 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 class Avis
 {
+    /** @var \MongoDB\Collection $collection */
     private $collection;
 
     public function __construct()
@@ -100,4 +101,22 @@ class Avis
 
         ];
     }
+
+    public function countByStatut(string $statut): int
+    {
+        return $this->collection->countDocuments(['statut' => $statut]);
+    }
+
+    public function getNoteMoyenne(): ?float
+    {
+        $pipeline = [
+            ['$match' => ['statut' => 'approuve']],
+            ['$group' => ['_id' => null, 'moyenne' => ['$avg' => '$note']]]
+        ];
+        /** @var array $result */
+        $result = iterator_to_array($this->collection->aggregate($pipeline));
+        return !empty($result) ? round($result[0]['moyenne'], 1) : null;
+    }
+
+
 }

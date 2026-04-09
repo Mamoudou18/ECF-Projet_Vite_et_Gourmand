@@ -11,13 +11,6 @@
     </div>
 </section>
 
-<!-- Stats Cards -->
-<section class="py-4">
-    <div class="container">
-        <div class="stats-grid" id="admin-stats"></div>
-    </div>
-</section>
-
 <!-- Main Content -->
 <section class="py-4">
     <div class="container">
@@ -78,32 +71,52 @@
 
                 <!-- SECTION: Dashboard -->
                 <div id="dashboard-section" class="section-content active">
-                    <div class="content-card">
+
+                    <!-- Stats rapides -->
+                    <div class="content-card mb-4">
                         <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
                         <div class="row g-4 mt-2">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="border rounded p-3 text-center">
                                     <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
                                     <h3 id="countEmployes" class="mt-2 mb-0">-</h3>
                                     <small class="text-muted">Employés actifs</small>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="border rounded p-3 text-center">
                                     <i class="bi bi-box-seam text-success" style="font-size: 2rem;"></i>
                                     <h3 id="countCommandes" class="mt-2 mb-0">-</h3>
                                     <small class="text-muted">Commandes du jour</small>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="border rounded p-3 text-center">
-                                    <i class="bi bi-star text-warning" style="font-size: 2rem;"></i>
+                                    <i class="bi bi-chat-dots text-info" style="font-size: 2rem;"></i>
                                     <h3 id="countAvis" class="mt-2 mb-0">-</h3>
                                     <small class="text-muted">Avis en attente</small>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-star-fill text-warning" style="font-size: 2rem;"></i>
+                                    <h3 id="dashNoteMoyenne" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Note moyenne</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Camembert commandes par statut -->
+                    <div class="content-card">
+                        <h5><i class="bi bi-pie-chart-fill"></i> Répartition des commandes par statut</h5>
+                        <div class="d-flex justify-content-center">
+                            <div style="position: relative; width: 350px; height: 350px;">
+                                <canvas id="chartDashStatut"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- SECTION: Gestion Employés -->

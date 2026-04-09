@@ -2,11 +2,15 @@
 // backend/models/Stats.php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/Avis.php';
+
 
 class Stats
 {
     private $collection;
     private $parisTimezone;
+
+    private $avisModel;
 
     public function __construct()
     {
@@ -14,6 +18,8 @@ class Stats
         $db = $client->selectDatabase($_ENV['MONGO_DB'] ?? 'vite_gourmand_db');
         $this->collection = $db->selectCollection('commandes');
         $this->parisTimezone = new DateTimeZone('Europe/Paris');
+
+        $this->avisModel = new Avis();
     }
 
     /**
@@ -217,18 +223,47 @@ class Stats
         return $menus;
     }
 
+    public function getQuickStats(): array
+    {
+        $todayStart = $this->toUTCDateTime(date('Y-m-d') . ' 00:00:00');
+        $todayEnd   = $this->toUTCDateTime(date('Y-m-d') . ' 23:59:59');
+
+        $commandesJour = $this->collection->countDocuments([
+            'created_at' => ['$gte' => $todayStart, '$lte' => $todayEnd]
+        ]);
+
+        // Commandes par statut
+        $statuts = [];
+        $pipeline = [
+            ['$group' => ['_id' => '$statut', 'count' => ['$sum' => 1]]]
+        ];
+        foreach ($this->collection->aggregate($pipeline) as $doc) {
+            $statuts[$doc['_id']] = $doc['count'];
+        }
+
+        return [
+            'commandes_jour'       => $commandesJour,
+            'commandes_par_statut' => $statuts,
+            'avis_en_attente'      => $this->avisModel->countByStatut('en_attente'),
+            'note_moyenne'         => $this->avisModel->getNoteMoyenne()
+        ];
+    }
+
+
     /**
      * Dashboard admin complet
      */
     public function getDashboard(): array
     {
         return [
+            'quick_stats'        => $this->getQuickStats(),
             'commandes_par_menu' => $this->getCommandesParMenu(),
             'chiffre_affaires'   => $this->getChiffreAffaires(),
             'top_clients'        => $this->getTopClients(),
             'menus_disponibles'  => $this->getMenusDisponibles()
         ];
     }
+
 
     /**
      * Construit le filtre $match pour les dates

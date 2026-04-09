@@ -13,11 +13,13 @@ const API_BASE = 'http://localhost/api';
 let allEmployes = [];
 let modalCreateEmploye, modalEditEmploye, modalToggleUser;
 let chartCommandesParMenu, chartCAParMenu;
+let chartDashStatut = null;
+let statsInterval = null; 
 
 // ===================== INIT =====================
 export async function init() {
     initEventListeners();
-    updateDasboardHeader();
+    updateDashboardHeader();
 
     // Initialiser les modals
     modalCreateEmploye = new bootstrap.Modal(document.getElementById('createEmployeModal'));
@@ -27,6 +29,7 @@ export async function init() {
     initEmployeEvents();
     initStatsEvents();
     chargerEmployes();
+    chargerDashboard();
 }
 
 function initEventListeners() {
@@ -53,11 +56,30 @@ function showSection(sectionId, clickedLink) {
     document.querySelectorAll(".sidebar-menu a").forEach(l => l.classList.remove("active"));
     if (clickedLink) clickedLink.classList.add("active");
 
+    if (sectionId === 'dashboard-section') chargerDashboard();
+
+    // Toujours arrêter l'ancien timer quand on change de section
+    if (statsInterval) {
+        clearInterval(statsInterval);
+        statsInterval = null;
+    }
+
+    // Section statistiques : sync immédiate + auto-refresh toutes les 30s
+    if (sectionId === 'statistiques-section') {
+        syncEtChargerStats();
+
+        statsInterval = setInterval(() => {
+            console.log('Auto-sync stats...');
+            syncEtChargerStats();
+        }, 30000); // 30 secondes
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
 // =============== MISE A JOUR HEADER ====================
-function updateDasboardHeader() {
+function updateDashboardHeader() {
     const user = getStorage();
     if (!user) return;
 
@@ -424,8 +446,12 @@ async function syncEtChargerStats() {
     if (!user) return;
 
     const btn = document.getElementById('btnSyncStats');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Synchronisation...';
+
+    // Le bouton peut ne pas exister (appel automatique)
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Synchronisation...';
+    }
 
     try {
         const res = await fetch(`${API_BASE}/stats/sync`, {
@@ -438,7 +464,6 @@ async function syncEtChargerStats() {
 
         showToast(`${data.nb_commandes_synchronisees ?? 0} commandes synchronisées`, 'success');
 
-        // Recharger tous les graphiques
         await Promise.all([
             chargerCommandesParMenu(),
             chargerCA(),
@@ -446,13 +471,18 @@ async function syncEtChargerStats() {
             chargerMenusPourFiltre()
         ]);
 
-        document.getElementById('lastSync').textContent = new Date().toLocaleString('fr-FR');
+        const lastSync = document.getElementById('lastSync');
+        if (lastSync) lastSync.textContent = new Date().toLocaleString('fr-FR');
+
+        await chargerDashboard();
 
     } catch (err) {
         showToast(err.message || 'Erreur synchronisation', 'danger');
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Synchroniser les données';
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Synchroniser les données';
+        }
     }
 }
 
@@ -739,6 +769,59 @@ async function chargerMenusPourFiltre() {
 
     } catch (err) {
         console.error('Erreur chargement menus filtre:', err);
+    }
+}
+
+async function chargerDashboard() {
+    const user = getStorage();
+    if (!user) return;
+
+    if (!allEmployes.length) {
+        await chargerEmployes();
+    }
+    // Employés actifs (déjà en mémoire)
+    const actifs = allEmployes.filter(u => u.role === 'employe' && u.is_actif == 1);
+
+    document.getElementById('countEmployes').textContent = actifs.length;
+
+    // Stats dashboard
+    try {
+        const res = await fetch(`${API_BASE}/stats/dashboard`, {
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        document.getElementById('countCommandes').textContent = data.quick_stats.commandes_jour;
+        document.getElementById('countAvis').textContent = data.quick_stats.avis_en_attente;
+        document.getElementById('dashNoteMoyenne').textContent = data.quick_stats.note_moyenne
+            ? data.quick_stats.note_moyenne + '/5'
+            : 'N/A';
+
+        const statuts = data.quick_stats.commandes_par_statut;
+        const labels = Object.keys(statuts);
+        const values = Object.values(statuts);
+        const colors = ['#ffc107', '#0d6efd', '#198754', '#dc3545', '#6c757d', '#0dcaf0'];
+
+        if (chartDashStatut) chartDashStatut.destroy();
+
+        chartDashStatut = new Chart(document.getElementById('chartDashStatut'), {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors.slice(0, labels.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    } catch (e) {
+        console.error('Erreur dashboard:', e);
     }
 }
 
