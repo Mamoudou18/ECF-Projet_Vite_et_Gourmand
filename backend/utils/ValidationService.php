@@ -602,5 +602,33 @@ class ValidationService
     }
 
 
+        /**
+    * Valider les données de création d'une demande de contact
+    */
+    public function validateDemandes(?array $data): array
+    {
+        $errors = [];
+
+        if (empty(trim($data['email'] ?? ''))) {
+            $errors['email'] = 'L\'email est requis.';
+        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'L\'email est invalide.';
+        }
+
+        if (empty($data)) {
+            return ['Données JSON invalides ou manquantes'];
+        }
+
+
+        if (empty($data['titre'])) {
+            $errors[] = 'Un titre est requis';
+        }
+
+        if (empty($data['description'])) {
+            $errors[] = 'Une description est requise';
+        }
+
+        return $errors;
+    }
 
 }

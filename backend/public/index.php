@@ -81,8 +81,9 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/stats/top-clients'                        => 'Top clients (filtre: limit)',
             'GET /api/stats/menus'                              => 'Liste menus pour filtres',
             'GET /api/stats/top-menus'                          => 'Liste des menus les plus commandés',
-            'GET /api/horaires/horaire-list'                            => 'Liste des horaires',
-            'PUT /api/horaires/horaire-update'                          => 'Mise à jours des horaires d\'ouverture'
+            'GET /api/horaires/horaire-list'                    => 'Liste des horaires',
+            'PUT /api/horaires/horaire-update'                  => 'Mise à jours des horaires d\'ouverture',
+            ' POST /api/contact/demande-create'                 => 'Prise de contact client',
 
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -1068,7 +1069,7 @@ switch ($ressource) {
             http_response_code(501);
             echo json_encode([
                 'error'   => 'Controller non trouvé',
-                'details' => 'StatsController.php manquant dans Backend/controllers/'
+                'details' => 'HoraireController.php manquant dans Backend/controllers/'
             ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             exit();
         }
@@ -1093,7 +1094,7 @@ switch ($ressource) {
                     http_response_code(405);
                     echo json_encode([
                         'error'         => 'Méthode HTTP non autorisée',
-                        'details'       => 'Utilisez POST pour /api/horaires/list',
+                        'details'       => 'Utilisez GET pour /api/horaires/list',
                         'methode_recue' => $method
                     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
@@ -1118,7 +1119,7 @@ switch ($ressource) {
                     http_response_code(405);
                     echo json_encode([
                         'error'         => 'Méthode HTTP non autorisée',
-                        'details'       => 'Utilisez GET pour /api/horaires/update',
+                        'details'       => 'Utilisez PUT pour /api/horaires/update',
                         'methode_recue' => $method
                     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
@@ -1134,12 +1135,64 @@ switch ($ressource) {
         }
         break;
 
+    // =============================================
+    // Demande client MongoDB
+    // =============================================
+    case 'contact':
+
+        $controllerPath = __DIR__ . '/../controllers/ContactController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'ContactController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new ContactController();
+
+        switch ($action) {
+
+            case 'demande-create':
+                if ($method === 'POST') {
+                    if (method_exists($controller, 'creerDemande')) {
+                        $controller->creerDemande();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode creerDemande() n\'existe pas dans ContactController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/contact/demande-create',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour contact",
+                    'actions_disponibles' => ['demande-create']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
     default:
         http_response_code(404);
         echo json_encode([
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats', 'horaires']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats', 'horaires', 'contact']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }
