@@ -14,6 +14,7 @@ export const allRoutes = [
     new Route("/espace-employe", "Espace employe", "./pages/comptes/employe.html","/js/comptes/employe.js"),
     new Route("/espace-administrateur", "Espace administrateur", "./pages/comptes/admin.html","/js/comptes/admin.js"),
     new Route("/contact", "Contact", "./pages/contact.html","/js/contact/contact.js"),
+    new Route("/avis", "Avis de nos clients", "./pages/avis/avis.html", "/js/avis/avis.js"),
 
 ];
 
