@@ -81,6 +81,8 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/stats/top-clients'                        => 'Top clients (filtre: limit)',
             'GET /api/stats/menus'                              => 'Liste menus pour filtres',
             'GET /api/stats/top-menus'                          => 'Liste des menus les plus commandés',
+            'GET /api/horaires/horaire-list'                            => 'Liste des horaires',
+            'PUT /api/horaires/horaire-update'                          => 'Mise à jours des horaires d\'ouverture'
 
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -1055,12 +1057,89 @@ switch ($ressource) {
         }
         break;
 
+    // =============================================
+    // Horaies d'ouverture
+    // =============================================
+    case 'horaires':
+
+        $controllerPath = __DIR__ . '/../controllers/HoraireController.php';
+
+        if (!file_exists($controllerPath)) {
+            http_response_code(501);
+            echo json_encode([
+                'error'   => 'Controller non trouvé',
+                'details' => 'StatsController.php manquant dans Backend/controllers/'
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit();
+        }
+
+        require_once $controllerPath;
+        $controller = new HoraireController();
+
+        switch ($action) {
+
+            case 'horaire-list':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'listHoraire')) {
+                        $controller->listHoraire();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode listHoraire() n\'existe pas dans HoraireController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez POST pour /api/horaires/list',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;
+
+            case 'horaire-update':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+                    
+                if ($method === 'PUT') {
+                    if (method_exists($controller, 'updateHoraire')) {
+                        $controller->updateHoraire();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode updateHoraire() n\'existe pas dans HoraireController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/horaires/update',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;              
+
+            default:
+                http_response_code(404);
+                echo json_encode([
+                    'error'               => 'Action non trouvée',
+                    'details'             => "L'action '$action' n'existe pas pour horaires",
+                    'actions_disponibles' => ['horaire-list', 'horaire-update']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        break;
+
     default:
         http_response_code(404);
         echo json_encode([
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats', 'horaires']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

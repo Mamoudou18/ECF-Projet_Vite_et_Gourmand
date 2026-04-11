@@ -277,76 +277,15 @@
                             Les horaires modifiés seront visibles sur le site web et dans le pied de page.
                         </div>
 
-                        <form onsubmit="saveHoraires(event)">
-                            <div class="horaires-grid">
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Lundi</strong>
-                                                                        <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Mardi</strong>
-                                    <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Mercredi</strong>
-                                    <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Jeudi</strong>
-                                    <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Vendredi</strong>
-                                    <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="09:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="18:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Samedi</strong>
-                                    <div>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="10:00">
-                                        <span class="mx-2">à</span>
-                                        <input type="time" class="form-control d-inline-block" style="width: 120px;" value="17:00">
-                                    </div>
-                                </div>
-
-                                <div class="horaire-item">
-                                    <strong><i class="bi bi-calendar"></i> Dimanche</strong>
-                                    <div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="dimancheFerme" checked>
-                                            <label class="form-check-label text-danger" for="dimancheFerme">
-                                                <strong>Fermé</strong>
-                                            </label>
-                                        </div>
-                                    </div>
+                        <form id="horairesForm">
+                            <div class="horaires-grid" id="horairesGrid">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <p class="mt-2 text-muted">Chargement des horaires...</p>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-success btn-lg mt-4">
+                            <button type="submit" class="btn bg-accent text-white w-100 mt-4" id="btnSaveHoraires">
                                 <i class="bi bi-check-circle"></i> Enregistrer les horaires
                             </button>
                         </form>

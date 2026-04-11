@@ -84,6 +84,8 @@ function showSection(sectionId, clickedLink) {
 
     if (sectionId === 'avis-section') loadAvis();
     if(sectionId === 'menus-section') initEmployeeMenus();
+    if (sectionId === 'horaires-section') loadHoraires();
+
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1091,4 +1093,134 @@ async function modererAvis(id, statut) {
     }
 }
 window.modererAvis = modererAvis;
+
+
+// ==================== HORAIRES ====================
+
+async function loadHoraires() {
+    const grid = document.getElementById('horairesGrid');
+    if (!grid) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/horaires/horaire-list`);
+        const data = await response.json();
+
+        if (!data.success) {
+            grid.innerHTML = '<p class="text-danger">Erreur de chargement.</p>';
+            return;
+        }
+
+        grid.innerHTML = data.horaires.map(h => `
+            <div class="horaire-item" data-jour-id="${h.jour_id}">
+                <strong><i class="bi bi-calendar"></i> ${h.jour}</strong>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="horaire-times" style="${h.is_ferme == 1 ? 'opacity:0.4; pointer-events:none' : ''}">
+                        <input type="time" class="form-control d-inline-block horaire-ouverture" 
+                            style="width: 120px;" value="${h.heure_ouverture ? h.heure_ouverture.substring(0, 5) : '09:00'}">
+                        <span class="mx-2">à</span>
+                        <input type="time" class="form-control d-inline-block horaire-fermeture" 
+                            style="width: 120px;" value="${h.heure_fermeture ? h.heure_fermeture.substring(0, 5) : '19:00'}">
+                    </div>
+                    <div class="form-check ms-3">
+                        <input class="form-check-input horaire-ferme" type="checkbox" 
+                            ${h.is_ferme == 1 ? 'checked' : ''} 
+                            onchange="toggleHoraireDay(this)">
+                        <label class="form-check-label text-danger"><strong>Fermé</strong></label>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        grid.innerHTML = '<p class="text-danger">Erreur réseau.</p>';
+        console.error('Erreur chargement horaires:', error);
+    }
+}
+
+function toggleHoraireDay(checkbox) {
+    const item = checkbox.closest('.horaire-item');
+    const times = item.querySelector('.horaire-times');
+    if (checkbox.checked) {
+        times.style.opacity = '0.4';
+        times.style.pointerEvents = 'none';
+    } else {
+        times.style.opacity = '1';
+        times.style.pointerEvents = 'auto';
+    }
+}
+
+window.toggleHoraireDay = toggleHoraireDay;
+
+
+
+document.getElementById('horairesForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const items = document.querySelectorAll('.horaire-item');
+    const horaires = [];
+    let hasError = false;
+
+    items.forEach(item => {
+        if (hasError) return;
+
+        const jourId = parseInt(item.dataset.jourId);
+        const isFerme = item.querySelector('.horaire-ferme').checked;
+        const ouverture = item.querySelector('.horaire-ouverture')?.value || null;
+        const fermeture = item.querySelector('.horaire-fermeture')?.value || null;
+
+        if (!isFerme && (!ouverture || !fermeture)) {
+            const jour = item.querySelector('strong').textContent.trim();
+            showToast(`${jour} : heures manquantes`, 'warning');
+            hasError = true;
+            return;
+        }
+
+        if (!isFerme && ouverture >= fermeture) {
+            const jour = item.querySelector('strong').textContent.trim();
+            showToast(`${jour} : l'ouverture doit être avant la fermeture`, 'warning');
+            hasError = true;
+            return;
+        }
+
+        horaires.push({
+            jour_id: jourId,
+            heure_ouverture: isFerme ? null : ouverture,
+            heure_fermeture: isFerme ? null : fermeture,
+            is_ferme: isFerme
+        });
+    });
+
+    if (hasError || horaires.length !== items.length) return;
+
+    const btn = document.getElementById('btnSaveHoraires');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enregistrement...';
+
+    try {
+        const user = getStorage();
+        if (!user) return;
+        
+        const response = await fetch(`${API_BASE}/horaires/horaire-update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.api_token}`
+            },
+            body: JSON.stringify({ horaires })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast('Horaires enregistrés avec succès !', 'success');
+        } else {
+            showToast(data.message || 'Erreur lors de la sauvegarde', 'danger');
+        }
+    } catch (error) {
+        showToast('Erreur réseau', 'danger');
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle"></i> Enregistrer les horaires';
+    }
+});
 
