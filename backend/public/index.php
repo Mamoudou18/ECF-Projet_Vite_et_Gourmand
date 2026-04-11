@@ -80,6 +80,7 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/stats/chiffre-affaires'                   => 'Chiffre d\'affaires (filtres: menu_id, date_debut, date_fin)',
             'GET /api/stats/top-clients'                        => 'Top clients (filtre: limit)',
             'GET /api/stats/menus'                              => 'Liste menus pour filtres',
+            'GET /api/stats/top-menus'                          => 'Liste des menus les plus commandés',
 
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -1023,12 +1024,33 @@ switch ($ressource) {
                 }
                 break;
 
+            case 'top-menus':
+                if ($method === 'GET') {
+                    if (method_exists($controller, 'topMenus')) {
+                        $controller->topMenus();
+                    } else {
+                        http_response_code(501);
+                        echo json_encode([
+                            'error'   => 'Méthode non implémentée',
+                            'details' => 'La méthode topMenus() n\'existe pas dans StatsController'
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                    }
+                } else {
+                    http_response_code(405);
+                    echo json_encode([
+                        'error'         => 'Méthode HTTP non autorisée',
+                        'details'       => 'Utilisez GET pour /api/stats/top-menus',
+                        'methode_recue' => $method
+                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                break;                
+
             default:
                 http_response_code(404);
                 echo json_encode([
                     'error'               => 'Action non trouvée',
                     'details'             => "L'action '$action' n'existe pas pour stats",
-                    'actions_disponibles' => ['sync', 'dashboard', 'commandes-par-menu', 'chiffre-affaires', 'top-clients', 'menus']
+                    'actions_disponibles' => ['sync', 'dashboard', 'commandes-par-menu', 'chiffre-affaires', 'top-clients', 'menus', 'top-menus']
                 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
         break;

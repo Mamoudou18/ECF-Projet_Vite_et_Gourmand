@@ -83,4 +83,48 @@ class StatsController
             'menus' => $this->stats->getMenusDisponibles()
         ]);
     }
+
+    /**
+     * GET /stats/top-menus — Top 3 menus les plus commandés (public)
+     */
+    public function topMenus(): void
+    {
+        // Récupérer les stats depuis MongoDB
+        $commandesParMenu = $this->stats->getCommandesParMenu(null, null);
+
+        // Prendre les 3 premiers (déjà triés par nb_commandes décroissant)
+        $top3 = array_slice($commandesParMenu, 0, 3);
+
+        // Récupérer les détails des menus depuis MySQL
+        $top3Ids = array_map(fn($item) => $item['menu_id'], $top3);
+
+        if (empty($top3Ids)) {
+            $this->response->success(['top_menus' => []]);
+            return;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($top3Ids), '?'));
+        $stmt = $this->pdo->prepare("SELECT * FROM vue_menus_complets WHERE is_active = 1 AND id IN ($placeholders)");
+        $stmt->execute($top3Ids);
+        $menus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 4. Combiner stats + détails menu
+        $result = array_map(function ($item) use ($menus) {
+            $menu = null;
+            foreach ($menus as $m) {
+                if ($m['id'] == $item['menu_id']) {
+                    $menu = $m;
+                    break;
+                }
+            }
+            return [
+                'menu' => $menu,
+                'nb_commandes' => $item['nb_commandes']
+            ];
+        }, $top3);
+
+        $this->response->success(['top_menus' => $result]);
+    }
+
+
 }
