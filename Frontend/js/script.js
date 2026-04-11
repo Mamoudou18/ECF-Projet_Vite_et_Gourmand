@@ -1,9 +1,11 @@
+const API_BASE = 'http://localhost/api';
 export const localStorageKey = "currentUser";
 
 //initialisation des fonctions
 export function init(){
     showAndHideElementsforRoles();
     updateHeader();
+    loadFooterHoraires();
 }
  init();
 
@@ -104,6 +106,52 @@ function updateHeader(){
         userLabel.innerHTML = `<span class="bi bi-person-circle"></span> ${user.prenom}`;
     }else{
         dropdown.style.display   = 'none';
+    }
+}
+
+//charger les horaires d'ouverture dans le footer
+async function loadFooterHoraires() {
+    const container = document.getElementById('footerHoraires');
+    if (!container) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/horaires/horaire-list`);
+        const data = await response.json();
+
+        if (!data.success || !data.horaires.length) return;
+
+        // Grouper les jours par horaire identique
+        const groups = [];
+        let currentGroup = null;
+
+        data.horaires.forEach(h => {
+            const key = h.is_ferme == 1 ? 'ferme' : `${h.heure_ouverture}-${h.heure_fermeture}`;
+
+            if (currentGroup && currentGroup.key === key) {
+                currentGroup.jours.push(h.jour);
+            } else {
+                currentGroup = { key, jours: [h.jour], horaire: h };
+                groups.push(currentGroup);
+            }
+        });
+
+        // Générer l'affichage
+        container.innerHTML = groups.map(g => {
+            const joursLabel = g.jours.length === 1
+                ? g.jours[0]
+                : `${g.jours[0]} - ${g.jours[g.jours.length - 1]}`;
+
+            if (g.horaire.is_ferme == 1) {
+                return `<p class="mb-1"><strong>${joursLabel}</strong> : <span class="text-danger">Fermé</span></p>`;
+            }
+
+            const ouv = g.horaire.heure_ouverture.substring(0, 5).replace(':', 'h');
+            const ferm = g.horaire.heure_fermeture.substring(0, 5).replace(':', 'h');
+            return `<p class="mb-1"><strong>${joursLabel}</strong> : ${ouv} - ${ferm}</p>`;
+        }).join('');
+
+    } catch (error) {
+        console.error('Erreur chargement horaires footer:', error);
     }
 }
 
