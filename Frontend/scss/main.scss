@@ -2081,3 +2081,54 @@ overflow: hidden;
 .btn-xs[title] {
     cursor: pointer;
 }
+
+
+// Mise en forme :  mentions légales et cgv
+main h1 {
+    color: $primary;
+    font-weight: 700;
+}
+
+main h2.h4 {
+    color: $primary;
+    border-bottom: 2px solid $primary;
+    padding-bottom: 10px;
+    margin-top: 30px;
+}
+
+main h3.h5 {
+    color: $primary;
+    font-weight: 600;
+}
+
+main a {
+    color: $primary;
+    text-decoration: none;
+}
+
+main a:hover {
+    text-decoration: underline;
+}
+
+main ul,
+main ol {
+    line-height: 1.8;
+    li{
+        color: black;
+    }
+}
+
+/* Mise en valeur des alertes importantes */
+.alert-info {
+    border-left: 4px solid $primary;
+}
+
+.text-danger {
+    font-weight: 600;
+}
+
+/* Numérotation des articles */
+main section h2::before {
+    content: "📄 ";
+}
+
