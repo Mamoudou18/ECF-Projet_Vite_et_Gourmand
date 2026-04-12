@@ -2084,34 +2084,34 @@ overflow: hidden;
 
 
 // Mise en forme :  mentions légales et cgv
-main h1 {
+.main-cgv h1 {
     color: $primary;
     font-weight: 700;
 }
 
-main h2.h4 {
+.main-cgv h2.h4 {
     color: $primary;
     border-bottom: 2px solid $primary;
     padding-bottom: 10px;
     margin-top: 30px;
 }
 
-main h3.h5 {
+.main-cgv h3.h5 {
     color: $primary;
     font-weight: 600;
 }
 
-main a {
+.main-cgv a {
     color: $primary;
     text-decoration: none;
 }
 
-main a:hover {
+.main-cgv a:hover {
     text-decoration: underline;
 }
 
-main ul,
-main ol {
+.main-cgv ul,
+.main-cgv ol {
     line-height: 1.8;
     li{
         color: black;
@@ -2119,16 +2119,16 @@ main ol {
 }
 
 /* Mise en valeur des alertes importantes */
-.alert-info {
+.main-cgv .alert-info {
     border-left: 4px solid $primary;
 }
 
-.text-danger {
+.main-cgv .text-danger {
     font-weight: 600;
 }
 
 /* Numérotation des articles */
-main section h2::before {
+.main-cgv section h2::before {
     content: "📄 ";
 }
 

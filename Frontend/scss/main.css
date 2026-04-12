@@ -14074,51 +14074,51 @@ li {
   cursor: pointer;
 }
 
-main h1, main .h1 {
+.main-cgv h1, .main-cgv .h1 {
   color: #6B5847;
   font-weight: 700;
 }
 
-main h2.h4, main .h4.h2 {
+.main-cgv h2.h4, .main-cgv .h4.h2 {
   color: #6B5847;
   border-bottom: 2px solid #6B5847;
   padding-bottom: 10px;
   margin-top: 30px;
 }
 
-main h3.h5, main .h5.h3 {
+.main-cgv h3.h5, .main-cgv .h5.h3 {
   color: #6B5847;
   font-weight: 600;
 }
 
-main a {
+.main-cgv a {
   color: #6B5847;
   text-decoration: none;
 }
 
-main a:hover {
+.main-cgv a:hover {
   text-decoration: underline;
 }
 
-main ul,
-main ol {
+.main-cgv ul,
+.main-cgv ol {
   line-height: 1.8;
 }
-main ul li,
-main ol li {
+.main-cgv ul li,
+.main-cgv ol li {
   color: black;
 }
 
 /* Mise en valeur des alertes importantes */
-.alert-info {
+.main-cgv .alert-info {
   border-left: 4px solid #6B5847;
 }
 
-.text-danger {
+.main-cgv .text-danger {
   font-weight: 600;
 }
 
 /* Numérotation des articles */
-main section h2::before, main section .h2::before {
+.main-cgv section h2::before, .main-cgv section .h2::before {
   content: "📄 ";
 }/*# sourceMappingURL=main.css.map */

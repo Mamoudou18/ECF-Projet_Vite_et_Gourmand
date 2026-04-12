@@ -653,10 +653,10 @@ async function formCommandeMenu(e) {
                 showToast('Commande modifiée avec succès !', 'success');
                 setTimeout(() => {
                     const role = currentUser.role;
-                    if (role === 'administrateur') {
-                        window.location.href = '/administrateur';
+                    if (role === 'admin') {
+                        window.location.href = '/espace-admin';
                     } else if (role === 'employe') {
-                        window.location.href = '/employe';
+                        window.location.href = '/espace-employe';
                     } else {
                         window.location.href = '/utilisateur';
                     }
