@@ -454,8 +454,7 @@ function calculatePrice() {
 
     // Activer/désactiver bouton décrémentation
     document.getElementById('btnDecrement').disabled = (personCount <= minPersons);
-    }
-
+}
 
 //Modifier une commande
 async function checkModification() {
@@ -529,36 +528,36 @@ async function checkModification() {
 }
 
 //validation du formulaire:
-    function validateForm() {
-        const errors = [];
-    
-        // Email
-        const email = document.getElementById('email').value;
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            errors.push('Email invalide');
-        }
-    
-        // Téléphone (format FR)
-        const tel = document.getElementById('telephone').value;
+function validateForm() {
+    const errors = [];
 
-        if (!/^0[1-9][0-9]{8}$/.test(tel.replace(/\s/g, ''))) {
-            errors.push('Téléphone invalide (format: 06 12 34 56 78)');
-        }
-
-        if (parseInt(document.getElementById('personCount').textContent) > selectedMenu.stock) {
-            errors.push('Stock insuffisant pour ce nombre de personnes');
-        }
-
-        if (!document.getElementById('adresseLivraison').value.trim()) {
-            errors.push('Veuillez renseigner l\'adresse de livraison');
-        }
-
-        if(errors.length > 0){
-            showToast('errors', 'validation');
-            return false;
-        }
-        return true;
+    // Email
+    const email = document.getElementById('email').value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.push('Email invalide');
     }
+
+    // Téléphone (format FR)
+    const tel = document.getElementById('telephone').value;
+
+    if (!/^0[1-9][0-9]{8}$/.test(tel.replace(/\s/g, ''))) {
+        errors.push('Téléphone invalide (format: 06 12 34 56 78)');
+    }
+
+    if (parseInt(document.getElementById('personCount').textContent) > selectedMenu.stock) {
+        errors.push('Stock insuffisant pour ce nombre de personnes');
+    }
+
+    if (!document.getElementById('adresseLivraison').value.trim()) {
+        errors.push('Veuillez renseigner l\'adresse de livraison');
+    }
+
+    if(errors.length > 0){
+        showToast('errors', 'validation');
+        return false;
+    }
+    return true;
+}
 
 // ============================================
 // SOUMISSION DU FORMULAIRE
