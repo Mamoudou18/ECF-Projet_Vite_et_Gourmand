@@ -1,13 +1,18 @@
+import { showToast } from './utils/util.js';
+
 const API_BASE = 'http://localhost/api';
 export const localStorageKey = "currentUser";
+const DUREE_SESSION = 2 * 60 * 60 * 1000; // 2 heures en ms
 
-//initialisation des fonctions
+// initialisation des fonctions
 export function init(){
+    checkSessionExpiration();   //vérifie la session au chargement
     showAndHideElementsforRoles();
     updateHeader();
     loadFooterHoraires();
+    startSessionWatcher();      //surveille la session en continu
 }
- init();
+init();
 
 // Récup du bouton signout
 const signoutBtn = document.getElementById("btn-signout");
@@ -17,10 +22,12 @@ if (signoutBtn) {
 
 // Fonction pour stocker dans le localStorage
 export function setStorage(userData){
+    // Ajoute automatiquement la date d'expiration
+    userData.expiresAt = Date.now() + DUREE_SESSION;
     localStorage.setItem(localStorageKey, JSON.stringify(userData));
 }
 
-//Fonction pour récuperer les données dans le localStorage
+// Fonction pour récuperer les données dans le localStorage
 export function getStorage(){
     return JSON.parse(localStorage.getItem(localStorageKey));
 }
@@ -35,8 +42,6 @@ export function getToken(){
 export function getUser(){
     return getStorage();
 }
-console.log("role:", getRole());
-
 
 // Fonction pour récupérer le rôle si besoin
 export function getRole(){
@@ -44,25 +49,61 @@ export function getRole(){
     return user ? user.role : null;
 }
 
-// Fonction pour vide le contenu du localStorage
- export function removeStorage(){
+// Fonction pour vider le contenu du localStorage
+export function removeStorage(){
     localStorage.removeItem(localStorageKey);
- }
+}
 
-// Gestion de la déconnexion : supprime la clé du localStorage et recharge la page
+// vérifie si la session est encore valide
+export function isSessionValid(){
+    const user = getStorage();
+    if (!user || !user.expiresAt) return false;
+    return Date.now() < user.expiresAt;
+}
+
+// prolonge la session (appelable après une action utilisateur)
+export function refreshSession(){
+    const user = getStorage();
+    if (user) {
+        user.expiresAt = Date.now() + DUREE_SESSION;
+        localStorage.setItem(localStorageKey, JSON.stringify(user));
+    }
+}
+
+// vérifie l'expiration et déconnecte si besoin
+function checkSessionExpiration(){
+    const user = getStorage();
+    if (user && !isSessionValid()) {
+        removeStorage();
+        if (!window.location.pathname.includes('/signin')) {
+            showToast('Votre session a expiré. Veuillez vous reconnecter.', 'warning');
+            setTimeout(() => {
+                window.location.href = '/signin';
+            }, 2000);
+        }
+    }
+}
+
+
+// surveille la session toutes les 60 secondes
+function startSessionWatcher(){
+    setInterval(checkSessionExpiration, 60 * 1000);
+}
+
+// Gestion de la déconnexion
 function signout(){
     removeStorage();
     window.location.href = '/signin';
 }
 
-// Vérifier si connecté
+// inclut la vérification d'expiration
 export function isConnected(){
     const token = getToken();
     const user = getStorage();
-    return !!(token && user);
+    return !!(token && user && isSessionValid());
 }
 
-//Affichage de certains éléments selon le rôle
+// Affichage de certains éléments selon le rôle
 export function showAndHideElementsforRoles(){
     const ROLES = {
         ADMIN: "admin",
@@ -96,6 +137,7 @@ export function showAndHideElementsforRoles(){
 // Afficher le nom de l'utilisateur connecté dans le header
 function updateHeader(){
     const dropdown   = document.querySelector('.nav-item.dropdown');
+    if (!dropdown) return;
     const userLabel  = dropdown.querySelector('.nav-link.dropdown-toggle');
 
     const userConnected  = isConnected();
@@ -109,7 +151,7 @@ function updateHeader(){
     }
 }
 
-//charger les horaires d'ouverture dans le footer
+// charger les horaires d'ouverture dans le footer
 async function loadFooterHoraires() {
     const container = document.getElementById('footerHoraires');
     if (!container) return;
@@ -120,7 +162,6 @@ async function loadFooterHoraires() {
 
         if (!data.success || !data.horaires.length) return;
 
-        // Grouper les jours par horaire identique
         const groups = [];
         let currentGroup = null;
 
@@ -135,7 +176,6 @@ async function loadFooterHoraires() {
             }
         });
 
-        // Générer l'affichage
         container.innerHTML = groups.map(g => {
             const joursLabel = g.jours.length === 1
                 ? g.jours[0]
@@ -161,9 +201,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.add('active');
         link.setAttribute('aria-current', 'page');
     } else {
-        // Retire active si on change de page
         link.classList.remove('active');
         link.removeAttribute('aria-current');
     }
 });
-

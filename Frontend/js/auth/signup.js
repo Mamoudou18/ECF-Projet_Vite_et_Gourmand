@@ -106,7 +106,6 @@ async function handleRegister(event) {
     });
 
     const texte = await response.text();
-    console.log('Réponse brute :',texte);
 
     if (!response.ok) {
 

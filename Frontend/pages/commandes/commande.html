@@ -178,18 +178,54 @@
                             </div>
 
                             <div class="row">
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">
                                         <i class="bi bi-calendar3"></i> Date de prestation <span class="text-danger">*</span>
                                     </label>
                                     <input type="date" class="form-control" id="datePrestation" required>
                                 </div>
+                                
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">
-                                        <i class="bi bi-clock"></i> Heure de prestation <span class="text-danger">*</span>
+                                        <i class="bi bi-clock"></i> Heure de livraison <span class="text-danger">*</span>
                                     </label>
-                                    <input type="time" class="form-control" id="heurePrestation" required>
+
+                                    <div class="d-flex gap-3 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="serviceChoisi" id="matinRadio" value="matin" checked>
+                                            <label class="form-check-label" for="matinRadio">Matin</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="serviceChoisi" id="soirRadio" value="soir">
+                                            <label class="form-check-label" for="soirRadio">Soir</label>
+                                        </div>
+                                    </div>
+
+                                    <select class="form-select" id="selectHourMatin" name="heure" required>
+                                        <option value="">-- Choisir --</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="10:30">10:30</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="11:30">11:30</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="12:30">12:30</option>
+                                    </select>
+
+                                    <select class="form-select" id="selectHourSoir" name="heure" style="display: none;" disabled>
+                                        <option value="">-- Choisir --</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="14:30">14:30</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="15:30">15:30</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="16:30">16:30</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="17:30">17:30</option>
+                                        <option value="18:00">18:00</option>
+                                    </select>
                                 </div>
+
                             </div>
 
                             <!-- NOMBRE DE PERSONNES -->
@@ -306,7 +342,7 @@
 
                         <div class="col">
                             <!-- Bouton annulation -->
-                            <button type="button" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger" id="btnAnnuler">
                                 <i class="bi bi-x-circle-fill"></i> Annuler
                             </button>
                         </div>
@@ -358,9 +394,28 @@
                 <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='/menu'">
                     <i class="bi bi-arrow-left"></i> Retour aux menus
                 </button>
-                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/utilisateur'">
+                <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='/utilisateur'">
                     <i class="bi bi-person-circle"></i> Mon espace
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation d'annuler -->
+<div class="modal fade" id="modalAnnuler" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modalAnnulerMessage">Voulez-vous vraiment quitter ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmAnnuler">Oui, annuler</button>
             </div>
         </div>
     </div>

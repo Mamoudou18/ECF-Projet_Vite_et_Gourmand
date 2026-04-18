@@ -91,7 +91,7 @@ export function checkPasswordMatch(inputPassword, inputPasswordConfirm) {
 
 // Modal de confirmation
 let modalInstance = null;
-export function showConfirm({ title, message, icon, iconColor, btnText, btnClass }) {
+export function showConfirm({ title, message, icon, iconColor, btnText, btnClass, titleHeder }) {
     return new Promise((resolve) => {
         const modal = document.getElementById('confirmActionModal');
 
@@ -101,6 +101,7 @@ export function showConfirm({ title, message, icon, iconColor, btnText, btnClass
         document.getElementById('confirmIcon').innerHTML =
             `<i class="bi ${icon || 'bi-exclamation-triangle-fill'} ${iconColor || 'text-warning'}" style="font-size: 4rem;"></i>`;
         document.getElementById('confirmBtnText').textContent = btnText || 'Oui, confirmer';
+        document.getElementById('numCommande').textContent = titleHeder;
 
         const btn = document.getElementById('confirmActionBtn');
         btn.className = `btn px-4 ${btnClass || 'btn-warning'}`;

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/Commande.php';
 require_once __DIR__ . '/../mails/commandeCreateMail.php';
 require_once __DIR__ . '/../mails/commandeTermineeMail.php';
+require_once __DIR__ . '/../mails/commandeRetourMaterielMail.php';
 require_once __DIR__ . '/../models/HistoriqueStatut.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
@@ -110,6 +111,7 @@ class CommandeController
     // ─────────────────────────────────────────
     // POST /api/commande/create-commande
     // ─────────────────────────────────────────
+
     public function createCommande(): void
     {
         $data = $this->getJsonBody();
@@ -127,37 +129,87 @@ class CommandeController
         try {
             $this->pdo->beginTransaction();
 
-            $commandeId = $this->commande->createCommande($data);
-            if (!$commandeId) {
-                $this->pdo->rollBack();
-                $this->response->error('Erreur lors de la création.', 500);
-                return;
+            // Vérifier le stock du menu
+            $stmt = $this->pdo->prepare(
+                "SELECT stock FROM menus WHERE id = :id FOR UPDATE"
+            );
+            $stmt->execute(['id' => $data['menu_id']]);
+            $menu = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$menu) {
+                throw new \Exception('Menu introuvable.');
             }
 
+            // Générer le numéro de commande côté back
+            $data['numero_commande'] = $this->genererNumeroCommande();
+
+            // Créer la commande
+            $commandeId = $this->commande->createCommande($data);
+
+            // Historique de statut
             $this->changerStatut($commandeId, 'en_attente', $data['user_id'] ?? null, 'Commande créée');
 
+            $this->pdo->commit();
+
+            // Envoi du mail (hors transaction, après commit)
             $mailCreateCommande = CommandeCreateMail::send(
                 $data['email_client'],
                 $data['prenom_client'],
-                $data['nom_client'], 
-                $data['numero_commande'], 
-                $data['prix_total'], 
-                $data['adresse_prestation'], 
+                $data['nom_client'],
+                $data['numero_commande'],
+                $data['prix_total'],
+                $data['adresse_prestation'],
                 $data['ville_prestation'],
                 $data['code_postal_prestation']
             );
 
-            $this->pdo->commit();
             $this->response->success([
-                'message'     => 'Commande créée avec succès.',
-                'commande_id' => $commandeId,
-                'mail_debug' => $mailCreateCommande
+                'message'         => 'Commande créée avec succès.',
+                'commande_id'     => $commandeId,
+                'numero_commande' => $data['numero_commande'], // ← renvoyé au front
+                'mail_debug'      => $mailCreateCommande
             ], 201);
 
         } catch (\Exception $e) {
-            $this->pdo->rollBack();
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             $this->response->error('Erreur : ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Génère un numéro de commande unique
+     * Format : CMD-AAMMJJ-XXXX
+     */
+    private function genererNumeroCommande(): string
+    {
+        $datePart = date('ymd');
+
+        // Compter les commandes du jour
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) as nb FROM commandes WHERE numero_commande LIKE :pattern"
+        );
+        $stmt->execute(['pattern' => 'CMD-' . $datePart . '-%']);
+        $count = (int) $stmt->fetch(\PDO::FETCH_ASSOC)['nb'];
+
+        $increment = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        $numero = 'CMD-' . $datePart . '-' . $increment;
+
+        // Sécurité anti-collision
+        $checkStmt = $this->pdo->prepare(
+            "SELECT COUNT(*) as nb FROM commandes WHERE numero_commande = :numero"
+        );
+        while (true) {
+            $checkStmt->execute(['numero' => $numero]);
+            if ((int)$checkStmt->fetch(\PDO::FETCH_ASSOC)['nb'] === 0) {
+                break;
+            }
+            $increment = str_pad((int)$increment + 1, 4, '0', STR_PAD_LEFT);
+            $numero = 'CMD-' . $datePart . '-' . $increment;
+        }
+
+        return $numero;
     }
 
     // ─────────────────────────────────────────
@@ -262,7 +314,7 @@ class CommandeController
             $this->pdo->commit();
 
             if ($nouveauStatut === 'terminee') {
-                $avisLink = ($_ENV['FRONTEND_URL'] ?? 'http://localhost:3000') . '/utilisateur';
+                $avisLink = ($_ENV['FRONTEND_URL'] ?? 'http://localhost:3000') . '/utilisateur#avis-section';
 
                 $client = $this->commande->getById($id);
                 if ($client) {
@@ -271,6 +323,18 @@ class CommandeController
                         $client['prenom_client'],
                         $client['numero_commande'],
                         $avisLink
+                    );
+                }
+            }
+
+            if ($nouveauStatut === 'attente_retour_materiel') {
+
+                $client = $this->commande->getById($id);
+                if ($client) {
+                    CommandeRetourMaterielMail::send(
+                        $client['email_client'],
+                        $client['prenom_client'],
+                        $client['numero_commande'],
                     );
                 }
             }

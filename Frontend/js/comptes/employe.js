@@ -278,7 +278,7 @@ function openDetailsModal(orderId) {
 
     const body = document.getElementById('detailsModalBody');
     body.innerHTML = `
-        <div class="row">
+        <div class="row text-primary">
             <div class="col-md-6">
                 <h6 class="fw-bold mb-3"><i class="bi bi-person"></i> Client</h6>
                 <p><strong>Nom :</strong> ${order.prenom_client} ${order.nom_client}</p>
@@ -293,7 +293,7 @@ function openDetailsModal(orderId) {
             </div>
         </div>
         <hr>
-        <div class="row">
+        <div class="row text-primary">
             <div class="col-md-6">
                 <h6 class="fw-bold mb-3"><i class="bi bi-calendar-event"></i> Événement</h6>
                 <p><strong>Menu :</strong> ${order.menu_titre}</p>
@@ -303,10 +303,10 @@ function openDetailsModal(orderId) {
             </div>
             <div class="col-md-6">
                 <h6 class="fw-bold mb-3"><i class="bi bi-cash-stack"></i> Facturation</h6>
-                <p><strong>Total :</strong> <span class="fs-5 fw-bold text-success">${parseFloat(order.prix_total).toFixed(2)} €</span></p>
+                <p><strong>Total :</strong> <span class="fs-5 fw-bold">${parseFloat(order.prix_total).toFixed(2)} €</span></p>
             </div>
         </div>
-        ${order.commentaire ? `<hr><div><h6 class="fw-bold mb-2"><i class="bi bi-chat-dots"></i> Commentaire</h6><p class="fst-italic">"${order.commentaire}"</p></div>` : ''}
+        ${order.commentaire ? `<hr><div><h6 class="fw-bold text-primary mb-2"><i class="bi bi-chat-dots text-primary "></i> Commentaire</h6><p class="fst-italic text-primary">"${order.commentaire}"</p></div>` : ''}
         ${order.statut === 'annulee' && order.motif_annulation ? `
         <hr>
         <div class="alert alert-danger">
@@ -317,7 +317,7 @@ function openDetailsModal(orderId) {
         ${order.statut === 'en_attente' ? `
         <hr>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-warning" onclick="openModificationModal(${order.id}, ${order.menu_id})">
+            <button class="btn bg-accent" onclick="openModificationModal(${order.id}, ${order.menu_id})">
                 <i class="bi bi-pencil-square"></i> Modifier la commande
             </button>
         </div>` : ''}
@@ -544,7 +544,7 @@ function loadAdminStats() {
             <div class="stat-number">${nouvelles}</div>
             <div class="stat-label">Nouvelles commandes (En attente)</div>
         </div>
-        <div class="stat-card" style="border-left: 4px solid #fd7e14;">
+        <div class="stat-card" style="border-left: 4px solid #a2aa37;">
             <div class="stat-number">${enCours}</div>
             <div class="stat-label">En cours</div>
         </div>
@@ -668,7 +668,7 @@ function getUrgentActions(commande) {
                 <i class="bi bi-check"></i> Accepter
             </button>`;
         case 'en_preparation':
-            return `<button class="btn btn-sm btn-primary btn-action btn-status" data-id="${commande.id}" data-status="en_cours_livraison">
+            return `<button class="btn btn-sm btn-secondary btn-action btn-status" data-id="${commande.id}" data-status="en_cours_livraison">
                 <i class="bi bi-truck"></i> Livrer
             </button>`;
         case 'attente_retour_materiel':
@@ -816,16 +816,16 @@ function displayEmployeeMenus(menus) {
         } else if (menu.stock < 10) {
             stockBadge = `<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle"></i> Stock: ${menu.stock}</span>`;
         } else {
-            stockBadge = `<span class="badge bg-success"><i class="bi bi-check"></i> En stock: ${menu.stock}</span>`;
+            stockBadge = `<span class="badge bg-badgeStock"><i class="bi bi-check"></i> En stock: ${menu.stock}</span>`;
         }
 
         const themeBadge = menu.themes
-            ? `<span class="badge ${getThemeBadgeColor(menu.themes)} me-1">${capitalize(menu.themes)}</span>`
+            ? `<span class="badge bg-accent me-1">${capitalize(menu.themes)}</span>`
             : '';
 
         const regimesBadges = menu.regimes
             ? menu.regimes.split(',').map(r =>
-                `<span class="badge bg-secondary mb-1 me-1">${r.trim()}</span>`
+                `<span class="badge bg-primary mb-1 me-1">${r.trim()}</span>`
             ).join('')
             : '';
 
@@ -845,7 +845,7 @@ function displayEmployeeMenus(menus) {
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item btn-edit-menu" href="#" data-id="${menu.id}">
+                                    <li><a class="dropdown-item text-primary btn-edit-menu" href="#" data-id="${menu.id}">
                                         <i class="bi bi-pencil"></i> Modifier</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item text-danger btn-toggle-menu" href="#" data-id="${menu.id}">
@@ -936,16 +936,6 @@ async function toggleMenu(id) {
 // utilitaires
 function capitalize(str) {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
-}
-
-function getThemeBadgeColor(theme) {
-    const colors = {
-        'noel': 'bg-danger',
-        'paques': 'bg-warning text-dark',
-        'classique': 'bg-secondary',
-        'evenement': 'bg-primary'
-    };
-    return colors[theme?.toLowerCase()] || 'bg-secondary';
 }
 
 // délégation d'évènements
@@ -1053,7 +1043,7 @@ function renderAvisCard(avis, type) {
     }
 
     return `
-        <div class="card mb-3 ${borderClass}" id="avis-card-${avis.id}">
+        <div class="card text-primary border-primary mb-3 ${borderClass}" id="avis-card-${avis.id}">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>

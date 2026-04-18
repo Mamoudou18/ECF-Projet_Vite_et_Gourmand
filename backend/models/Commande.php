@@ -137,7 +137,7 @@ class Commande
         if ($stmStock->rowCount() === 0) {
             throw new \Exception('Ce menu n\'est plus disponible (stock épuisé).');
         }
-
+        
         return($commandeId);
     }
 
@@ -180,6 +180,7 @@ class Commande
         $stmt = $this->pdo->prepare("UPDATE menus SET stock = stock + 1 WHERE id = :menu_id");
         $stmt->execute(['menu_id' => $menuId]);
     }
+
 
     public function updateMotifAnnulation(int $id, array $data): bool
     {

@@ -28,7 +28,6 @@ function invalidateCommandesCache() {
 
 // Initialisation 
 export async function init() {
-    console.log('Initialisation page mon compte');
 
     updateDasboardHeader();
     autoFillProfilInfoUser();
@@ -36,6 +35,15 @@ export async function init() {
     loadDashboard();
     loadCommandes();
     loadAvis();
+
+    // Redirection via hash
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+        const link = document.querySelector(`.sidebar-menu a[data-section="${hash}"]`);
+        if (link) {
+            showSection(hash, link);
+        }
+    }
 }
 
 // initiliser les écouteurs d'évèenement
@@ -48,8 +56,6 @@ function initEventListeners(){
         link.addEventListener("click",function(e){
             e.preventDefault();
             const sectionId = this.getAttribute("data-section")|| this.id;
-
-            console.log('Navigation vers la section:', sectionId);
 
             showSection(sectionId,this);
         });
@@ -99,24 +105,24 @@ function showSection(sectionId,clickedLink){
         section.classList.remove("active");
     });
 
-// Afficher la section demandée
-const targetSection = document.getElementById(sectionId);
-if(!targetSection){
-    console.error('Section introuvable:',sectionId);
-    return;
-}
-targetSection.classList.add("active");
+    // Afficher la section demandée
+    const targetSection = document.getElementById(sectionId);
+    if(!targetSection){
+        console.error('Section introuvable:',sectionId);
+        return;
+    }
+    targetSection.classList.add("active");
 
-// Mettre à jour le menu latéral
-document.querySelectorAll(".sidebar-menu a").forEach(link => {
-    link.classList.remove("active");
-});
-if(clickedLink){
-    clickedLink.classList.add("active");
-}
+    // Mettre à jour le menu latéral
+    document.querySelectorAll(".sidebar-menu a").forEach(link => {
+        link.classList.remove("active");
+    });
+    if(clickedLink){
+        clickedLink.classList.add("active");
+    }
 
-// Scroll vers le haut
-window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll vers le haut
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Filtre commandes
@@ -125,8 +131,6 @@ function filterOrders() {
     const search = document.getElementById('searchOrder').value.toLowerCase();
     const orders = document.querySelectorAll('.order-card');
     let visibleCount = 0;
-
-    console.log(search);
 
     orders.forEach(order => {
         const orderStatus = order.getAttribute('data-status');
@@ -391,11 +395,6 @@ async function handleInitPassword(event) {
     }
 }
 
-
-// ============================================================
-// AJOUTS : Tableau de bord, Commandes, Avis
-// ============================================================
-
 // Configuration des statuts
 function getStatusConfig(status) {
     const configs = {
@@ -517,19 +516,28 @@ function renderOrderCard(commande) {
         actions += `<button class="btn btn-sm btn-outline-warning" onclick="modifierCommande(${commande.id})">
             <i class="bi bi-pencil"></i> Modifier
         </button>`;
-        actions += `<button class="btn btn-sm btn-outline-danger" onclick="annulerCommande(${commande.id})">
+
+        actions += `<button class="btn btn-sm btn-outline-danger btn-annuler"
+        data-id ="${commande.id}"
+        data-numero="${commande.numero_commande}">
             <i class="bi bi-x-circle"></i> Annuler
         </button>`;
     }
 
     if (['accepte', 'en_preparation', 'en_cours_livraison', 'livre','attente_retour_materiel','terminee','annulee'].includes(commande.statut)) {
-        actions += `<button class="btn btn-sm btn-outline-info" onclick="suivreCommande(${commande.id})">
+
+        actions += `<button class="btn btn-sm btn-outline-info btn-suivre" 
+            data-id="${commande.id}" 
+            data-numero="${commande.numero_commande}">
             <i class="bi bi-geo-alt"></i> Suivre ma commande
         </button>`;
+
     }
 
     if (commande.statut === 'terminee') {
-        actions += `<button class="btn btn-sm btn-outline-success" onclick="recommander(${commande.id})">
+        actions += `<button class="btn btn-sm btn-outline-success btn-recommander"
+        data-id= "${commande.id}"
+        data-numero="${commande.numero_commande}">
             <i class="bi bi-arrow-repeat"></i> Recommander
         </button>`;
     }
@@ -580,15 +588,21 @@ function renderOrderCard(commande) {
     `;
 }
 
-// Actions commandes (globales pour onclick)
-window.annulerCommande = async function(id) {
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-annuler');
+    if (!btn) return;
+    annulerCommande(btn.dataset.id, btn.dataset.numero);
+});
+
+ async function annulerCommande (id, numero_commande) {
     const confirmed = await showConfirm({
         title: 'Annuler la commande ?',
         message: 'Votre commande sera définitivement annulée.',
         icon: 'bi-x-circle-fill',
-        iconColor: 'text-danger',
+        iconColor: 'text-primary',
         btnText: 'Oui, annuler',
-        btnClass: 'btn-danger'
+        btnClass: 'bg-accent',
+        titleHeder : '#'+numero_commande,
     });
     if (!confirmed) return;
 
@@ -637,13 +651,18 @@ window.modifierCommande = async function(id) {
     }
 };
 
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-suivre');
+    if (!btn) return;
+    suivreCommande(btn.dataset.id, btn.dataset.numero);
+});
 
-window.suivreCommande = function(id) {
+ function suivreCommande (id, numero_commande) {
     // Ouvrir la modale de suivi
     const modal = document.getElementById('suiviModal');
     if (modal) {
         document.getElementById('suiviCommandeId').textContent = `#${id}`;
-        loadSuiviCommande(id);
+        loadSuiviCommande(id, numero_commande);
         new bootstrap.Modal(modal).show();
     }
 };
@@ -665,20 +684,22 @@ window.voirDetail = async function(id) {
     }
 };
 
-window.recommander = async function(id) {
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-recommander');
+    if (!btn) return;
+    recommander(btn.dataset.id, btn.dataset.numero);
+});
 
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    const timestamp = String(now.getFullYear()).slice(2) + pad(now.getMonth()+1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
-    const newNumCommande = 'CMD-' + timestamp;
+async function recommander (id, numero_commande) {
 
     const confirmed = await showConfirm({
         title: 'Recommander ?',
         message: 'Une nouvelle commande identique sera créée.',
         icon: 'bi-arrow-repeat',
-        iconColor: 'text-success',
+        iconColor: 'text-primary',
         btnText: 'Oui, recommander',
-        btnClass: 'btn-success'
+        btnClass: 'bg-accent',
+        titleHeder : '#'+numero_commande,
     });
     if (!confirmed) return;
 
@@ -710,7 +731,6 @@ window.recommander = async function(id) {
             prix_menu: old.prix_menu,
             prix_total: old.prix_total,
             location_materiel: old.location_materiel,
-            numero_commande: newNumCommande,
             commentaire: old.commentaire
         };
 
@@ -737,13 +757,13 @@ window.recommander = async function(id) {
 };
 
 // Charger le suivi d'une commande
-async function loadSuiviCommande(id) {
+async function loadSuiviCommande(id, numero_commande) {
     try {
         const response = await fetch(`${API_BASE}/commande/historique?id=${id}`);
         const data = await response.json();
 
         if (data.success) {
-            document.getElementById('suiviCommandeId').textContent = `#${id}`;
+            document.getElementById('suiviCommandeId').textContent = `#${numero_commande}`;
             afficherSuiviCommande(data.historique);
         } else {
             document.getElementById('suiviCommandeContent').innerHTML = `
@@ -887,7 +907,7 @@ function afficherSuiviCommande(historique) {
         'annulee': { icon: 'bi-x-circle-fill', color: '#e74c3c' }
     };
 
-    let html = '<div class="timeline">';
+    let html = '<div>';
 
     historique.forEach((etape, index) => {
         const config = icones[etape.statut_libelle] || { icon: 'bi-circle', color: '#95a5a6' };
@@ -895,12 +915,12 @@ function afficherSuiviCommande(historique) {
         const date = new Date(etape.created_at).toLocaleString('fr-FR');
 
         html += `
-            <div class="timeline-item d-flex mb-4 ${isLast ? '' : ''}">
-                <div class="timeline-icon me-3 text-center" style="min-width: 40px;">
+            <div class="d-flex mb-4 ${isLast ? '' : ''}">
+                <div class="me-3 text-center" style="min-width: 40px;">
                     <i class="bi ${config.icon}" style="font-size: 1.5rem; color: ${config.color};"></i>
-                    ${!isLast ? `<div style="width: 2px; height: 30px; background: #dee2e6; margin: 5px auto;"></div>` : ''}
+                    ${!isLast ? `<div class="bg-accent" style="width: 2px; height: 30px; margin: 5px auto;"></div>` : ''}
                 </div>
-                <div class="timeline-content">
+                <div>
                     <h6 class="mb-1 fw-bold" style="color: ${config.color};">
                         ${etape.statut_libelle.replace('_', ' ').toUpperCase()}
                     </h6>
@@ -1028,7 +1048,6 @@ window.ouvrirFormulaireAvis = function(commandeId) {
                                     <div id="avisStarsInput" class="fs-3 d-flex gap-1">
                                         ${[1,2,3,4,5].map(i => `<i class="bi bi-star text-muted" data-note="${i}" style="cursor:pointer"></i>`).join('')}
                                     </div>
-                                    <small class="text-muted">Clic = note entière, double-clic = demi-étoile</small>
                                     <input type="hidden" id="avisNoteValue" value="0">
                             </div>
                             <div class="mb-3">
@@ -1038,7 +1057,7 @@ window.ouvrirFormulaireAvis = function(commandeId) {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="button" class="btn btn-warning" onclick="envoyerAvis()">
+                            <button type="button" class="btn bg-accent" onclick="envoyerAvis()">
                                 <i class="bi bi-send"></i> Envoyer
                             </button>
                         </div>

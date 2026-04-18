@@ -11,8 +11,17 @@ export async function init() {
     
     // Vérifier si déjà connecté
     const currentUser = getStorage();
-    if (currentUser) {
-        window.location.href = '/';
+
+    if (currentUser && currentUser.role) {
+        
+        const role = currentUser.role;
+        if (role === 'admin') {
+            window.location.href = '/espace-administrateur';
+        } else if (role === 'employe') {
+            window.location.href = '/espace-employe';
+        } else {
+            window.location.href = '/menu';
+        }
         return;
     }
     
@@ -111,15 +120,30 @@ async function handleLogin(event) {
 
             // Message succès
             showToast('Connexion réussie ! Redirection...', 'success');
-            
-            // Redirection selon paramètre ou page d'accueil
+
+            // Redirection selon paramètres ou page d'accueil
             setTimeout(() => {
                 const urlParams = new URLSearchParams(window.location.search);
-                const redirect = urlParams.get('redirect') || '/';
-                window.location.href = redirect;
+                const redirect = urlParams.get('redirect');
+
+                // Si un redirect est explicitement demandé dans l'URL, on l'utilise en priorité
+                if (redirect) {
+                    window.location.href = redirect;
+                } else {
+                    // Sinon, redirection selon le rôle
+                    const role = userData.role;
+                    if (role === 'admin') {
+                        window.location.href = '/espace-administrateur';
+                    } else if (role === 'employe') {
+                        window.location.href = '/espace-employe';
+                    } else {
+                        window.location.href = '/menu';
+                    }
+                }
             }, 1500);
         } else {
-            console.error('Problème de récupération du result:', error);
+            console.error('Problème de récupération du result');
+            showToast('Erreur lors de la connexion', 'danger');
         }
     })
     .catch((error) => {
@@ -137,39 +161,39 @@ async function handleForgotPassword(event) {
     event.preventDefault();
 
     const email = document.getElementById('forgotEmail').value.trim();
-    const messageDiv = document.getElementById('forgotMessage');
+    const submitBtn = event.target.querySelector('button[type="submit"]');
 
-    if (!email) {
-        alert('Veuillez entrer votre adresse email');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        showToast('Veuillez entrer une adresse email valide', 'warning');
         return;
     }
 
     try {
-        const response = await fetch(`{API_BASE}/auth/forgot-password`, {
+        submitBtn.disabled = true;
+
+        const response = await fetch(`${API_BASE}/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
 
-        const data = await response.json();
-
-        messageDiv.classList.remove('d-none', 'alert-danger', 'alert-success');
-        messageDiv.classList.add(response.ok ? 'alert-success' : 'alert-danger');
-        messageDiv.textContent = data.message;
+        const data = await response.json().catch(() => ({}));
 
         if (response.ok) {
+            showToast(data.message || 'Email envoyé.', 'success');
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById("forgotPassword"));
-                modal.hide();
+                if (modal) modal.hide();
                 document.getElementById('forgotPasswordForm').reset();
-            }, 3000);
+            }, 2000);
+        } else {
+            showToast(data.message || 'Erreur lors de l\'envoi.', 'danger');
         }
-
     } catch (error) {
         console.error(error);
-        messageDiv.classList.remove('d-none', 'alert-success');
-        messageDiv.classList.add('alert-danger');
-        messageDiv.textContent = 'Une erreur est survenue.';
+        showToast('Une erreur est survenue.', 'danger');
+    } finally {
+        submitBtn.disabled = false;
     }
-
 }

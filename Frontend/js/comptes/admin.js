@@ -45,6 +45,21 @@ function initEventListeners() {
     });
 }
 
+// =============== MISE A JOUR HEADER ====================
+function updateDashboardHeader() {
+    const user = getStorage();
+    if (!user) return;
+
+    const avatar = document.getElementById("user-avatar");
+    if (avatar) {
+        const initiales = `${user.prenom.charAt(0)}${user.nom.charAt(0)}`.toUpperCase();
+        avatar.textContent = initiales;
+    }
+
+    const nom = document.querySelector('.lead');
+    if (nom) nom.textContent = `Bienvenue, ${user.prenom} ${user.nom}`;
+}
+
 // ===================== NAVIGATION =====================
 function showSection(sectionId, clickedLink) {
     document.querySelectorAll(".section-content").forEach(s => s.classList.remove("active"));
@@ -75,22 +90,6 @@ function showSection(sectionId, clickedLink) {
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-
-// =============== MISE A JOUR HEADER ====================
-function updateDashboardHeader() {
-    const user = getStorage();
-    if (!user) return;
-
-    const avatar = document.getElementById("user-avatar");
-    if (avatar) {
-        const initiales = `${user.prenom.charAt(0)}${user.nom.charAt(0)}`.toUpperCase();
-        avatar.textContent = initiales;
-    }
-
-    const nom = document.querySelector('.lead');
-    if (nom) nom.textContent = `Bienvenue, ${user.prenom} ${user.nom}`;
 }
 
 // ===================================================
@@ -373,10 +372,10 @@ function ouvrirToggleUserModal(id, isActif) {
 
     if (isActif) {
         action.value = 'desactiver';
-        header.className = 'modal-header bg-danger text-dark';
+        header.className = 'modal-header bg-danger';
         title.innerHTML = '<i class="bi bi-person-x"></i> Désactiver le compte';
         message.textContent = 'Voulez-vous vraiment désactiver cet utilisateur ?';
-        btn.className = 'btn btn-danger';
+        btn.className = 'btn bg-danger text-white';
         btn.innerHTML = '<i class="bi bi-person-x-fill"></i> Désactiver';
     } else {
         action.value = 'activer';
@@ -461,8 +460,6 @@ async function syncEtChargerStats() {
 
         const data = await res.json();
         if (!res.ok) throw data;
-
-        showToast(`${data.nb_commandes_synchronisees ?? 0} commandes synchronisées`, 'success');
 
         await Promise.all([
             chargerCommandesParMenu(),

@@ -403,11 +403,6 @@ class ValidationService
             $errors['prix_total'] = 'Le prix total doit être un nombre positif.';
         }
 
-        // --- Numéro de commande ---
-        if (empty(trim($data['numero_commande'] ?? ''))) {
-            $errors['numero_commande'] = 'Le numéro de commande est requis.';
-        }
-
         // --- Location matériel ---
         if (!isset($data['location_materiel']) || !in_array($data['location_materiel'], [0, 1, '0', '1', true, false], true)) {
             $errors['location_materiel'] = 'La location de matériel doit être 0 ou 1.';

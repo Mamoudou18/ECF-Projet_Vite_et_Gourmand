@@ -106,7 +106,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">&nbsp;</label>
-                                <button class="btn btn-sm btn-outline-primary w-100" id="resetFilterBtn">
+                                <button class="btn btn-sm btn-secondary w-100" style="height: 50px;" id="resetFilterBtn">
                                     <i class="bi bi-x-circle"></i> Réinitialiser
                                 </button>
                             </div>
@@ -322,7 +322,7 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
-                <div class="modal-body" id="detailCommandeContent">
+                <div class="modal-body text-primary" id="detailCommandeContent">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Chargement...</span>
@@ -367,11 +367,14 @@
     <!-- Modale Confirmation Action -->
     <div class="modal fade" id="confirmActionModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-0 pb-0">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="suiviModalLabel">
+                        Commande <span id="numCommande"></span>
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
-                <div class="modal-body text-center px-4 pt-0 pb-4">
+                <div class="modal-body text-center text-primary px-4 pt-0 pb-4">
                     <div id="confirmIcon" class="mb-3">
                         <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 4rem;"></i>
                     </div>
@@ -379,10 +382,10 @@
                     <p id="confirmMessage" class="text-muted mb-0">Cette action est irréversible.</p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center pt-0 pb-4 gap-2">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
                         <i class="bi bi-x-lg"></i> Non, annuler
                     </button>
-                    <button type="button" class="btn px-4" id="confirmActionBtn">
+                    <button type="button" class="btn  bg-accent px-4" id="confirmActionBtn">
                         <i class="bi bi-check-lg"></i> <span id="confirmBtnText">Oui, confirmer</span>
                     </button>
                 </div>

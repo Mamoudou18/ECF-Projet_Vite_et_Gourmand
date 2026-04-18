@@ -7,13 +7,20 @@ let selectedMenu = null;
 let minPersons = 0;
 let pricePerPerson = 0;
 let deliveryCost = 0;
+let delaiJours = 7; 
 let map, directionsService, directionsRenderer;
+let autocompleteInstance = null;
+
+let joursFermes = [];
 
 //Initialisation
 export async function init() {
     await loadMenuCommande();
+    await loadHoraires();
     autoFillUserInfo();
     await initGoogleMaps();
+
+    setupDateField();
 
     initEventListeners(); //fonction pour initialiser les écouteurs d'évènements
 
@@ -22,35 +29,15 @@ export async function init() {
 
 //initialiser les écouteurs d'évènements
 function initEventListeners() {
-    const villeLivraison = document.getElementById('villeLivraison');
-    if(villeLivraison){
-        villeLivraison.addEventListener("input",calculerFraisManuel);
-    }
-
-    const copyPostalAddress = document.getElementById("copyPostalAddress");
-    if(copyPostalAddress){
-        copyPostalAddress.addEventListener("click", copieAdressePostale);
-    }
-
-    const btnIncrement = document.getElementById("btnIncrement");
-    if(btnIncrement){
-        btnIncrement.addEventListener("click",incrementPersons);
-    }
-
-    const btnDecrement = document.getElementById("btnDecrement");
-    if(btnDecrement){
-        btnDecrement.addEventListener("click",decrementPersons);
-    }
-
-    const inputLocationMateriel = document.getElementById("locationMateriel");
-    if(inputLocationMateriel){
-        inputLocationMateriel.addEventListener("change",calculatePrice);
-    }
-
-    const commandeForm = document.getElementById('commandeForm');
-    if(commandeForm){
-        commandeForm.addEventListener('submit', formCommandeMenu);
-    }
+    addListener('villeLivraison', 'input', calculerFraisManuel);
+    addListener('copyPostalAddress', 'click', copieAdressePostale);
+    addListener('btnIncrement', 'click', incrementPersons);
+    addListener('btnDecrement', 'click', decrementPersons);
+    addListener('locationMateriel', 'change', calculatePrice);
+    addListener('commandeForm', 'submit', formCommandeMenu);
+    addListener('btnAnnuler', 'click', annulerFormulaire);
+    addListener('matinRadio', 'change', toggleHeureService);
+    addListener('soirRadio', 'change', toggleHeureService);
 }
 
 const listeners = [];
@@ -82,6 +69,13 @@ export function cleanup() {
     map = null;
     directionsRenderer = null;
     directionsService = null;
+
+
+     // Nettoyer l'autocomplete Google
+    if (autocompleteInstance) {
+        google.maps.event.clearInstanceListeners(autocompleteInstance);
+        autocompleteInstance = null;
+    }
 }
 
 // intégration de google maps et calcul de frais de livraison
@@ -100,12 +94,12 @@ async function initGoogleMaps() {
     directionsRenderer.setMap(map);
 
     const input = document.getElementById("adresseLivraison");
-    const autocomplete = new Autocomplete(input, {
-      fields: ["geometry", "address_components", "formatted_address"],
+    autocompleteInstance = new Autocomplete(input, {
+        fields: ["geometry", "address_components", "formatted_address"],
     });
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
+    autocompleteInstance.addListener("place_changed", () => {
+      const place = autocompleteInstance.getPlace();
       if (!place.geometry) return;
 
     // EXTRACTION CODE POSTAL ET VILLE
@@ -236,6 +230,7 @@ function calculerItineraire(origin, destination) {
         if (villeDestination.includes("bordeaux")) {
           deliveryCost = 0;
           deliveryDetails.textContent = "Livraison gratuite dans Bordeaux";
+          deliveryPrice.textContent = "0.00";
         } else {
             deliveryCost = 5 + 0.59 * distanceKm;
             deliveryDetails.textContent =
@@ -255,6 +250,72 @@ function calculerItineraire(origin, destination) {
 function getMenuIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     return parseInt(urlParams.get('menu'));
+}
+
+// Fonction toggle heure de service
+function toggleHeureService() {
+    const isMatin = document.getElementById('matinRadio').checked;
+    const selectMatin = document.getElementById('selectHourMatin');
+    const selectSoir = document.getElementById('selectHourSoir');
+
+    selectMatin.style.display = isMatin ? 'block' : 'none';
+    selectMatin.disabled = !isMatin;
+    selectMatin.required = isMatin;
+
+    selectSoir.style.display = isMatin ? 'none' : 'block';
+    selectSoir.disabled = isMatin;
+    selectSoir.required = !isMatin;
+
+    // Reset la sélection du select masqué
+    if (isMatin) {
+        selectSoir.value = '';
+    } else {
+        selectMatin.value = '';
+    }
+}
+
+// Fonction utilitaire pour récupérer l'heure sélectionnée
+function getSelectedHeure() {
+    const isMatin = document.getElementById('matinRadio').checked;
+    return isMatin
+        ? document.getElementById('selectHourMatin').value
+        : document.getElementById('selectHourSoir').value;
+}
+
+// Charger les horaires
+async function loadHoraires() {
+    try {
+        const response = await fetch(`${API_BASE}/horaires/horaire-list`);
+        const data = await response.json();
+        if (data.success) {
+            // Mapper ordre vers getDay()
+            joursFermes = data.horaires
+                .filter(h => h.is_ferme === 1)
+                .map(h => h.ordre % 7);
+        }
+    } catch (error) {
+        console.error('Erreur chargement horaires:', error);
+    }
+}
+
+// Fonction séparée, en dehors de loadMenuCommande
+function setupDateField() {
+    const dateInput = document.getElementById('datePrestation');
+    if (!dateInput) return;
+
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + delaiJours);
+    dateInput.min = minDate.toISOString().split('T')[0];
+
+    dateInput.addEventListener('input', function () {
+        const selectedDate = new Date(this.value + 'T00:00:00');
+        const dayOfWeek = selectedDate.getDay();
+
+        if (joursFermes.includes(dayOfWeek)) {
+            showToast('Ce jour est un jour de fermeture. Veuillez choisir un autre jour.', 'warning');
+            this.value = '';
+        }
+    });
 }
 
 
@@ -307,7 +368,14 @@ async function loadMenuCommande() {
             ? selectedMenu.conditions.split(',').map(c => c.trim().replace(/^"|"$/g, '').trim()).filter(c => c)
             : [];
 
-    displayMenuRecap();
+        
+        const delaiCondition = selectedMenu.conditionsList.find(c => c.toLowerCase().includes('délai'));
+        if (delaiCondition) {
+            const match = delaiCondition.match(/(\d+)/);
+            if (match) delaiJours = parseInt(match[1]);
+        }
+
+        displayMenuRecap();
 
     } catch (error) {
         console.error('Erreur chargement menus:', error);
@@ -327,9 +395,11 @@ async function loadMenuCommande() {
 // ============================================
 function displayMenuRecap() {
     if (!selectedMenu) return;
+
     // Titre et description
     document.getElementById('menuTitreText').textContent = selectedMenu.titre;
     document.getElementById('menuDescription').textContent = selectedMenu.description;
+
     // Infos principales
     pricePerPerson = parseFloat(selectedMenu.prix_base) || 0 ;
     minPersons = selectedMenu.nb_personnes_min;
@@ -356,26 +426,28 @@ function displayMenuRecap() {
     } else {
         allergenesDiv.innerHTML = '<span class="text-white">Aucun allergène déclaré</span>';
     }
+
     // Conditions (CONFORME ÉNONCÉ)
     const conditionsUl = document.getElementById('menuConditionsListe');
     conditionsUl.innerHTML = '';
-    const delaiJours = minPersons >= 20 ? 14 : 7;
-    const conditions = selectedMenu.conditionsList || [
-        `Commander ce menu au minimum ${delaiJours} jours avant la prestation`,
-        'Conservation : à consommer dans les 48h après livraison',
-        'Réchauffage : instructions détaillées fournies avec la commande',
-        'Matériel : vaisselle et couverts à prévoir (ou location possible +50€)',
-        'Stock disponible : ' + (selectedMenu.stock || 'limité')
-    ];
-    conditions.forEach(condition => {
+
+    if (selectedMenu.conditionsList && selectedMenu.conditionsList.length > 0) {
+        selectedMenu.conditionsList.forEach(condition => {
+            const li = document.createElement('li');
+            li.textContent = condition;
+            conditionsUl.appendChild(li);
+        });
+    } else {
         const li = document.createElement('li');
-        li.textContent = condition;
+        li.textContent = 'Aucune condition particulière';
         conditionsUl.appendChild(li);
-    });
+    }
+
     // Mettre à jour les autres éléments
     document.getElementById('minPersonsInfo').textContent = minPersons;
     document.getElementById('personCount').textContent = minPersons;
     document.getElementById('delaiCommande').textContent = delaiJours + ' jours';
+
     // Définir la date minimale selon le délai
     const today = new Date();
     today.setDate(today.getDate() + delaiJours);
@@ -423,8 +495,10 @@ function calculatePrice() {
     if (!selectedMenu) return;
     const personCount = parseInt(document.getElementById('personCount').textContent);
     const locationMateriel = document.getElementById("locationMateriel").checked;
+
     // Prix menu de base
     let menuPrice = pricePerPerson * personCount;
+
     // Location matériel
     let materielCost = 0;
     if (locationMateriel) {
@@ -433,6 +507,7 @@ function calculatePrice() {
     } else {
         document.getElementById('recapMaterielLine').style.display = 'none';
     }
+
     // Réduction 10% si >= minPersons + 5 personnes
     let discount = 0;
     if (personCount >= minPersons + 5) {
@@ -476,7 +551,7 @@ async function checkModification() {
 
         // Vérifier le statut
         if (cmd.statut !== 'en_attente') {
-            showToast('Cette commande ne peut plus être modifiée (statut : " + cmd.statut + ").', 'danger');
+            showToast(`Cette commande ne peut plus être modifiée (statut : ${cmd.statut}).`, 'danger');
             setTimeout(() => {
                 window.location.href = '/utilisateur';
             }, 2000);
@@ -488,8 +563,20 @@ async function checkModification() {
         document.getElementById('codePostalLivraison').value = cmd.code_postal_prestation || '';
         document.getElementById('villeLivraison').value = cmd.ville_prestation || '';
         document.getElementById('datePrestation').value = cmd.date_prestation || '';
-        document.getElementById('heurePrestation').value = cmd.heure_prestation || '';
         document.getElementById('commentaire').value = cmd.commentaire || '';
+        if (cmd.heure_prestation) {
+            const heure = cmd.heure_prestation.substring(0, 5);
+            const heureInt = parseInt(heure.split(':')[0]);
+
+            if (heureInt < 14) {
+                document.getElementById('matinRadio').checked = true;
+                document.getElementById('selectHourMatin').value = heure;
+            } else {
+                document.getElementById('soirRadio').checked = true;
+                document.getElementById('selectHourSoir').value = heure;
+            }
+            toggleHeureService();
+        }
 
         // Nombre de personnes
         document.getElementById('personCount').textContent = cmd.nb_personnes || minPersons;
@@ -544,16 +631,12 @@ function validateForm() {
         errors.push('Téléphone invalide (format: 06 12 34 56 78)');
     }
 
-    if (parseInt(document.getElementById('personCount').textContent) > selectedMenu.stock) {
-        errors.push('Stock insuffisant pour ce nombre de personnes');
-    }
-
     if (!document.getElementById('adresseLivraison').value.trim()) {
         errors.push('Veuillez renseigner l\'adresse de livraison');
     }
 
     if(errors.length > 0){
-        showToast('errors', 'validation');
+        errors.forEach(err => showToast(err, 'danger'));
         return false;
     }
     return true;
@@ -576,10 +659,14 @@ async function formCommandeMenu(e) {
     const dateMin = new Date(document.getElementById('datePrestation').min);
 
     if (datePrestation < dateMin) {
-        const delaiJours = minPersons >= 20 ? 14 : 7;
+
         showToast(`La date de prestation doit être au minimum ${delaiJours} jours après aujourd'hui`, 'warning');
         return;
     }
+
+    const btnSubmit = document.querySelector('#commandeForm button[type="submit"]');
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Envoi en cours...';
 
     const currentUser = getStorage();
     if (!currentUser) return;
@@ -590,12 +677,6 @@ async function formCommandeMenu(e) {
     const materielCost = locationMateriel ? 50 : 0;
     const discount = nbPersonnes >= minPersons + 5 ? menuPrice * 0.10 : 0;
     const prixTotal = menuPrice + materielCost + deliveryCost - discount;
-
-    //Définir un nouveau numéro de commande > année + mois + jour + heure + minute + seconde: CMD-250419183020
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    const timestamp = String(now.getFullYear()).slice(2) + pad(now.getMonth()+1) + pad(now.getDate()) + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
-    const numeroCommande = 'CMD-' + timestamp;
 
     const commande = {
         user_id: currentUser.id,
@@ -608,7 +689,7 @@ async function formCommandeMenu(e) {
         ville_prestation: document.getElementById('villeLivraison').value.trim(),
         code_postal_prestation: document.getElementById('codePostalLivraison').value.trim(),
         date_prestation: document.getElementById('datePrestation').value,
-        heure_prestation: document.getElementById('heurePrestation').value.substring(0, 5),
+        heure_prestation: getSelectedHeure(),
         nb_personnes: nbPersonnes,
         prix_menu: menuPrice.toFixed(2),
         prix_livraison: deliveryCost.toFixed(2),
@@ -620,9 +701,6 @@ async function formCommandeMenu(e) {
 
     const modifierId = document.getElementById('commandeForm').dataset.modifierId;
 
-    if (!modifierId) {
-        commande.numero_commande = numeroCommande;
-    }
     // Si modification, re-vérifier le statut
     if (modifierId) {
         const checkResp = await fetch(`${API_BASE}/commande/detail-commande?id=${modifierId}`);
@@ -640,20 +718,20 @@ async function formCommandeMenu(e) {
 
     const method = modifierId ? "PUT" : "POST";
 
-    fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(commande),
-    })
-    .then((response) => response.json())
-    .then((result) => {
-        if (result.success) {
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(commande),
+        });
+        const result = await response.json();
+        if(result.success){
             if (modifierId) {
                 showToast('Commande modifiée avec succès !', 'success');
                 setTimeout(() => {
                     const role = currentUser.role;
                     if (role === 'admin') {
-                        window.location.href = '/espace-admin';
+                        window.location.href = '/espace-administrateur';
                     } else if (role === 'employe') {
                         window.location.href = '/espace-employe';
                     } else {
@@ -661,18 +739,48 @@ async function formCommandeMenu(e) {
                     }
                 }, 2000);
             }else {
-                document.getElementById('orderNumber').textContent = numeroCommande;
+                document.getElementById('orderNumber').textContent = result.numero_commande;
                 document.getElementById('confirmEmail').textContent = commande.email_client;
                 const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
                 modal.show();
             }
-        } else {
+        }else {
             showToast(result.message || 'Une erreur est survenue', 'danger');
         }
-    })
-    .catch((error) => {
+    } catch (error) {
         console.error('Erreur :', error);
-        showToast('Une erreur réseau est survenue. Veuillez réessayer', 'danger');
-    });
+        showToast('Une erreur réseau est survenue.', 'danger'); 
+    } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="bi bi-check-circle"></i> Confirmer ma commande';
+    }
 
 }
+
+// Bouton annuler
+function annulerFormulaire() {
+    const modifierId = document.getElementById('commandeForm').dataset.modifierId;
+    const message = modifierId
+        ? 'Voulez-vous annuler la modification ?'
+        : 'Voulez-vous quitter ? Les données saisies seront perdues.';
+
+    document.getElementById('modalAnnulerMessage').textContent = message;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalAnnuler'));
+    modal.show();
+
+    document.getElementById('btnConfirmAnnuler').onclick = () => {
+        modal.hide();
+        if (modifierId) {
+            const currentUser = getStorage();
+            const redirects = {
+                admin: '/espace-administrateur',
+                employe: '/espace-employe',
+            };
+            window.location.href = redirects[currentUser?.role] || '/utilisateur';
+        } else {
+            window.location.href = '/menu';
+        }
+    };
+}
+
