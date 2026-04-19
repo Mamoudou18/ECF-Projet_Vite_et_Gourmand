@@ -1,0 +1,217 @@
+<div class="container">
+    <div class="register-container mx-auto">
+        <div class="register-card">
+            
+            <!-- Header -->
+            <div class="register-header">
+                <i class="bi bi-person-plus-fill"></i>
+                <h2>Créer un compte</h2>
+                <p class="mb-0">Rejoignez-nous en quelques clics</p>
+            </div>
+
+            <div class="register-body">
+
+                <form id="registerForm">
+                    
+                    <!-- Nom et Prénom -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="nom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="nom" placeholder="Votre nom" required minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="prenom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="prenom" placeholder="Votre prénom" required minlength="2">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="email" placeholder="votre.email@exemple.com" required>
+                        </div>
+                        <small id="emailMessage" class="text-danger" style="display: none;">
+                            Votre adresse mail ne respecte pas le format!
+                        </small>
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="telephone" class="form-label">
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="telephone" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse postale -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="adressePostale" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="codePostalClient" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="villeClient" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill primary"></i> Mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input 
+                                type="password" class="form-control" id="password" placeholder="••••••••••" required minlength="10">
+                            <span class="password-toggle" type="button" id="togglePassword">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+                        
+                        <!-- Barre de force -->
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="strengthBar"></div>
+                        </div>
+
+                        <!-- Exigences -->
+                        <div class="password-requirements mt-2">
+                            <div class="requirement" id="req-length">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Minimum 10 caractères</span>
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 majuscule</span>
+                            </div>
+                            <div class="requirement" id="req-lowercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 minuscule</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 chiffre</span>
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 caractère spécial (!@#$%^&*)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation mot de passe -->
+                    <div class="mb-3">
+                        <label for="passwordConfirm" class="form-label">
+                            <i class="bi bi-shield-lock-fill"></i> Confirmer le mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input 
+                                type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                            <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+                        <small id="passwordMatchMessage" class="text-danger" style="display: none;">
+                            Les mots de passe ne correspondent pas
+                        </small>
+                    </div>
+
+                    <!-- RGPD -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rgpd" required>
+                            <label class="form-check-label" for="rgpd">
+                                J'accepte la <a href="/mentions-legales" target="_blank" class="link-primary-custom">politique de confidentialité</a> 
+                                et les <a href="/cgv" target="_blank" class="link-primary-custom">CGV</a> <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bouton inscription -->
+                    <button type="submit" class="btn btn-register" id="registerBtn">
+                        <i class="bi bi-person-plus-fill"></i> Créer mon compte
+                    </button>
+
+                </form>
+                
+                <!-- Divider -->
+                <div class="divider">
+                    <span>OU</span>
+                </div>
+
+                <!-- Lien connexion -->
+                <div class="text-center">
+                    <p class="mb-0">
+                        Vous avez déjà un compte ?
+                        <a href="/signin" class="link-signin">
+                            <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                        </a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--- modal confirmation inscription ----->
+<div class="modal fade" id="inscriptionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill"></i> Inscription réussie !
+                </h5>
+            </div>
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-person-check text-success" style="font-size: 6rem;"></i>
+                </div>
+                <h3 class="mb-4">Bienvenue <strong id="confirmNom"></strong> !</h3>
+                <div class="alert alert-success">
+                    <h5>Votre compte a été créé avec succès</h5>
+                </div>
+                <p class="mb-3">Un email de confirmation a été envoyé à :</p>
+                <p class="fs-5"><strong id="confirmEmailInscription"></strong></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary btn-lg" onclick="window.location.href='/menu'">
+                    <i class="bi bi-book"></i> Voir nos menus
+                </button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="window.location.href='/signin'">
+                    <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

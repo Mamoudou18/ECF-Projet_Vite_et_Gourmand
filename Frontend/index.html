@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./scss/main.css">
+
+    <script>
+        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t.toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key: "AIzaSyC6i1IKZS8oMpCw9r3a-N28w4XspQAFb_g"});
+    </script>
+
+    <title>Vite & Gourmand</title>
+</head>
+<body>
+    
+    <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <header class="header-sticky" role="banner">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">VITE &amp; GOURMAND</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/menu">Nos menus</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/avis">Avis clients</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contact">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signin" data-show="disconnected">Connexion</a>
+                            <a class="nav-link" href="/signup" data-show="disconnected">Inscription</a>
+                        </li>
+                        <li class="nav-item dropdown" data-show="connected">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="bi-person-circle"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item text-primary" data-show="ADMIN" href="/espace-administrateur">Mon compte</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-primary" data-show="EMPLOYE" href="/espace-employe">Mon compte</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-primary" data-show="UTILISATEUR" href="/utilisateur">Mon compte</a>
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <button class="dropdown-item text-danger" id="btn-signout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-page">
+        <!---- Ici sera injecté le contenu des différentes pages de l'application -->
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+
+                <div class="col-lg-6 col-md-6">
+                    <h5><i class="bi bi-clock"></i> Horaires</h5>
+                    <div id="footerHoraires">
+                        <p class="mb-1">Chargement...</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                    <h5><i class="bi bi-geo-alt"></i> Contact</h5>
+                    <p class="mb-1">
+                        <a href="mailto:vitegourmandecf26@gmail.com">
+                            <i class="bi bi-envelope"></i> vitegourmandecf26@gmail.com
+                        </a>
+                    </p>
+                    <p class="mb-1">
+                        <i class="bi bi-telephone"></i> 03 88 40 00 00
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-map"></i> 1 Place de la république, 33000 Bordeaux - France
+                    </p>
+                </div>
+            </div>
+
+            <hr class="footer-divider">
+
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-muted small">
+                        © 2026 Vite &amp; Gourmand - Tous droits réservés
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="/mentions-legales" class="me-3 small">Mentions légales</a>
+                    <a href="/cgv" class="small">CGV</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script type="module" src="/js/script.js"></script>
+    <script type="module" src="/Router/router.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

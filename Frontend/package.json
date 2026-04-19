@@ -1,0 +1,25 @@
+{
+  "name": "vitegourmandfrontend",
+  "version": "1.0.0",
+  "description": "Dans le cadre de ma formation Développeur Web et mobile, l'objectif de ce projet est de concevoir un site de restauration (TRAITEUR) pour l'entreprise Vite &amp; Gourmand afin de proposer des menus de différents évènements aux visiteurs et ainsi leur permettre de faire une commande depuis l'application.",
+  "main": "eslint.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mamoudou18/ECF-Projet_Vite_et_Gourmand.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mamoudou18/ECF-Projet_Vite_et_Gourmand/issues"
+  },
+  "homepage": "https://github.com/Mamoudou18/ECF-Projet_Vite_et_Gourmand#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1"
+  }
+}

@@ -1,0 +1,33 @@
+# Docker
+.env
+.env local
+
+# Base de données
+*.sql.backup
+db_data/
+
+# Logs
+*.log
+docker/nginx/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Dépendances
+node_modules/
+vendor/
+images
+ViteGourmandFrontEnd/node_modules
+
+#vendor
+.vendor
+
+backend/public/uploads/**
+!backend/public/uploads/.gitkeep
+!backend/public/uploads/menus/.gitkeep

@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="register-container menu-container mx-auto">
+        <div class="register-card">
+
+            <!-- Header -->
+            <div class="register-header">
+                <i class="bi bi-journal-richtext"></i>
+                <h2>Gestion des menus</h2>
+                <p class="mb-0">Créez et organisez vos menus</p>
+            </div>
+
+            <!-- Body -->
+            <div class="register-body">
+
+                <!-- Choix du thème -->
+                <div class="mb-4">
+                    <label for="themeSelect" class="form-label">
+                        <i class="bi bi-palette-fill"></i> Choisir un thème
+                    </label>
+                    <select name="themeSelect" id="themeSelect" class="form-select">
+                        <option value="noel">Noël</option>
+                        <option value="paques">Pâques</option>
+                        <option value="classique">Classique</option>
+                        <option value="evenement">Évènement</option>
+                    </select>
+                </div>
+
+                <!-- Conteneur des menus -->
+                <div id="menusContainer"></div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex gap-3 mt-4 mb-3">
+                    <button type="button" class="btn btn-register w-50" id="btnAjouterMenu">
+                        <i class="bi bi-plus-circle-fill"></i> Ajouter un menu
+                    </button>
+                    <button type="button" class="btn btn-register w-50" id="btnSave">
+                        <i class="bi bi-floppy-fill"></i> Enregistrer
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

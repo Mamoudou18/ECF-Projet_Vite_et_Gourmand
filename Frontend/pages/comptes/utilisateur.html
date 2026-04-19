@@ -1,0 +1,397 @@
+<!-- Header Dashboard -->
+<section class="dashboard-header">
+    <div class="container">
+        <div class="user-info-card">
+            <div class="user-avatar" id="user-avatar"> </div>
+            <div class="user-details">
+                <h3>Bienvenue, </h3>
+                <p><i class="bi bi-envelope"></i> </p>
+                <p><i class="bi bi-telephone"></i> </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard principal -->
+<section class="dashboard-section">
+    <div class="container">
+        <div class="row">
+            
+            <!-- Menu latéral -->
+            <div class="col-lg-3 mb-4">
+                <div class="sidebar">
+                    <h5>
+                        <i class="bi bi-menu-button-wide"></i> Menu
+                    </h5>
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" id="dashboard" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="commandes" data-section="commandes-section">
+                                <i class="bi bi-cart-check"></i>
+                                <span>Mes commandes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="avis" data-section="avis-section">
+                                <i class="bi bi-star"></i>
+                                <span>Mes avis</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="profil" data-section="profil-section">
+                                <i class="bi bi-person-gear"></i>
+                                <span>Mon profil</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="password" data-section="password-section">
+                                <i class="bi bi-shield-lock"></i>
+                                <span>Mot de passe</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Contenu principal -->
+            <div class="col-lg-9">
+
+                <!-- SECTION: Tableau de bord -->
+                <div id="dashboard-section" class="section-content active">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-speedometer2"></i>
+                            Tableau de bord
+                        </h4>
+                        <div class="stats-grid"></div>
+                        <h5 class="mb-3 fw-bold">Commandes récentes</h5>
+                        <div id="recentOrdersList"></div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-primary" id="btn-voir-commandes">
+                                Voir toutes mes commandes <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Mes commandes -->
+                <div id="commandes-section" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-cart-check"></i>
+                            Mes commandes
+                        </h4>
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Filtrer par statut</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="en_attente">En attente</option>
+                                    <option value="accepte">Acceptée</option>
+                                    <option value="en_preparation">En préparation</option>
+                                    <option value="en_cours_livraison">En cours de livraison</option>
+                                    <option value="livre">Livrée</option>
+                                    <option value="attente_retour_materiel">Attente retour matériel</option>
+                                    <option value="terminee">Terminée</option>
+                                    <option value="annulee">Annulée</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Rechercher</label>
+                                <input type="text" class="form-control" id="searchOrder" placeholder="N° commande, menu...">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-sm btn-secondary w-100" style="height: 50px;" id="resetFilterBtn">
+                                    <i class="bi bi-x-circle"></i> Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                        <div id="ordersList"></div>
+                        <div id="noOrdersFound" style="display: none;" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">Aucune commande trouvée</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Mes avis -->
+                <div id="avis-section" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-star"></i>
+                            Mes avis
+                        </h4>
+                        <div id="avisPublies">
+                            <h5 class="mb-3 fw-bold">Avis publiés</h5>
+                            <div id="avisPubliesList"></div>
+                        </div>
+                        <div id="avisEnAttente">
+                            <h5 class="mb-3 fw-bold mt-4">Avis en attente de validation</h5>
+                            <div id="avisEnAttenteList"></div>
+                        </div>
+                        <div id="commandesAEvaluer">
+                            <h5 class="mb-3 fw-bold mt-4">Commandes à évaluer</h5>
+                            <div id="commandesAEvaluerAlert"></div>
+                            <div id="commandesAEvaluerList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Mon profil -->
+                <div id="profil-section" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-person-gear"></i>
+                            Modifier mon profil
+                        </h4>
+
+                        <form id="profilForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nom" class="form-label">
+                                        <i class="bi bi-person"></i> Nom *
+                                    </label>
+                                    <input type="text" class="form-control" id="nom" value="Dupont" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="prenom" class="form-label">
+                                        <i class="bi bi-person"></i> Prénom *
+                                    </label>
+                                    <input type="text" class="form-control" id="prenom" value="Jean" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email
+                                </label>
+                                <input type="email" class="form-control" id="email" value="jean.dupont@email.com" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">
+                                    <i class="bi bi-telephone"></i> Téléphone *
+                                </label>
+                                <input type="tel" class="form-control" id="telephone" value="0612345678" required pattern="[0-9]{10}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="adresse" class="form-label">
+                                    <i class="bi bi-geo-alt"></i> Adresse postale *
+                                </label>
+                                <input type="text" class="form-control" id="adresse" value="15 Rue de la Liberté" required placeholder="Numéro et nom de rue">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="codePostal" class="form-label">Code postal *</label>
+                                    <input type="text" class="form-control" id="codePostal" value="33000" required pattern="[0-9]{5}">
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="ville" class="form-label">Ville *</label>
+                                    <input type="text" class="form-control" id="ville" value="Bordeaux" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-lg w-100">
+                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SECTION: Mot de passe -->
+                <div id="password-section" class="section-content">
+                    <div class="content-card">
+                        <h4>
+                            <i class="bi bi-shield-lock"></i>
+                            Changer mon mot de passe
+                        </h4>
+                        <div class="register-body">
+
+                            <form id="initPasswordForm">
+
+                                <!-- Mot de passe -->
+                                <div class="mb-3">
+                                    <label for="oldPassword" class="form-label">
+                                        <i class="bi bi-lock-fill primary"></i> Mot de passce actuel <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="oldPassword" placeholder="••••••••••" required minlength="10">
+                                        <span class="password-toggle" type="button" id="toggleOldPassword">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+
+                                    <label for="newPassword" class="form-label">
+                                        <i class="bi bi-lock-fill primary"></i> Nouveau mot de passe <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="newPassword" placeholder="••••••••••" required minlength="10">
+                                        <span class="password-toggle" type="button" id="togglePassword">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Barre de force -->
+                                    <div class="password-strength">
+                                        <div class="password-strength-bar" id="strengthBar"></div>
+                                    </div>
+
+                                    <!-- Exigences -->
+                                    <div class="password-requirements mt-2">
+                                        <div class="requirement" id="req-length">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Minimum 10 caractères</span>
+                                        </div>
+                                        <div class="requirement" id="req-uppercase">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 majuscule</span>
+                                        </div>
+                                        <div class="requirement" id="req-lowercase">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 minuscule</span>
+                                        </div>
+                                        <div class="requirement" id="req-number">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 chiffre</span>
+                                        </div>
+                                        <div class="requirement" id="req-special">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            <span>Au moins 1 caractère spécial (!@#$%^&*)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Confirmation mot de passe -->
+                                <div class="mb-3">
+                                    <label for="passwordConfirm" class="form-label">
+                                        <i class="bi bi-shield-lock-fill"></i> Confirmer le nouveau mot de passe <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-key-fill"></i>
+                                        </span>
+                                        <input 
+                                            type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                                        <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+                                    <small id="passwordMatchMessage" class="text-danger" style="display: none;">
+                                        Les mots de passe ne correspondent pas
+                                    </small>
+                                </div>
+
+                                <!-- Bouton inscription -->
+                                <button type="submit" class="btn btn-register" id="initPasswordBtn">
+                                    <i class="bi bi-unlock-fill"></i> Réinitialiser mon mot de passe
+                                </button>
+
+                            </form>
+                            <!-- Messages -->
+                            <div id="message" class="message hidden"></div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Détail Commande -->
+    <div class="modal fade" id="detailCommandeModal" tabindex="-1" aria-labelledby="detailCommandeLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailCommandeLabel">
+                        <i class="bi bi-receipt"></i> Détail de la commande
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body text-primary" id="detailCommandeContent">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Suivi Commande -->
+    <div class="modal fade" id="suiviModal" tabindex="-1" aria-labelledby="suiviModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="suiviModalLabel">
+                        <i class="bi bi-geo-alt"></i> Suivi commande <span id="suiviCommandeId"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body" id="suiviCommandeContent">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Confirmation Action -->
+    <div class="modal fade" id="confirmActionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="suiviModalLabel">
+                        Commande <span id="numCommande"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body text-center text-primary px-4 pt-0 pb-4">
+                    <div id="confirmIcon" class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 id="confirmTitle" class="fw-bold mb-2">Êtes-vous sûr ?</h4>
+                    <p id="confirmMessage" class="text-muted mb-0">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0 pb-4 gap-2">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Non, annuler
+                    </button>
+                    <button type="button" class="btn  bg-accent px-4" id="confirmActionBtn">
+                        <i class="bi bi-check-lg"></i> <span id="confirmBtnText">Oui, confirmer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+

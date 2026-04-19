@@ -1,0 +1,583 @@
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <div class="user-info-card">
+            <div class="user-avatar" id="user-avatar"> </div>
+            <div class="user-details">
+                <h1><i class="bi bi-shield-lock"></i> Espace Administrateur</h1>
+                <p class="lead mb-0">Bienvenue, </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="dashboard-sidebar">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-section="employes-section">
+                                <i class="bi bi-people"></i>
+                                <span>Gestion Employés</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-section="statistiques-section">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Statistiques</span>
+                            </a>
+                        </li>
+                        <hr class="my-2">
+                        <li>
+                            <a href="/espace-employe#menus-section">
+                                <i class="bi bi-card-list"></i>
+                                <span>Gestion Menus</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#commandes-section">
+                                <i class="bi bi-box-seam"></i>
+                                <span>Gestion Commandes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#horaires-section">
+                                <i class="bi bi-clock"></i>
+                                <span>Horaires</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/espace-employe#avis-section">
+                                <i class="bi bi-star"></i>
+                                <span>Validation Avis</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+
+                <!-- SECTION: Dashboard -->
+                <div id="dashboard-section" class="section-content active">
+
+                    <!-- Stats rapides -->
+                    <div class="content-card mb-4">
+                        <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
+                        <div class="row g-4 mt-2">
+                            <div class="col-md-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                                    <h3 id="countEmployes" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Employés actifs</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-box-seam text-success" style="font-size: 2rem;"></i>
+                                    <h3 id="countCommandes" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Commandes du jour</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-chat-dots text-info" style="font-size: 2rem;"></i>
+                                    <h3 id="countAvis" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Avis en attente</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-star-fill text-warning" style="font-size: 2rem;"></i>
+                                    <h3 id="dashNoteMoyenne" class="mt-2 mb-0">-</h3>
+                                    <small class="text-muted">Note moyenne</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camembert commandes par statut -->
+                    <div class="content-card">
+                        <h5><i class="bi bi-pie-chart-fill"></i> Répartition des commandes par statut</h5>
+                        <div class="d-flex justify-content-center">
+                            <div style="position: relative; width: 350px; height: 350px;">
+                                <canvas id="chartDashStatut"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SECTION: Gestion Employés -->
+                <div id="employes-section" class="section-content">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4><i class="bi bi-people"></i> Gestion des Employés</h4>
+                            <button class="btn bg-accent text-white" id="btnOpenCreateEmploye">
+                                <i class="bi bi-person-plus"></i> Nouvel Employé
+                            </button>
+                        </div>
+
+                        <!-- Recherche -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="searchEmploye"
+                                    placeholder="Rechercher un employé...">
+                            </div>
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="table-responsive">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>GSM</th>
+                                        <th>Rôle</th>
+                                        <th>Statut</th>
+                                        <th>Date création</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="employeTableBody">
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Statistiques -->
+                <div id="statistiques-section" class="section-content">
+
+                    <!-- Bouton sync -->
+                    <div class="content-card mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4><i class="bi bi-graph-up"></i> Statistiques</h4>
+                            <button class="btn bg-accent text-white" id="btnSyncStats">
+                                <i class="bi bi-arrow-repeat"></i> Synchroniser les données
+                            </button>
+                        </div>
+                        <small class="text-muted">Dernière synchronisation : <span id="lastSync">-</span></small>
+                    </div>
+
+                    <!-- ===================== -->
+                    <!-- COMMANDES PAR MENU    -->
+                    <!-- ===================== -->
+                    <div class="content-card mb-4">
+                        <h5><i class="bi bi-bar-chart"></i> Commandes par menu</h5>
+
+                        <!-- Filtres dates -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Date début</label>
+                                <input type="date" class="form-control form-control-sm" id="cmdMenuDateDebut">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Date fin</label>
+                                <input type="date" class="form-control form-control-sm" id="cmdMenuDateFin">
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button class="btn btn-sm bg-accent text-white w-100" id="btnFiltrerCmdMenu">
+                                    <i class="bi bi-funnel"></i> Filtrer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Graphique -->
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="chartCommandesParMenu"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ===================== -->
+                    <!-- CHIFFRE D'AFFAIRES    -->
+                    <!-- ===================== -->
+                    <div class="content-card mb-4">
+                        <h5><i class="bi bi-cash-stack"></i> Chiffre d'affaires</h5>
+
+                        <!-- Filtres menu + dates -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Menu</label>
+                                <select class="form-select form-select-sm" id="caMenuSelect">
+                                    <option value="">Tous les menus</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Date début</label>
+                                <input type="date" class="form-control form-control-sm" id="caDateDebut">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Date fin</label>
+                                <input type="date" class="form-control form-control-sm" id="caDateFin">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-sm bg-accent text-white w-100" id="btnFiltrerCA">
+                                    <i class="bi bi-funnel"></i> Filtrer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Totaux -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-cash-stack text-success" style="font-size: 1.5rem;"></i>
+                                    <h4 id="totalCA" class="mt-2 mb-0">0.00 €</h4>
+                                    <small class="text-muted">CA total</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-receipt text-primary" style="font-size: 1.5rem;"></i>
+                                    <h4 id="totalCmdCA" class="mt-2 mb-0">0</h4>
+                                    <small class="text-muted">Commandes</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-cart-check text-info" style="font-size: 1.5rem;"></i>
+                                    <h4 id="panierMoyenCA" class="mt-2 mb-0">0.00 €</h4>
+                                    <small class="text-muted">Panier moyen</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphique -->
+                        <div style="position: relative; height: 300px;">
+                            <canvas id="chartCAParMenu"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ===================== -->
+                    <!-- TOP CLIENTS           -->
+                    <!-- ===================== -->
+                    <div class="content-card">
+                        <h5><i class="bi bi-people-fill"></i> Top 10 clients</h5>
+                        <div class="table-responsive">
+                            <table class="table order-table align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center" style="width: 60px;">#</th>
+                                        <th>Client</th>
+                                        <th class="text-center">Commandes</th>
+                                        <th class="text-end">Total dépensé</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topClientsBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <i class="bi bi-arrow-repeat me-2"></i>Synchronisez les données pour voir les résultats
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================== -->
+<!-- MODAL CRÉATION EMPLOYÉ -->
+<!-- ============================== -->
+<div class="modal fade" id="createEmployeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-person-plus"></i> Créer un employé</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formCreateEmploye">
+                <div class="modal-body">
+
+                    <input type="hidden" id="createEmpRole" value="2">
+
+                    <!-- Nom et Prénom -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="createEmpNom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="createEmpNom" placeholder="Nom" required minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="createEmpPrenom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="createEmpPrenom" placeholder="Prénom" required minlength="2">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="createEmpEmail" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="createEmpEmail" placeholder="email@exemple.com" required>
+                        </div>
+                        <small id="createEmpEmailMessage" class="text-danger" style="display: none;">
+                            L'adresse mail ne respecte pas le format!
+                        </small>
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="createEmpGsm" class="form-label">
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="createEmpGsm" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse postale -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="createEmpAdresse" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createEmpCodePostal" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="createEmpVille" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill primary"></i> Mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" placeholder="••••••••••" required minlength="10">
+                            <span class="password-toggle" type="button" id="togglePassword">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+
+                        <!-- Barre de force -->
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="strengthBar"></div>
+                        </div>
+
+                        <!-- Exigences -->
+                        <div class="password-requirements mt-2">
+                            <div class="requirement" id="req-length">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Minimum 10 caractères</span>
+                            </div>
+                            <div class="requirement" id="req-uppercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 majuscule</span>
+                            </div>
+                            <div class="requirement" id="req-lowercase">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 minuscule</span>
+                            </div>
+                            <div class="requirement" id="req-number">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 chiffre</span>
+                            </div>
+                            <div class="requirement" id="req-special">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Au moins 1 caractère spécial (!@#$%^&*)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation mot de passe -->
+                    <div class="mb-3">
+                        <label for="passwordConfirm" class="form-label">
+                            <i class="bi bi-shield-lock-fill"></i> Confirmer le mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-key-fill"></i>
+                            </span>
+                            <input type="password" class="form-control" id="passwordConfirm" placeholder="••••••••••" required>
+                            <span class="password-toggle" type="button" id="togglePasswordConfirm">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+                        <small id="passwordMatchMessage" class="text-danger" style="display: none;">
+                            Les mots de passe ne correspondent pas
+                        </small>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn bg-accent text-white" id="btnCreateEmploye">
+                        <i class="bi bi-person-plus-fill"></i> Créer l'employé
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================== -->
+<!-- MODAL ÉDITION EMPLOYÉ -->
+<!-- ============================== -->
+<div class="modal fade" id="editEmployeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Modifier l'employé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditEmploye">
+                <div class="modal-body">
+
+                    <input type="hidden" id="editEmpId">
+
+                    <!-- Nom et Prénom -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="editEmpNom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="editEmpNom" placeholder="Nom" required minlength="2">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEmpPrenom" class="form-label">
+                                <i class="bi bi-person-fill"></i> Prénom <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="editEmpPrenom" placeholder="Prénom" required minlength="2">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="editEmpEmail" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="editEmpEmail" placeholder="email@exemple.com" required>
+                        </div>
+                        <small id="editEmpEmailMessage" class="text-danger" style="display: none;">
+                            L'adresse mail ne respecte pas le format!
+                        </small>
+                    </div>
+
+                    <!-- Téléphone -->
+                    <div class="mb-3">
+                        <label for="editEmpGsm" class="form-label">
+                            <i class="bi bi-telephone-fill"></i> Numéro de téléphone (GSM) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="editEmpGsm" placeholder="06 12 34 56 78" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse postale -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt"></i> Adresse postale <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="editEmpAdresse" placeholder="12 rue de la République" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code postal <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editEmpCodePostal" placeholder="33000" required>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Ville <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editEmpVille" placeholder="Bordeaux" required>
+                        </div>
+                    </div>
+
+                    <!-- Rôle -->
+                    <div class="mb-3">
+                        <label for="editEmpRole" class="form-label">
+                            <i class="bi bi-shield-fill"></i> Rôle <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="editEmpRole" required>
+                            <option value="employe">Employé</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn bg-accent text-white">
+                        <i class="bi bi-check-lg"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================== -->
+<!-- MODAL DÉSACTIVER/ACTIVER USER -->
+<!-- ============================== -->
+<div class="modal fade" id="toggleUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="toggleUserHeader">
+                <h5 class="modal-title" id="toggleUserTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <input type="hidden" id="toggleUserId">
+                <input type="hidden" id="toggleUserAction">
+                <p id="toggleUserMessage"></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn" id="btnConfirmToggleUser"></button>
+            </div>
+        </div>
+    </div>
+</div>
+

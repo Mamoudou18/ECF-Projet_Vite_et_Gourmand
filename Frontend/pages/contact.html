@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="register-container mx-auto">
+        <div class="register-card">
+            
+            <!-- Header -->
+            <div class="register-header">
+                <h2>
+                    <i class="bi bi-envelope-heart"></i> Contactez-nous
+                </h2>
+                <p class="mb-0">Une question ? Un projet ? N'hésitez pas à nous écrire !</p>
+            </div>
+
+            <div class="register-body">
+
+                <form id="contactForm">
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope-fill"></i> Adresse email <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input type="email" class="form-control" id="email" placeholder="votre.email@exemple.com">
+                        </div>
+                        <small id="emailMessage" class="text-danger" style="display: none;">
+                            Votre adresse mail ne respecte pas le format!
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="titre" class="form-label">
+                            <i class="bi bi-card-heading"></i> Titre de votre message <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="titre" name="titre" placeholder="Résumez nous votre demande en quelques mots" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="bi bi-chat-text-fill"></i> Votre message <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="description" rows="6" placeholder=" Décrivez nous votre demande en détail ..." required></textarea>
+                    </div>
+                    <!-- RGPD -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rgpd">
+                            <label class="form-check-label" for="rgpd">
+                                J'accepte la <a href="/mentions-legales" target="_blank" class="link-primary-custom">politique de confidentialité</a> 
+                                et les <a href="/cgv" target="_blank" class="link-primary-custom">CGV</a> <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bouton inscription -->
+                    <button type="submit" class="btn bg-accent w-100" id="contactBtn">
+                        <i class="bi bi-person-plus-fill"></i> Envoyer ma demande
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

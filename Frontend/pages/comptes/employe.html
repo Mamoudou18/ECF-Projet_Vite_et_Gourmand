@@ -1,0 +1,496 @@
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <div class="user-info-card">
+            <div class="user-avatar" id="user-avatar"> </div>
+            <div class="user-details">
+                <h1><i class="bi bi-briefcase"></i> Espace Employé</h1>
+                <p class="lead mb-0">Bienvenue, </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Cards -->
+<section class="py-4">
+    <div class="container">
+        <!-- Stats rapides -->
+        <div class="stats-grid" id="admin-stats"></div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="dashboard-sidebar">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" id="dashboard" data-section="dashboard-section">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Tableau de bord</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="commandes" data-section="commandes-section">
+                                <i class="bi bi-box-seam"></i>
+                                <span> Gestion Commandes</span>
+                                <span class="badge bg-danger ms-auto" id="badge-commandes" >0</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="menus" data-section="menus-section">
+                                <i class="bi bi-card-list"></i>
+                                <span>Gestion Menus</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="horaires" data-section="horaires-section">
+                                <i class="bi bi-clock"></i>
+                                <span>Horaires</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="avis" data-section="avis-section">
+                                <i class="bi bi-star"></i>
+                                <span>Validation Avis</span>
+                                <span class="badge bg-warning ms-auto" id="badge-avis" >0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+
+                <!-- SECTION: Dashboard -->
+                <div id="dashboard-section" class="section-content active">
+                    <div class="content-card">
+                        <h4><i class="bi bi-speedometer2"></i> Vue d'ensemble</h4>
+
+                        <!-- Alerte urgente (masquée par défaut) -->
+                        <div class="alert alert-warning d-none" id="alert-urgent">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Urgent !</strong> <span id="urgent-count">0</span> commande(s) nécessitent une action immédiate.
+                        </div>
+
+                        <!-- Commandes urgentes -->
+                        <h5 class="mt-4 mb-3">Commandes urgentes</h5>
+                        <div class="table-responsive">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Client</th>
+                                        <th>Menu</th>
+                                        <th>Date prestation</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="urgent-orders-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Chargement...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Activité récente -->
+                        <h5 class="mt-4 mb-3">Activité récente</h5>
+                        <div class="timeline" id="timeline-activity">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Commandes -->
+                <div id="commandes-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-box-seam"></i> Gestion des commandes</h4>
+
+                        <!-- Filtres -->
+                        <div class="filters-section">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Statut</label>
+                                    <select class="form-select" id="filterStatus">
+                                        <option value="">Tous les statuts</option>
+                                        <option value="en_attente">En attente</option>
+                                        <option value="accepte">Acceptée</option>
+                                        <option value="en_preparation">En préparation</option>
+                                        <option value="en_cours_livraison">En livraison</option>
+                                        <option value="livre">Livrée</option>
+                                        <option value="attente_retour_materiel">Attente matériel</option>
+                                        <option value="terminee">Terminée</option>
+                                        <option value="annulee">Annulée</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Recherche client</label>
+                                    <input type="text" class="form-control" id="searchOrder"
+                                        placeholder="Nom, email ou n° commande">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-secondary w-100" style="height: 50px;" id="resetFilterBtn">
+                                        <i class="bi bi-x-circle"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tableau commandes -->
+                        <div class="table-responsive mt-4">
+                            <table class="table order-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Client</th>
+                                        <th>Contact</th>
+                                        <th>Menu</th>
+                                        <th>Personnes</th>
+                                        <th>Date/Lieu</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commandesTableBody">
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="noOrdersFound" style="display: none;" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">Aucune commande trouvée</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Menus -->
+                <div id="menus-section" class="section-content">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0"><i class="bi bi-card-list"></i> Gestion des menus</h4>
+                            <button class="btn bg-accent" id="btnCreerMenu">
+                                <i class="bi bi-plus-circle"></i> Créer un menu
+                            </button>
+
+                        </div>
+
+                        <!-- Filtres -->
+                        <div class="filters-section mb-4 p-3 rounded border">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-search"></i> Titre</label>
+                                    <input type="text" class="form-control form-control-sm" id="filterTitre" placeholder="Rechercher...">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-calendar-event"></i> Thème</label>
+                                    <select class="form-select form-select-sm" id="filterTheme">
+                                        <option value="">Tous</option>
+                                        <option value="noel">Noël</option>
+                                        <option value="paques">Pâques</option>
+                                        <option value="classique">Classique</option>
+                                        <option value="evenement">Événement</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-heart-pulse"></i> Régime</label>
+                                    <select class="form-select form-select-sm" id="filterRegime">
+                                        <option value="">Tous</option>
+                                        <option value="classique">Classique</option>
+                                        <option value="vegan">Vegan</option>
+                                        <option value="vegetarien">Végétarien</option>
+                                        <option value="hallal">Hallal</option>
+                                        <option value="sans-gluten">Sans gluten</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-currency-euro"></i> Prix max</label>
+                                    <input type="number" class="form-control form-control-sm" id="filterPrixMax" placeholder="€" min="0" step="5">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-people"></i> Pers. min</label>
+                                    <input type="number" class="form-control form-control-sm" id="filterPersonnes" placeholder="Nb" min="1">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-box-seam"></i> Stock</label>
+                                    <select class="form-select form-select-sm" id="filterStock">
+                                        <option value="">Tous</option>
+                                        <option value="ok">En stock (≥10)</option>
+                                        <option value="low">Stock faible (&lt;10)</option>
+                                        <option value="0">Rupture</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold"><i class="bi bi-sort-down"></i> Tri</label>
+                                    <select class="form-select form-select-sm" id="filterSort">
+                                        <option value="id-desc">Plus récent</option>
+                                        <option value="id-asc">Plus ancien</option>
+                                        <option value="prix-asc">Prix croissant</option>
+                                        <option value="prix-desc">Prix décroissant</option>
+                                        <option value="titre-asc">Titre A-Z</option>
+                                        <option value="titre-desc">Titre Z-A</option>
+                                        <option value="stock-asc">Stock croissant</option>
+                                        <option value="stock-desc">Stock décroissant</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button class="btn btn-secondary btn-sm w-100" style="height: 50px;" id="btnResetFilters">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compteur + info page -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span id="employeeMenusCount" class="text-muted small"></span>
+                            <span id="employeeMenusPageInfo" class="text-muted small"></span>
+                        </div>
+
+                        <!-- Grille des menus -->
+                        <div class="row" id="employeeMenusGrid">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2 text-muted">Chargement des menus...</p>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center mt-4" id="employeeMenusPagination"></div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Horaires -->
+                <div id="horaires-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-clock"></i> Gestion des horaires</h4>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Les horaires modifiés seront visibles sur le site web et dans le pied de page.
+                        </div>
+
+                        <form id="horairesForm">
+                            <div class="horaires-grid" id="horairesGrid">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <p class="mt-2 text-muted">Chargement des horaires...</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn bg-accent text-white w-100 mt-4" id="btnSaveHoraires">
+                                <i class="bi bi-check-circle"></i> Enregistrer les horaires
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SECTION: Avis -->
+                <div id="avis-section" class="section-content">
+                    <div class="content-card">
+                        <h4><i class="bi bi-star"></i> Modération des avis clients</h4>
+
+                        <div id="avis-alert" class="alert alert-warning d-none">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong id="avis-pending-count">0</strong> avis en attente de validation.
+                        </div>
+
+                        <!-- Avis en attente -->
+                        <h5 class="mt-4 mb-3">Avis en attente</h5>
+                        <div id="avis-pending-container">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
+
+                        <!-- Avis validés -->
+                        <h5 class="mt-5 mb-3">Avis validés récemment</h5>
+                        <div id="avis-approved-container">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
+
+                        <!-- Avis refusés -->
+                        <h5 class="mt-5 mb-3">Avis refusés</h5>
+                        <div id="avis-rejected-container">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== MODALES ===================== -->
+<!-- Modal: Changer le statut -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> Mettre à jour le statut</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="statusOrderId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Commande</label>
+                    <p id="statusOrderRef" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Statut actuel</label>
+                    <p><span id="statusCurrentBadge"></span></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nouveau statut</label>
+                    <select class="form-select" id="newStatusSelect">
+                        <!-- Options remplies dynamiquement selon le statut actuel -->
+                    </select>
+                </div>
+                <!-- Champ matériel prêté (visible si statut = livree) -->
+                <div class="mb-3 d-none" id="materielPretGroup">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="materielPrete">
+                        <label class="form-check-label" for="materielPrete">
+                            Du matériel a été prêté au client
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn bg-accent" id="confirmStatusBtn">
+                    <i class="bi bi-check-lg"></i> Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Annuler une commande -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-x-octagon"></i> Annuler la commande</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="cancelOrderId">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Attention :</strong> Vous devez avoir contacté le client avant d'annuler.
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Commande</label>
+                    <p id="cancelOrderRef" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mode de contact utilisé <span class="text-danger">*</span></label>
+                    <select class="form-select" id="cancelContactMode" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="telephone">Appel téléphonique (GSM)</option>
+                        <option value="email">Email</option>
+                    </select>
+                    <div class="invalid-feedback">Veuillez indiquer le mode de contact.</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Motif d'annulation <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="cancelReason" rows="3"
+                            placeholder="Expliquez le motif de l'annulation..." required></textarea>
+                    <div class="invalid-feedback">Le motif est obligatoire.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Retour</button>
+                <button type="button" class="btn bg-danger text-white" id="confirmCancelBtn">
+                    <i class="bi bi-x-lg"></i> Confirmer l'annulation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Détails commande -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-eye"></i> Détails de la commande</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <!-- Rempli dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modification -->
+<div class="modal fade" id="modificationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-pencil-square"></i> Modifier la commande
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 text-primary">
+                    <label class="form-label fw-bold">Mode de contact avec le client</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactTel" value="telephone">
+                        <label class="form-check-label" for="modifContactTel">
+                            <i class="bi bi-telephone"></i> Téléphone
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="modifContact" id="modifContactEmail" value="email" checked>
+                        <label class="form-check-label" for="modifContactEmail">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="modifMotif" class="form-label fw-bold">Motif de la modification</label>
+                    <textarea class="form-control" id="modifMotif" rows="3" 
+                        placeholder="Ex: Le client souhaite changer la date..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn bg-accent" id="btnConfirmModification">
+                    <i class="bi bi-pencil-square"></i> Continuer vers la modification
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Motif d'annulation -->
+<div class="modal fade" id="cancelReasonModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-accent text-white">
+                <h5 class="modal-title"><i class="bi bi-info-circle"></i> Motif d'annulation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-primary" id="cancelReasonBody">
+                <!-- Rempli dynamiquement -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
