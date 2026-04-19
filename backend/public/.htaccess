@@ -1,16 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
-    # API routes passent directement
-    RewriteRule ^api/ - [L]
-    
-    # Fichiers/dossiers existants
-    RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^ - [L]
-    
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
-    
-    # Tout le reste va à index.php
-    RewriteRule ^ index.php [L]
+    RewriteBase /
+
+    # Ne pas réécrire si le fichier existe réellement
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirige tout vers index.php (sauf fichiers/dossiers existants)
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
