@@ -8,8 +8,9 @@ if (strpos($uri, '/api/') === 0) {
     // Le reste du code API continue...
 } else {
     // C'est une requête frontend → sers le SPA
-    require_once __DIR__ . '/../../frontend/index.html';
+    readfile(__DIR__ . '/../../frontend/index.html');
     exit();
+
 }
 
 require_once __DIR__ . '/../config/database.php';
