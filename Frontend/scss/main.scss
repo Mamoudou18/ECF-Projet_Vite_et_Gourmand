@@ -12,9 +12,62 @@ html{
     min-height: 100%;
 }
 body{
-  font-family: $font-family-sans-serif;
-  background-color: $white-secondary;
-  color: $primary;
+    font-family: $font-family-sans-serif;
+    background-color: $white-secondary;
+    color: $primary;
+}
+
+/* Loader overlay */
+.loader {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #eee;
+        border-top-color: $primary; 
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Transitions du contenu */
+#main-page {
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#main-page.page-exit {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+#main-page.page-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 main{
@@ -80,7 +133,7 @@ main{
 
 .navbar-brand{
     color: $primary !important;
-    font-weight:700; 
+    font-weight:700;
     font-size:1.5rem;
 }
 .nav-link{
@@ -104,8 +157,8 @@ footer.footer{
     color: $white-secondary;
     text-align: center;
     margin-top: 3rem;
-    position: absolute;
     bottom: 0;
+    position: absolute;
     width: 100%;
 
     h5{
@@ -154,7 +207,7 @@ footer.footer{
     flex-direction: column;
     justify-content: center;
     align-items: stretch; // permet breadcrumb à gauche
-    gap: .75rem;          
+    gap: .75rem;
   }
 
   h1 {
@@ -181,7 +234,7 @@ footer.footer{
     }
 }
 
-  // Responsive 
+  // Responsive
 @media (max-width: 768px) {
   .hero-scene h1 {
     font-size: 2rem;
@@ -595,7 +648,7 @@ footer.footer{
 .menu-price-label {
     font-size: 0.85rem;
     color: #6c757d;
-    margin-bottom: 1rem;            
+    margin-bottom: 1rem;
 }
 
 .menu-price-value {
@@ -823,7 +876,7 @@ footer.footer{
 
         .card-descriptionLong{
             background: $white-primary;
-            
+
         }
 
 
@@ -1020,7 +1073,7 @@ overflow: hidden;
 }
 
 .link-signin:hover {
-    color: $primary; 
+    color: $primary;
     text-decoration: underline;
  }
 
@@ -1403,7 +1456,7 @@ overflow: hidden;
     .menu-recap-content {
         grid-template-columns: 1fr;
     }
-            
+
     .menu-info-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1449,16 +1502,16 @@ overflow: hidden;
 }
 
 //Google maps
-#googleMap{ 
-    height: 1015px; 
-    width: 100%; 
+#googleMap{
+    height: 1015px;
+    width: 100%;
     margin-bottom: 1.5rem;
 }
 
 // Page utilisateur
 
 //Header Dashboard
-.dashboard-header { 
+.dashboard-header {
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
     color: $white-primary;
     padding: 3rem 0 2rem;
@@ -1804,11 +1857,6 @@ overflow: hidden;
     top: 80px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* Commandes Table */
 
 .order-table th {
@@ -1934,11 +1982,11 @@ overflow: hidden;
     .stats-grid {
         grid-template-columns: 1fr;
     }
-            
+
     .order-table {
         font-size: 0.85rem;
     }
-            
+
     .btn-action {
         padding: 0.3rem 0.6rem;
         font-size: 0.75rem;
@@ -2028,4 +2076,3 @@ overflow: hidden;
 .main-cgv section h2::before {
     content: "📄 ";
 }
-

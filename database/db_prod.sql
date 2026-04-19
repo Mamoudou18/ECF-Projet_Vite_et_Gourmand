@@ -1,12 +1,12 @@
 -- =============================================
--- BASE DE DONNÉES : ViteGourmandRestaurent_db  créé via docker
+-- BASE DE DONNÉES : ViteGourmandRestaurent_prod_db
 -- =============================================
 
-CREATE DATABASE IF NOT EXISTS ViteGourmandRestaurent_db
+CREATE DATABASE IF NOT EXISTS ViteGourmandRestaurent_prod_db
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE ViteGourmandRestaurent_db;
+USE ViteGourmandRestaurent_prod_db;
 
 -- =============================================
 -- TABLES DE RÉFÉRENCE
@@ -38,11 +38,6 @@ CREATE TABLE statuts_commande (
     ordre   INT NOT NULL
 );
 
-CREATE TABLE statuts_avis (
-    id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(50) NOT NULL UNIQUE
-);
-
 CREATE TABLE jours (
     id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     libelle VARCHAR(20) NOT NULL UNIQUE,
@@ -54,21 +49,26 @@ CREATE TABLE jours (
 -- =============================================
 
 CREATE TABLE users (
-    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nom         VARCHAR(100) NOT NULL,
-    prenom      VARCHAR(100) NOT NULL,
-    email       VARCHAR(255) NOT NULL UNIQUE,
-    password    VARCHAR(255) NOT NULL,
-    gsm         VARCHAR(20),
-    adresse     VARCHAR(255),
-    ville       VARCHAR(100),
-    code_postal VARCHAR(10),
-    role_id     INT UNSIGNED NOT NULL,
-    is_active   BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nom                    VARCHAR(100) NOT NULL,
+    prenom                 VARCHAR(100) NOT NULL,
+    email                  VARCHAR(255) NOT NULL UNIQUE,
+    password               VARCHAR(255) NOT NULL,
+    gsm                    VARCHAR(20),
+    adresse                VARCHAR(255),
+    ville                  VARCHAR(100),
+    code_postal            VARCHAR(10),
+    role_id                INT UNSIGNED NOT NULL,
+    is_actif               BOOLEAN DEFAULT 1,
+    api_token              VARCHAR(64) NOT NULL UNIQUE,
+    reset_token            VARCHAR(64) NULL,
+    reset_token_expires_at DATETIME NULL,
+    created_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_users_role
-        FOREIGN KEY (role_id) REFERENCES roles(id)
+        FOREIGN KEY (role_id) REFERENCES roles(id),
+
+    INDEX idx_users_reset_token (reset_token)
 );
 
 -- =============================================
@@ -139,7 +139,7 @@ CREATE TABLE menus (
     conditions       TEXT,
     is_active        BOOLEAN NOT NULL DEFAULT TRUE,
     created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at       DATETIME NULL DEFAULT NULL
                      ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -209,6 +209,7 @@ CREATE TABLE menu_plat (
 
 CREATE TABLE commandes (
     id                     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    numero_commande        VARCHAR(50) NULL,
     user_id                INT UNSIGNED NOT NULL,
     menu_id                INT UNSIGNED NOT NULL,
     statut_id              INT UNSIGNED NOT NULL,
@@ -230,7 +231,7 @@ CREATE TABLE commandes (
     motif_annulation       TEXT NULL,
     mode_contact           VARCHAR(50) NULL,
     created_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at             DATETIME NULL DEFAULT NULL
                            ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_commandes_user
@@ -240,9 +241,11 @@ CREATE TABLE commandes (
         FOREIGN KEY (menu_id) REFERENCES menus(id),
 
     CONSTRAINT fk_commandes_statut
-        FOREIGN KEY (statut_id) REFERENCES statuts_commande(id)
-);
+        FOREIGN KEY (statut_id) REFERENCES statuts_commande(id),
 
+    INDEX idx_commandes_numero (numero_commande),
+    INDEX idx_commandes_date_prestation (date_prestation)
+);
 
 -- =============================================
 -- HISTORIQUE DES STATUTS DE COMMANDE
@@ -267,30 +270,6 @@ CREATE TABLE commande_historique_statuts (
         FOREIGN KEY (modifie_par) REFERENCES users(id)
 );
 
--- =============================================
--- AVIS
--- =============================================
-
-CREATE TABLE avis (
-    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    commande_id INT UNSIGNED NOT NULL UNIQUE,
-    user_id     INT UNSIGNED NOT NULL,
-    statut_id   INT UNSIGNED NOT NULL,
-    note        TINYINT UNSIGNED NOT NULL CHECK (note BETWEEN 1 AND 5),
-    commentaire TEXT,
-    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_avis_commande
-        FOREIGN KEY (commande_id) REFERENCES commandes(id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_avis_user
-        FOREIGN KEY (user_id) REFERENCES users(id),
-
-    CONSTRAINT fk_avis_statut
-        FOREIGN KEY (statut_id) REFERENCES statuts_avis(id)
-);
-
 
 -- =============================================
 -- DONNÉES DE RÉFÉRENCE (INSERTS)
@@ -311,7 +290,6 @@ INSERT INTO regimes (libelle) VALUES
     ('hallal'),
     ('sans-gluten');
 
-
 INSERT INTO types_plat (libelle) VALUES
     ('entree'),
     ('plat'),
@@ -327,11 +305,6 @@ INSERT INTO statuts_commande (libelle, ordre) VALUES
     ('terminee',                 7),
     ('annulee',                  8);
 
-INSERT INTO statuts_avis (libelle) VALUES
-    ('en_attente'),
-    ('valide'),
-    ('refuse');
-
 INSERT INTO jours (libelle, ordre) VALUES
     ('Lundi',    1),
     ('Mardi',    2),
@@ -344,25 +317,3 @@ INSERT INTO jours (libelle, ordre) VALUES
 -- Horaires par défaut (à modifier via espace admin/employé)
 INSERT INTO horaires (jour_id, heure_ouverture, heure_fermeture, is_ferme)
 SELECT id, '09:00:00', '19:00:00', FALSE FROM jours;
-
--------------------------------------------------
-ALTER TABLE users
-CHANGE COLUMN is_active is_actif BOOLEAN DEFAULT 1
-
-
--- Création de la colonne api_token
-ALTER TABLE users ADD COLUMN api_token VARCHAR(64) UNIQUE NOT NULL;
-
--- ajout de deux colonnes pour reset password (envoi mail)
-ALTER TABLE users 
-ADD COLUMN reset_token VARCHAR(64) NULL,
-ADD COLUMN reset_token_expires_at DATETIME NULL;
-
-ALTER TABLE menus 
-MODIFY updated_at DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE commandes 
-MODIFY updated_at DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP;
-
-ALTER TABLE commandes
-ADD COLUMN numero_commande VARCHAR(50) NULL;

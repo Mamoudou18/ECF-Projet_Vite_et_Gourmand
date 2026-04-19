@@ -6,11 +6,11 @@ const DUREE_SESSION = 2 * 60 * 60 * 1000; // 2 heures en ms
 
 // initialisation des fonctions
 export function init(){
-    checkSessionExpiration();   //vérifie la session au chargement
+    checkSessionExpiration();
     showAndHideElementsforRoles();
     updateHeader();
     loadFooterHoraires();
-    startSessionWatcher();      //surveille la session en continu
+    startSessionWatcher();
 }
 init();
 
