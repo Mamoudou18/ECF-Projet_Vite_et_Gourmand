@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Les vraies requêtes API passent
-    RewriteCond %{REQUEST_URI} ^/api/ [L]
+    # Les vraies requêtes API passent directement
+    RewriteRule ^api/ - [L]
     
     # Les fichiers et dossiers qui existent, on les sert
     RewriteCond %{REQUEST_FILENAME} -f [OR]
