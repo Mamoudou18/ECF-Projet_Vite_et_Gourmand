@@ -1,5 +1,17 @@
 <?php
 
+// ===== ROUTING FRONTEND/API =====
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Si c'est une requête API, continue normalement
+if (strpos($uri, '/api/') === 0) {
+    // Le reste du code API continue...
+} else {
+    // C'est une requête frontend → sers le SPA
+    require_once __DIR__ . '/../../frontend/router.php';
+    exit();
+}
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 

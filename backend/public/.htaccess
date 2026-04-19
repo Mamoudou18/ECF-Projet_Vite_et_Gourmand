@@ -1,7 +1,14 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+    
+    # Les vraies requêtes API passent
+    RewriteCond %{REQUEST_URI} ^/api/ [L]
+    
+    # Les fichiers et dossiers qui existent, on les sert
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Tout le reste → index.php (qui route vers le frontend)
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
