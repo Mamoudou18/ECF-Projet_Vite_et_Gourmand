@@ -1,5 +1,6 @@
 # Docker
 .env
+.env local
 
 # Base de données
 *.sql.backup
