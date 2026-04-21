@@ -1,7 +1,6 @@
 import { renderStars } from "../utils/util.js";
+import { API_BASE } from "../config.js";
 
-// ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
 
 async function init() {
 

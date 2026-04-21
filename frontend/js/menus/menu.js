@@ -1,7 +1,6 @@
+import { API_BASE, URL_IMG } from "../config";
 
 // ========== VARIABLES GLOBALES ==========
-
-const API_BASE = 'http://localhost/api';
 let menus = []
 let filteredMenus = [];
 let currentPage = 1;
@@ -84,7 +83,7 @@ function displayMenus() {
 
         // Extraire la première image
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-        const imagePrincipale = images.length > 0 ? `http://localhost${images[0]}` : 'assets/img/default-menu.jpg';
+        const imagePrincipale = images.length > 0 ? `${URL_IMG}${images[0]}` : 'assets/img/default-menu.jpg';
 
         container.innerHTML += `
             <div class="col-xl-4 col-lg-6 col-md-6">

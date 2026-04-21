@@ -7,9 +7,9 @@ import {
     showToast,
     formatDate
 } from "../utils/util.js";
+import { API_BASE } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
 let allEmployes = [];
 let modalCreateEmploye, modalEditEmploye, modalToggleUser;
 let chartCommandesParMenu, chartCAParMenu;

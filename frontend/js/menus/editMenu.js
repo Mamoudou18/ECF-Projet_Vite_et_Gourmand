@@ -1,8 +1,5 @@
 import {showToast } from "../utils/util.js";
-
-// ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
-const IMG_URL  = 'http://localhost';
+import { API_BASE, URL_IMG } from "../config.js";
 
 const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");

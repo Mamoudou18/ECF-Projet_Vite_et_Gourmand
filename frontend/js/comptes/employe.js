@@ -1,8 +1,8 @@
 import { getStorage } from "../script.js";
 import { showToast, formatDate, renderStars } from "../utils/util.js";
+import { API_BASE, URL_IMG } from "../config.js";
 
 // ===================== VARIABLES =====================
-const API_BASE = 'http://localhost/api';
 let orders = [];
 let modificationOrderId = null;
 let modificationMenuId = null;
@@ -807,7 +807,7 @@ function displayEmployeeMenus(menus) {
     menus.forEach(menu => {
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
         const imagePrincipale = images.length > 0
-            ? `http://localhost${images[0]}`
+            ? `${URL_IMG}${images[0]}`
             : 'https://via.placeholder.com/400x200/6c757d/ffffff?text=Pas+d%27image';
 
         let stockBadge;

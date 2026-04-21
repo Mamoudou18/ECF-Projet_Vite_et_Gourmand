@@ -1,8 +1,8 @@
 import { getStorage } from "../script.js";
 import {showToast } from "../utils/util.js";
+import { API_BASE } from "../config.js";
 
 //Variables globales
-const API_BASE = 'http://localhost/api';
 let selectedMenu = null;
 let minPersons = 0;
 let pricePerPerson = 0;

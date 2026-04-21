@@ -1,7 +1,7 @@
 import { renderStars } from "../utils/util.js";
+import { API_BASE, URL_IMG } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
 let top3Menus = [];
 
 async function init() {
@@ -49,7 +49,7 @@ function displayTop3Menus() {
         const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-        const imagePrincipale = images.length > 0 ? `http://localhost${images[0]}` : 'assets/img/default-menu.jpg';
+        const imagePrincipale = images.length > 0 ? `${URL_IMG}${images[0]}` : 'assets/img/default-menu.jpg';
 
         container.innerHTML += `
             <div class="col-xl-4 col-lg-6 col-md-6">

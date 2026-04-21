@@ -2,9 +2,7 @@ import {
     validateEmail,
     showToast 
 } from "../utils/util.js";
-
-// ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
+import { API_BASE } from "../config.js";
 
 // ****************************************
 // ENVOI DEMANDE DE CONTACT

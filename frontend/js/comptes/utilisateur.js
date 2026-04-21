@@ -7,10 +7,9 @@ import {
     renderStars,
     showToast 
 } from "../utils/util.js";
+import { API_BASE } from "../config.js";
 
-//Constante API
-const API_BASE = 'http://localhost/api';
-
+//variables globales
 let cachedCommandes = null;
 
 async function getCommandes(userId) {

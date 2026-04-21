@@ -4,10 +4,9 @@
 
 import { getStorage } from "../script.js";
 import { showToast } from "../utils/util.js";
+import { API_BASE, URL_IMG } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
-const URL_IMG = 'http://localhost';
 const REDUCT = 5;
 let currentMenu = null;
 let commanderHandler = null;

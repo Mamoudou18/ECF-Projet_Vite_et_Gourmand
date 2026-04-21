@@ -1,6 +1,7 @@
 import { showToast } from './utils/util.js';
+import { API_BASE } from './config.js';
 
-const API_BASE = 'http://localhost/api';
+
 export const localStorageKey = "currentUser";
 const DUREE_SESSION = 2 * 60 * 60 * 1000; // 2 heures en ms
 

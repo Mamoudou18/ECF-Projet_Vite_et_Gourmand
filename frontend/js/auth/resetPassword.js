@@ -1,7 +1,5 @@
 import { showPassword, checkPasswordStrength, checkPasswordMatch, showToast } from "../utils/util.js";
-
-// ===================== VARIABLES GLOBALES ========
-const API_BASE = 'http://localhost/api';
+import { API_BASE } from "../config.js";
 
 // Récupération des inputs du formulaire
 const inputPassword = document.getElementById("newPassword");
