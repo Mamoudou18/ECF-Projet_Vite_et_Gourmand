@@ -21,12 +21,12 @@ Thumbs.db
 
 # Dépendances
 node_modules/
-vendor/
+#vendor/
 images
-ViteGourmandFrontEnd/node_modules
+frontend/node_modules
 
 #vendor
-.vendor
+#.vendor
 
 backend/public/uploads/**
 !backend/public/uploads/.gitkeep
