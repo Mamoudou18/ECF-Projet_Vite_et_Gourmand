@@ -1,4 +1,4 @@
-import { API_BASE, URL_IMG } from "../config";
+import { API_BASE, URL_IMG } from "../config.js";
 
 // ========== VARIABLES GLOBALES ==========
 let menus = []
