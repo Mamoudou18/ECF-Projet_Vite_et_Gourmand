@@ -1,4 +1,13 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
+//chargé le .env
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+if (file_exists(__DIR__ . '/../../.env')) {
+    $dotenv->load();
+}
+
+require_once __DIR__ . '/../config/database.php';
 
 // ===== ROUTING FRONTEND/API =====
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -13,20 +22,11 @@ if (strpos($uri, '/api/') === 0) {
 
 }
 
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-
-//chargé le .env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-if (file_exists(__DIR__ . '/../../.env')) {
-    $dotenv->load();
-}
-
 // Autoriser les requêtes du frontend local ET prod
 $allowed_origins = [
     'http://localhost',
     'http://localhost:3000',
-    'https://vitegourmand-ecf2026-0523fcfb2200.herokuapp.com'  // la vraie URL Heroku
+    'https://vitegourmand.com'  // la vraie URL Heroku
 ];
 
 // Headers CORS

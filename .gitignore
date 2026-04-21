@@ -11,6 +11,7 @@ db_data/
 docker/nginx/logs/
 
 # OS
+dis/
 .DS_Store
 Thumbs.db
 
@@ -21,7 +22,7 @@ Thumbs.db
 
 # Dépendances
 node_modules/
-#vendor/
+vendor/
 frontend/node_modules
 
 #vendor
