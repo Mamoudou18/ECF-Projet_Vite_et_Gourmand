@@ -22,7 +22,6 @@ Thumbs.db
 # Dépendances
 node_modules/
 #vendor/
-images
 frontend/node_modules
 
 #vendor
