@@ -1,4 +1,3 @@
-
 services:
   # ==========================================
   # Base de données MySQL
@@ -26,6 +25,30 @@ services:
       retries: 5
 
   # ==========================================
+  # MongoDB
+  # ==========================================
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-password}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-vite_gourmand_db}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo_configdb:/data/configdb
+    networks:
+      - vitegourmand-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
   # PHP-FPM
   # ==========================================
   php:
@@ -44,8 +67,12 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      MONGO_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-password}@mongodb:27017/${MONGO_DB:-repas_express_avis}?authSource=admin
+      MONGO_DB: ${MONGO_DB:-vite_gourmand_db}
     depends_on:
       mysql:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     networks:
       - vitegourmand-network
@@ -88,14 +115,37 @@ services:
     networks:
       - vitegourmand-network
 
+  # ==========================================
+  # Mongo Express (interface web MongoDB)
+  # ==========================================
+  mongo-express:
+    image: mongo-express:1.0
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER:-admin}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD:-password}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-password}@mongodb:27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - vitegourmand-network
+
 # ==========================================
 # VOLUMES
 # ==========================================
 volumes:
   db_data:
+  mongo_data:
 
-
-
+# ==========================================
+# NETWORKS
+# ==========================================
 networks:
   vitegourmand-network:
     driver: bridge

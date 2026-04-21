@@ -1,0 +1,5 @@
+build:
+  docker:
+    web: docker/php/Dockerfile
+run:
+  web: sh -c "supervisord -c /etc/supervisor/conf.d/supervisord.conf"

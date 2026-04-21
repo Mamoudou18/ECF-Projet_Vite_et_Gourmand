@@ -1,28 +1,39 @@
 FROM php:8.2-fpm-alpine
 
-# Installer les extensions nécessaires
+# Extensions PHP
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-RUN apk add --no-cache $PHPIZE_DEPS openssl-dev && pecl install mongodb && docker-php-ext-enable mongodb
+# MongoDB
+RUN apk add --no-cache $PHPIZE_DEPS openssl-dev && \
+    pecl install mongodb && \
+    docker-php-ext-enable mongodb
 
 # Config upload
-RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "upload_max_filesize = 10M" > /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size = 10M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-# Définir le répertoire de travail
-WORKDIR /var/www/html
-
-# Copier les fichiers PHP
-COPY ./backend /var/www/html/backend
-
-#composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+WORKDIR /var/www/html
 
-# Exposer le port PHP-FPM
+# Copier les sources
+COPY ./backend /var/www/html/backend
+COPY ./frontend /var/www/html/frontend
+COPY .env* /var/www/html/
+
+# Installer les dépendances PHP
+WORKDIR /var/www/html/backend
+RUN composer install --no-dev --optimize-autoloader 2>&1
+
+WORKDIR /var/www/html
+
+# Permissions
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    mkdir -p /var/www/html/backend/public/uploads && \
+    chmod -R 777 /var/www/html/backend/public/uploads
+
 EXPOSE 9000
 
 CMD ["php-fpm"]

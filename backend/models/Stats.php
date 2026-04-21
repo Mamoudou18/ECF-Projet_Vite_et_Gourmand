@@ -14,7 +14,7 @@ class Stats
 
     public function __construct()
     {
-        $client = new MongoDB\Client($_ENV['MONGO_URI'] ?? 'mongodb://localhost:27017');
+        $client = new MongoDB\Client($_ENV['MONGO_URI'] ?? 'mongodb://mongodb:27017');
         $db = $client->selectDatabase($_ENV['MONGO_DB'] ?? 'vite_gourmand_db');
         $this->collection = $db->selectCollection('commandes');
         $this->parisTimezone = new DateTimeZone('Europe/Paris');
