@@ -1,0 +1,21 @@
+server {
+    listen <%= ENV["PORT"] %>;
+    
+    # API → backend
+    location /api/ {
+        root /app/backend/public;
+        try_files $uri /index.php$is_args$args;
+        
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass heroku-fcgi;
+            fastcgi_param SCRIPT_FILENAME /app/backend/public/index.php;
+        }
+    }
+    
+    # Frontend → fichiers statiques
+    location / {
+        root /app/frontend;
+        try_files $uri /index.html;
+    }
+}
