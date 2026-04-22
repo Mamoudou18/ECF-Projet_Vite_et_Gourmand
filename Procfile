@@ -1,1 +1,1 @@
-web: vendor/bin/heroku-php-nginx backend/public/
+web: vendor/bin/heroku-php-nginx -C config/nginx.conf.erb backend/public/
