@@ -1,47 +1,39 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-//chargé le .env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 if (file_exists(__DIR__ . '/../../.env')) {
     $dotenv->load();
 }
 
-require_once __DIR__ . '/../config/database.php';
-
-// ===== ROUTING FRONTEND/API =====
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-// Si c'est une requête API, continue normalement
-if (strpos($uri, '/api/') === 0) {
-    // Le reste du code API continue...
-} else {
-    // C'est une requête frontend → sers le SPA
-    readfile(__DIR__ . '/../../frontend/index.html');
-    exit();
-
-}
-
-// Autoriser les requêtes du frontend local ET prod
 $allowed_origins = [
     'http://localhost',
     'http://localhost:3000',
-    'https:https://vitegourmand-ecf2026-0523fcfb2200.herokuapp.com'  // la vraie URL Heroku
+    'https://vitegourmand-ecf2026-0523fcfb2200.herokuapp.com'
 ];
 
-// Headers CORS
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    header('Content-Type: application/json; charset=utf-8');
 }
+header('Content-Type: application/json; charset=utf-8');
 
-// Gestion requête OPTIONS (preflight CORS)
+// OPTIONS preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
+    exit();
+}
+
+require_once __DIR__ . '/../config/database.php';
+
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Frontend SPA
+if (strpos($uri, '/api/') !== 0) {
+    header('Content-Type: text/html; charset=utf-8'); // override le json
+    readfile(__DIR__ . '/../../frontend/index.html');
     exit();
 }
 
