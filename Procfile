@@ -1,1 +1,1 @@
-echo "web: vendor/bin/heroku-php-apache2 backend/public/" > Procfile
+web: vendor/bin/heroku-php-apache2 backend/public/
