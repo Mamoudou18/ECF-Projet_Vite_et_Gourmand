@@ -3,8 +3,9 @@
 .env.production
 
 # Base de données
-*.sql.backup
-db_data/
+*.sql
+database/
+
 
 # Logs
 *.log
