@@ -26,7 +26,7 @@ if (strpos($uri, '/api/') === 0) {
 $allowed_origins = [
     'http://localhost',
     'http://localhost:3000',
-    'https://vitegourmand.com'  // la vraie URL Heroku
+    'https:https://vitegourmand-ecf2026-0523fcfb2200.herokuapp.com'  // la vraie URL Heroku
 ];
 
 // Headers CORS
