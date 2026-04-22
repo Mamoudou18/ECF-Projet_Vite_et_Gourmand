@@ -23,10 +23,10 @@ Thumbs.db
 # Dépendances
 node_modules/
 vendor/
+backend/vendor/
 frontend/node_modules
 
-#vendor
-#.vendor
+vendor
 
 backend/public/uploads/**
 !backend/public/uploads/.gitkeep
