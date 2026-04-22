@@ -1,4 +1,11 @@
 RewriteEngine On
+
+# Ne pas réécrire les fichiers/dossiers existants
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Ne pas réécrire les assets statiques
+RewriteRule \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ - [L]
+
+# Tout le reste vers router.php
 RewriteRule ^ router.php [QSA,L]
