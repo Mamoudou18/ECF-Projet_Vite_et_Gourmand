@@ -1,1 +1,1 @@
-web: vendor/bin/heroku-php-nginx -C nginx/nginx.conf
+echo "web: vendor/bin/heroku-php-apache2 backend/public/" > Procfile
