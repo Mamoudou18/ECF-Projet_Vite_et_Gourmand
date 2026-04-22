@@ -9,7 +9,7 @@ if (file_exists(__DIR__ . '/../../.env')) {
 $allowed_origins = [
     'http://localhost',
     'http://localhost:3000',
-    'https://vitegourmand-ecf2026-0523fcfb2200.herokuapp.com'
+    'https://vite-et-gourmand.fr'
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
