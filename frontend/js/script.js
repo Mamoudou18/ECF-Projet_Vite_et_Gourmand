@@ -183,7 +183,7 @@ async function loadFooterHoraires() {
                 : `${g.jours[0]} - ${g.jours[g.jours.length - 1]}`;
 
             if (g.horaire.is_ferme == 1) {
-                return `<p class="mb-1"><strong>${joursLabel}</strong> : <span class="text-danger">Fermé</span></p>`;
+                return `<p class="mb-1"><strong>${joursLabel}</strong> : <span class="ferme">Fermé</span></p>`;
             }
 
             const ouv = g.horaire.heure_ouverture.substring(0, 5).replace(':', 'h');
