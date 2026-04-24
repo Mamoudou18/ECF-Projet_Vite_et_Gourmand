@@ -3,7 +3,9 @@
         "ext-mongodb": "*",
         "phpmailer/phpmailer": "^7.0",
         "vlucas/phpdotenv": "^5.6",
-        "mongodb/mongodb": "^2.2"
+        "phpoption/phpoption": "^1.9",
+        "mongodb/mongodb": "^2.2",
+        "cloudinary/cloudinary_php": "^3.1"
     },
     "config": {
         "vendor-dir": "backend/vendor"
