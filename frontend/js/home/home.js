@@ -1,5 +1,5 @@
 import { renderStars } from "../utils/util.js";
-import { API_BASE, URL_IMG } from "../config.js";
+import { API_BASE } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
 let top3Menus = [];
@@ -49,13 +49,17 @@ function displayTop3Menus() {
         const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-        const imagePrincipale = images.length > 0 ? `${URL_IMG}${images[0]}` : 'assets/img/default-menu.jpg';
+
+        const svgPlaceholder = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%20pour%20ce%20menu%3C%2Ftext%3E%3C%2Fsvg%3E"
+
+        const imagePrincipale = images.length > 0 ? images[0] : svgPlaceholder;
 
         container.innerHTML += `
             <div class="col-xl-4 col-lg-6 col-md-6">
                 <div class="menu-card">
                     <div class="menu-image">
-                        <img src="${imagePrincipale}" alt="${menu.titre}">
+                        <img src="${imagePrincipale}" alt="${menu.titre}"
+                            onerror="this.onerror=null; this.src='${svgPlaceholder}'">
                         <div class="menu-badge">${menu.themes.charAt(0).toUpperCase() + menu.themes.slice(1)}</div>
                         <div class="menu-stock ${stockClass}">
                             <i class="bi bi-${stockIcon}"></i>
@@ -96,11 +100,9 @@ function chargerAvisAccueil() {
 
             if (!data.avis || data.avis.length === 0) {
                 container.innerHTML = `
-                    <div class="col-12">
-                        <div class="text-center py-5">
-                            <i class="bi bi-chat-square-text display-1 text-muted"></i>
-                            <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
-                        </div>
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-chat-square-text display-1 text-muted"></i>
+                        <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
                     </div>
                 `;
                 return;

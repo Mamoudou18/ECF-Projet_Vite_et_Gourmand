@@ -130,13 +130,15 @@ export function showConfirm({ title, message, icon, iconColor, btnText, btnClass
 }
 
 // ===================== TOAST =====================
- export function createToastContainer() {
+export function createToastContainer() {
     const container = document.createElement('div');
-    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    const isMobile = window.innerWidth <= 768;
+    container.className = `toast-container position-fixed ${isMobile ? 'bottom-0 start-50 translate-middle-x' : 'top-0 end-0'} p-3`;
     container.style.zIndex = '9999';
     document.body.appendChild(container);
     return container;
 }
+
 
 export function showToast(message, type = 'success') {
 

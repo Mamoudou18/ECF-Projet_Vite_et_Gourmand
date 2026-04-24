@@ -178,6 +178,14 @@ footer.footer{
     }
 }
 
+.ferme {
+    color: rgb(255, 242.6, 205.4);
+}
+
+.copy-right{
+    color: rgb(255, 242.6, 205.4) !important;
+}
+
 /* Hero scene */
 .hero-scene {
   position: relative;
@@ -188,7 +196,7 @@ footer.footer{
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url(../images/bigtitle.jpg);
+    background-image: url(../images/bigtitle.webp);
     background-size: cover;
     background-position: center;
     filter: brightness(0.4);

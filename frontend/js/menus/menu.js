@@ -1,4 +1,4 @@
-import { API_BASE, URL_IMG } from "../config.js";
+import { API_BASE } from "../config.js";
 
 // ========== VARIABLES GLOBALES ==========
 let menus = []
@@ -24,7 +24,7 @@ async function loadMenus() {
         const data = await response.json();
         menus = data.menus;
         filteredMenus = [...menus];
-        
+        console.log(filteredMenus);
     } catch (error) {
         console.error('Erreur de chargment des menus:', error);
         document.getElementById("menusGrid").innerHTML=`
@@ -83,13 +83,17 @@ function displayMenus() {
 
         // Extraire la première image
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-        const imagePrincipale = images.length > 0 ? `${URL_IMG}${images[0]}` : 'assets/img/default-menu.jpg';
+
+        const svgPlaceholder = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%20pour%20ce%20menu%3C%2Ftext%3E%3C%2Fsvg%3E"
+    
+        const imagePrincipale = images.length > 0 ? images[0] : svgPlaceholder;
 
         container.innerHTML += `
             <div class="col-xl-4 col-lg-6 col-md-6">
                 <div class="menu-card">
-                    <div class="menu-image">
-                        <img src="${imagePrincipale}" alt="${menu.titre}">
+                    <div class="menu-image h-80">
+                        <img src="${imagePrincipale}" alt="${menu.titre}"
+                            onerror="this.onerror=null; this.src='${svgPlaceholder}'">
                         <div class="menu-badge">${menu.themes.charAt(0).toUpperCase() + menu.themes.slice(1)}</div>
                         <div class="menu-stock ${stockClass}">
                             <i class="bi bi-${stockIcon}"></i>

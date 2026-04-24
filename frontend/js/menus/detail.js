@@ -4,7 +4,7 @@
 
 import { getStorage } from "../script.js";
 import { showToast } from "../utils/util.js";
-import { API_BASE, URL_IMG } from "../config.js";
+import { API_BASE } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
 const REDUCT = 5;
@@ -186,9 +186,9 @@ function displayMenuDetail(menu) {
             <div class="carousel-inner">
                 ${menu.imagesList.map((img, index) => `
                     <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                        <img src="${URL_IMG}${escapeHTML(img)}" 
+                        <img src="${escapeHTML(img)}" 
                             class="d-block w-100" 
-                            style="height: 500px; object-fit: cover;"
+                            style="height: 550px; object-fit: cover;"
                             alt="${escapeHTML(menu.titre)} - Image ${index + 1}">
                     </div>
                 `).join('')}

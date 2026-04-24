@@ -5,6 +5,13 @@ require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
 require_once __DIR__ . '/../config/database.php';
 
+// Cloudinary
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Cloudinary\Configuration\Configuration;
+use Cloudinary\Api\Upload\UploadApi;
+use Cloudinary\Api\Admin\AdminApi;
+
 class MenuController
 {
     private Menu $menu;
@@ -12,21 +19,27 @@ class MenuController
     private ResponseService $response;
     private \PDO $pdo;
 
-    private string $uploadDir;
-    private string $uploadUrl = '/uploads/menus/';
-
     public function __construct()
     {
         $this->pdo       = Database::getInstance();
         $this->menu      = new Menu($this->pdo);
         $this->validator = new ValidationService();
         $this->response  = new ResponseService();
-        $this->uploadDir = __DIR__ . '/../public/uploads/menus/';
+
+
+        Configuration::instance([
+            'cloud' => [
+                'cloud_name' => $_ENV['CLOUDINARY_CLOUD_NAME'],
+                'api_key'    => $_ENV['CLOUDINARY_API_KEY'],
+                'api_secret' => $_ENV['CLOUDINARY_API_SECRET'],
+            ]
+        ]);
     }
 
     // ─────────────────────────────────────────
     // GET /api/menus
     // ─────────────────────────────────────────
+
     public function list(): void
     {
         $menus = $this->menu->getTous();
@@ -39,6 +52,7 @@ class MenuController
     // ─────────────────────────────────────────
     // GET /api/menus?id={id}
     // ─────────────────────────────────────────
+
     public function detail(): void
     {
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -61,6 +75,7 @@ class MenuController
     // ─────────────────────────────────────────
     // POST /api/menus
     // ─────────────────────────────────────────
+
     public function create(): void
     {
         $data  = $_POST;
@@ -170,6 +185,7 @@ class MenuController
     // ─────────────────────────────────────────
     // PUT /api/menus?id={id}
     // ─────────────────────────────────────────
+
     public function update(): void
     {
         
@@ -341,13 +357,9 @@ class MenuController
             $this->pdo->commit();
 
             // suppression physique
+
             foreach ($urlsASupprimer as $oldUrl) {
-                $filePath = __DIR__ . '/../public' . $oldUrl;
-                error_log("Suppression tentée : $filePath | exists: " . (file_exists($filePath) ? 'OUI' : 'NON'));
-                if (file_exists($filePath)) {
-                    $result = unlink($filePath);
-                    error_log("unlink result: " . ($result ? 'OK' : 'ECHEC'));
-                }
+                $this->deleteImage($oldUrl);
             }
 
 
@@ -362,6 +374,7 @@ class MenuController
     // ─────────────────────────────────────────
     // PATCH /api/menus?id={id}
     // ─────────────────────────────────────────
+
     public function toggle(): void
     {
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -394,6 +407,7 @@ class MenuController
     // ─────────────────────────────────────────
     // DELETE /api/menus?id={id}
     // ─────────────────────────────────────────
+
     public function delete(): void
     {
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -443,7 +457,7 @@ class MenuController
     private function uploadImage(array $file): string|false
     {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        $maxSize      = 10 * 1024 * 1024; //10Mo
+        $maxSize      = 10 * 1024 * 1024;
 
         if (!in_array($file['type'], $allowedTypes)) {
             error_log('type not allowed: ' . $file['type']);
@@ -454,33 +468,36 @@ class MenuController
             return false;
         }
 
-        if (!is_dir($this->uploadDir)) {
-            error_log('creating dir: ' . $this->uploadDir);
-            mkdir($this->uploadDir, 0755, true);
-        }
+        try {
+            $result = (new UploadApi())->upload($file['tmp_name'], [
+                'folder' => 'menus',
+            ]);
 
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename  = uniqid('menu_', true) . '.' . $extension;
-        $dest      = $this->uploadDir . $filename;
+            // retourne l'URL sécurisée Cloudinary
+            return $result['secure_url'];
 
-        error_log('dest: ' . $dest);
-
-        if (!move_uploaded_file($file['tmp_name'], $dest)) {
-            error_log('move_uploaded_file failed');
+        } catch (Exception $e) {
+            error_log('Cloudinary upload error: ' . $e->getMessage());
             return false;
         }
-
-        return $this->uploadUrl . $filename;
     }
-
 
     private function deleteImage(string $imageUrl): void
     {
-        $filename = basename($imageUrl);
-        $path     = $this->uploadDir . $filename;
+        // Extrait le public_id depuis l'URL Cloudinary
+        // ex: https://res.cloudinary.com/xxx/image/upload/v123/menus/menu_abc.jpg
+        // => public_id = menus/menu_abc
+        if (empty($imageUrl)) return;
 
-        if (file_exists($path)) {
-            unlink($path);
+        try {
+            $pattern = '/\/upload\/(?:v\d+\/)?(.+)\.[a-z]+$/i';
+            if (preg_match($pattern, $imageUrl, $matches)) {
+                $publicId = $matches[1];
+                (new AdminApi())->deleteAssets([$publicId]);
+            }
+        } catch (Exception $e) {
+            error_log('Cloudinary delete error: ' . $e->getMessage());
         }
     }
+
 }
