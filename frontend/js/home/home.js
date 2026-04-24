@@ -1,5 +1,5 @@
 import { renderStars } from "../utils/util.js";
-import { API_BASE, URL_IMG } from "../config.js";
+import { API_BASE } from "../config.js";
 
 // ===================== VARIABLES GLOBALES ========
 let top3Menus = [];
@@ -49,7 +49,7 @@ function displayTop3Menus() {
         const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-        const imagePrincipale = images.length > 0 ? `${URL_IMG}${images[0]}` : 'assets/img/default-menu.jpg';
+        const imagePrincipale = images.length > 0 ? images[0] : 'https://via.placeholder.com/400x200/6c757d/ffffff?text=Pas+d%27image';
 
         container.innerHTML += `
             <div class="col-xl-4 col-lg-6 col-md-6">
@@ -96,11 +96,9 @@ function chargerAvisAccueil() {
 
             if (!data.avis || data.avis.length === 0) {
                 container.innerHTML = `
-                    <div class="col-12">
-                        <div class="text-center py-5">
-                            <i class="bi bi-chat-square-text display-1 text-muted"></i>
-                            <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
-                        </div>
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-chat-square-text display-1 text-muted"></i>
+                        <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
                     </div>
                 `;
                 return;

@@ -298,7 +298,7 @@ async function loadHoraires() {
     }
 }
 
-// Fonction séparée, en dehors de loadMenuCommande
+
 function setupDateField() {
     const dateInput = document.getElementById('datePrestation');
     if (!dateInput) return;

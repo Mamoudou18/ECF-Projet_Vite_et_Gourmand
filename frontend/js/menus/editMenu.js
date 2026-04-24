@@ -1,5 +1,5 @@
 import {showToast } from "../utils/util.js";
-import { API_BASE, URL_IMG } from "../config.js";
+import { API_BASE } from "../config.js";
 
 const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");
@@ -56,7 +56,7 @@ async function chargerMenuParId(id) {
         // Image principale = index 0
         if (imgs[0]) {
             const preview = menuDiv.querySelector(".previewImgPrincipale");
-            preview.src = `${IMG_URL}${imgs[0]}`;
+            preview.src = imgs[0];
             preview.classList.remove("d-none");
         }
 
@@ -75,7 +75,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxEntree]) {
                     const preview = platDiv.querySelector(".section-entree .previewImgPlat");
                     if (preview) {
-                        preview.src = `${IMG_URL}${imgs[idxEntree]}`;
+                        preview.src = `${imgs[idxEntree]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -89,7 +89,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxPlat]) {
                     const preview = platDiv.querySelector(".section-plat .previewImgPlat");
                     if (preview) {
-                        preview.src = `${IMG_URL}${imgs[idxPlat]}`;
+                        preview.src = `${imgs[idxPlat]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -103,7 +103,7 @@ async function chargerMenuParId(id) {
                 if (imgs[idxDessert]) {
                     const preview = platDiv.querySelector(".section-dessert .previewImgPlat");
                     if (preview) {
-                        preview.src = `${IMG_URL}${imgs[idxDessert]}`;
+                        preview.src = `${imgs[idxDessert]}`;
                         preview.classList.remove("d-none");
                     }
                 }
@@ -316,7 +316,7 @@ function enregistrer() {
     if (menus.length === 0) return showToast('Ajoutez au moins un menu.', 'warning');
 
     const themeIdMap = { noel: 1, paques: 2, classique: 3, evenement: 4 };
-    const regimeIdMap = { classique: 1, vegetarien: 2, vegan: 3, "sans-gluten": 4, hallal: 5 };
+    const regimeIdMap = { classique: 3, vegetarien: 1, vegan: 2, "sans-gluten": 5, hallal: 4 };
     const promises = [];
 
     menus.forEach(menu => {
