@@ -208,7 +208,7 @@ function displayMenuDetail(menu) {
     const descriptionLongHTML = `
         <div class="card-descriptionLong shadow-sm mb-4">
             <div class="card-body">
-                <h4 class="m-3 pt-3"><i class="bi bi-card-text"></i> Description</h4>
+                <h2 class="m-3 pt-3"><i class="bi bi-card-text"></i> Description</h2>
                 <p class="text-muted p-3">${escapeHTML(menu.description)}</p>
             </div>
         </div>
@@ -241,9 +241,9 @@ function displayMenuDetail(menu) {
         const displayLabel = total > 1 ? `${label} ${index + 1}` : label;
         return `
             <div>
-                <h6 class="text-primary mb-2">
+                <h3 class="text-primary mb-2">
                     <i class="bi bi-${icon}"></i> ${displayLabel}
-                </h6>
+                </h3>
                 <div class="plat-card p-3">
                     <strong>${escapeHTML(plat.nom)}</strong>
                     <p class="small text-muted mb-2">${escapeHTML(plat.description)}</p>
@@ -284,7 +284,7 @@ function displayMenuDetail(menu) {
         : `
             <div class="card card-composition shadow-sm mb-4">
                 <div class="card-header">
-                    <h4><i class="bi bi-list-ul"></i> Composition du menu</h4>
+                    <h2><i class="bi bi-list-ul"></i> Composition du menu</h2>
                 </div>
                 <div class="card-body">
                     <div class="row row-cols-1 row-cols-md-${Math.min(maxLength, 3)} g-3 justify-content-center">
@@ -321,7 +321,7 @@ function displayMenuDetail(menu) {
     const prixHTML = `
         <div class="card card-composition shadow-sm mb-4">
             <div class="card-header">
-                <h4><i class="bi bi-tag"></i> Tarif & Commande</h4>
+                <h2><i class="bi bi-tag"></i> Tarif & Commande</h2>
             </div>
             <div class="card-body">
                 <div class="price-box mb-4">
@@ -345,7 +345,7 @@ function displayMenuDetail(menu) {
                     </a>
 
                     <div class="mt-4 pt-3" style="border-top: 1px solid rgba(255,255,255,0.2);">
-                        <h6 class="mb-3"><i class="bi bi-info-circle"></i> Informations</h6>
+                        <h3 class="mb-3"><i class="bi bi-info-circle"></i> Informations</h3>
                         <div class="small">
                             <div class="${menu.stock <= 5 ? 'text-danger fw-bold' : ''}">
                                 <i class="bi bi-box-seam"></i> 
@@ -362,10 +362,10 @@ function displayMenuDetail(menu) {
     // ---- CONDITIONS ----
     const conditionsMenuHTML = menu.conditionsList.length > 0 ? `
         <div class="conditions-box">
-            <h5 class="mb-3">
+            <h3 class="mb-3">
                 <i class="bi bi-exclamation-circle-fill"></i> 
                 <strong>Conditions importantes</strong>
-            </h5>
+            </h3>
             <ul class="mb-0">
                 ${menu.conditionsList.map(condition => `
                     <li class="mb-2"><strong>${escapeHTML(condition)}</strong></li>

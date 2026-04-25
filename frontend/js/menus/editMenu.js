@@ -316,7 +316,7 @@ function enregistrer() {
     if (menus.length === 0) return showToast('Ajoutez au moins un menu.', 'warning');
 
     const themeIdMap = { noel: 1, paques: 2, classique: 3, evenement: 4 };
-    const regimeIdMap = { classique: 3, vegetarien: 1, vegan: 2, "sans-gluten": 5, hallal: 4 };
+    const regimeIdMap = { vegetarien: 1, vegan: 2, classique: 3, hallal: 4, "sans-gluten": 5, };
     const promises = [];
 
     menus.forEach(menu => {
