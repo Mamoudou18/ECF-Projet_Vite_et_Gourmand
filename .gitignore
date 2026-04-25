@@ -4,7 +4,8 @@
 
 # Base de données
 *.sql
-database/db_prod.sql
+database
+database/db.sql
 
 
 # Logs

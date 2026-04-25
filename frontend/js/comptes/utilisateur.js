@@ -428,22 +428,22 @@ async function loadDashboard() {
             statsGrid.innerHTML = `
                 <div class="stat-card">
                     <i class="bi bi-cart-check-fill"></i>
-                    <h3>${total}</h3>
+                    <span class="fs-1 fw-bold">${total}</span>
                     <p>Commandes totales</p>
                 </div>
                 <div class="stat-card">
                     <i class="bi bi-hourglass-split"></i>
-                    <h3>${enCours}</h3>
+                    <span class="fs-1 fw-bold">${enCours}</span>
                     <p>En cours</p>
                 </div>
                 <div class="stat-card">
                     <i class="bi bi-check-circle-fill"></i>
-                    <h3>${terminees}</h3>
+                    <span class="fs-1 fw-bold">${terminees}</span>
                     <p>Terminées</p>
                 </div>
                 <div class="stat-card">
                     <i class="bi bi-x-circle"></i>
-                    <h3>${annulees}</h3>
+                    <span class="fs-1 fw-bold">${annulees}</span>
                     <p>Annulées</p>
                 </div>
             `;
@@ -800,7 +800,7 @@ function afficherDetailCommande(commande) {
     container.innerHTML = `
         <!-- En-tête -->
         <div class="mb-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>#${commande.numero_commande}</h5>
+            <h3 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>#${commande.numero_commande}</h3>
             <span class="order-status ${config.class}">
                 <i class="bi ${config.icon}"></i> ${config.label}
             </span>
@@ -808,7 +808,7 @@ function afficherDetailCommande(commande) {
         <hr>
 
         <!-- Prestation -->
-        <h6 class="fw-bold text-muted mb-3"><i class="bi bi-calendar-event me-2"></i>Détails prestation</h6>
+        <h4 class="fw-bold text-muted mb-3"><i class="bi bi-calendar-event me-2"></i>Détails prestation</h4>
         <div class="row g-2 mb-3">
             <div class="col-md-4">
                 <div class="bg-light rounded p-2">
@@ -849,7 +849,7 @@ function afficherDetailCommande(commande) {
         </div>
 
         <!-- Tarification -->
-        <h6 class="fw-bold text-muted mb-3"><i class="bi bi-currency-euro me-2"></i>Tarification</h6>
+        <h4 class="fw-bold text-muted mb-3"><i class="bi bi-currency-euro me-2"></i>Tarification</h4>
         <div class="bg-light rounded p-3 mb-3">
             <div class="d-flex justify-content-between mb-1">
                 <span>Prix menu</span>
@@ -873,7 +873,7 @@ function afficherDetailCommande(commande) {
 
         <!-- Commentaire -->
         ${commande.commentaire ? `
-        <h6 class="fw-bold text-muted mb-2"><i class="bi bi-chat-text me-2"></i>Commentaire</h6>
+        <h4 class="fw-bold text-muted mb-2"><i class="bi bi-chat-text me-2"></i>Commentaire</h4>
         <div class="bg-light rounded p-2 mb-3">
             <p class="mb-0">${commande.commentaire}</p>
         </div>` : ''}

@@ -280,13 +280,13 @@ function openDetailsModal(orderId) {
     body.innerHTML = `
         <div class="row text-primary">
             <div class="col-md-6">
-                <h6 class="fw-bold mb-3"><i class="bi bi-person"></i> Client</h6>
+                <h4 class="fw-bold mb-3"><i class="bi bi-person"></i> Client</h4>
                 <p><strong>Nom :</strong> ${order.prenom_client} ${order.nom_client}</p>
                 <p><strong>Email :</strong> ${order.email_client}</p>
                 <p><strong>Téléphone :</strong> ${order.gsm_client || 'Non renseigné'}</p>
             </div>
             <div class="col-md-6">
-                <h6 class="fw-bold mb-3"><i class="bi bi-box-seam"></i> Commande</h6>
+                <h4 class="fw-bold mb-3"><i class="bi bi-box-seam"></i> Commande</h4>
                 <p><strong>N° :</strong> ${order.numero_commande}</p>
                 <p><strong>Statut :</strong> ${getStatusBadge(order.statut)}</p>
                 <p><strong>Date commande :</strong> ${formatDate(order.created_at)}</p>
@@ -295,22 +295,22 @@ function openDetailsModal(orderId) {
         <hr>
         <div class="row text-primary">
             <div class="col-md-6">
-                <h6 class="fw-bold mb-3"><i class="bi bi-calendar-event"></i> Événement</h6>
+                <h4 class="fw-bold mb-3"><i class="bi bi-calendar-event"></i> Événement</h4>
                 <p><strong>Menu :</strong> ${order.menu_titre}</p>
                 <p><strong>Personnes :</strong> ${order.nb_personnes}</p>
                 <p><strong>Date :</strong> ${formatDate(order.date_prestation)}</p>
                 <p><strong>Lieu :</strong> ${order.adresse_prestation || order.ville_prestation}</p>
             </div>
             <div class="col-md-6">
-                <h6 class="fw-bold mb-3"><i class="bi bi-cash-stack"></i> Facturation</h6>
+                <h4 class="fw-bold mb-3"><i class="bi bi-cash-stack"></i> Facturation</h4>
                 <p><strong>Total :</strong> <span class="fs-5 fw-bold">${parseFloat(order.prix_total).toFixed(2)} €</span></p>
             </div>
         </div>
-        ${order.commentaire ? `<hr><div><h6 class="fw-bold text-primary mb-2"><i class="bi bi-chat-dots text-primary "></i> Commentaire</h6><p class="fst-italic text-primary">"${order.commentaire}"</p></div>` : ''}
+        ${order.commentaire ? `<hr><div><h4 class="fw-bold text-primary mb-2"><i class="bi bi-chat-dots text-primary "></i> Commentaire</h4><p class="fst-italic text-primary">"${order.commentaire}"</p></div>` : ''}
         ${order.statut === 'annulee' && order.motif_annulation ? `
         <hr>
         <div class="alert alert-danger">
-            <h6 class="fw-bold"><i class="bi bi-x-octagon"></i> Annulation</h6>
+            <h4 class="fw-bold"><i class="bi bi-x-octagon"></i> Annulation</h4>
             <p><strong>Contact :</strong> ${order.mode_contact === 'telephone' ? 'Téléphone' : 'Email'}</p>
             <p><strong>Motif :</strong> ${order.motif_annulation}</p>
         </div>` : ''}
@@ -797,7 +797,7 @@ function displayEmployeeMenus(menus) {
         container.innerHTML = `
             <div class="col-12 text-center py-5">
                 <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
-                <h5 class="mt-3 text-muted">Aucun menu trouvé</h5>
+                <h3 class="mt-3 text-muted">Aucun menu trouvé</h3>
                 <p class="text-muted">Modifiez vos filtres ou créez un nouveau menu</p>
             </div>
         `;
@@ -840,7 +840,7 @@ function displayEmployeeMenus(menus) {
                     <div class="menu-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h5 class="menu-title mb-1">${menu.titre}</h5>
+                                <h3 class="menu-title mb-1">${menu.titre}</h3>
                                 <div class="mb-2">${themeBadge}${regimesBadges}</div>
                             </div>
                             <div class="dropdown">
@@ -1050,7 +1050,7 @@ function renderAvisCard(avis, type) {
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h6 class="mb-1"><strong>${avis.prenom_client} ${avis.nom_client}</strong></h6>
+                        <h4 class="mb-1"><strong>${avis.prenom_client} ${avis.nom_client}</strong></h4>
                         <small class="text-muted">Commande #${avis.numero_commande}</small>
                     </div>
                     <div class="text-end">

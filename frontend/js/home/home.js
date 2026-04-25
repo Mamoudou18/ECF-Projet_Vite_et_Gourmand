@@ -136,7 +136,7 @@ function chargerAvisAccueil() {
         })
         .catch(() => {
             document.getElementById('avis-accueil').innerHTML = `
-                <div class="col-12">
+                <div class="col-12 text-center">
                     <p class="text-center text-danger">Impossible de charger les avis.</p>
                 </div>
             `;

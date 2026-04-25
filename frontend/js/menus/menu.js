@@ -54,7 +54,7 @@ function displayMenus() {
             <div class="col-12">
                 <div class="no-results">
                     <i class="bi bi-search"></i>
-                    <h4>Aucun menu trouvé</h4>
+                    <h3>Aucun menu trouvé</h3>
                     <p>Essayez de modifier vos filtres de recherche</p>
                     <button id="resetFiltersBtn" class="btn btn-primary mt-3">
                         Réinitialiser les filtres
