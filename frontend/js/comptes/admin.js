@@ -1,4 +1,3 @@
-await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js');
 import { getStorage } from "../script.js";
 import {
     showPassword,

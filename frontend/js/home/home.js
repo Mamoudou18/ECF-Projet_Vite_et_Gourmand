@@ -5,13 +5,10 @@ import { API_BASE } from "../config.js";
 let top3Menus = [];
 
 async function init() {
-    await Promise.all([
-        loadTop3Menus(),
-        chargerAvisAccueil()
-    ]);
+    await loadTop3Menus();
     displayTop3Menus();
+    chargerAvisAccueil();
 }
-
 
 //chargement des 3 menus les plus commandés
 async function loadTop3Menus() {
@@ -95,56 +92,55 @@ function displayTop3Menus() {
     });
 }
 
-async function chargerAvisAccueil() {
-    try {
-        const response = await fetch(`${API_BASE}/avis/approuves`);
-        const data = await response.json();
+function chargerAvisAccueil() {
+    fetch(`${API_BASE}/avis/approuves`)
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('avis-accueil');
 
-        const container = document.getElementById('avis-accueil');
-
-        if (!data.avis || data.avis.length === 0) {
-            container.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i class="bi bi-chat-square-text display-1 text-muted"></i>
-                    <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
-                </div>
-            `;
-            return;
-        }
-
-        const avisAffiches = data.avis.slice(0, 3);
-
-        if (avisAffiches.length === 1) {
-            container.className = 'row justify-content-center g-4';
-        } else if (avisAffiches.length === 2) {
-            container.className = 'row row-cols-1 row-cols-lg-2 justify-content-center g-4';
-        } else {
-            container.className = 'row row-cols-1 row-cols-lg-3 g-4';
-        }
-
-        container.innerHTML = avisAffiches.map(a => {
-            const stars = renderStars(a.note);
-            const prenom = a.prenom_client || 'Anonyme';
-            const initiale = a.nom_client ? a.nom_client.charAt(0).toUpperCase() + '.' : '';
-            return `
-                <div class="col text-center">
-                    <div class="avis">
-                        <div class="stars-color">${stars}</div>
-                        <p>"${a.commentaire}"</p>
-                        <div class="autheur">— ${prenom} ${initiale}</div>
+            if (!data.avis || data.avis.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-chat-square-text display-1 text-muted"></i>
+                        <p class="text-muted mt-3 fs-5">Aucun avis pour le moment.</p>
                     </div>
+                `;
+                return;
+            }
+
+            const avisAffiches = data.avis.slice(0, 3);
+            
+            // Adapter la classe selon le nombre d'avis
+            if (avisAffiches.length === 1) {
+                container.className = 'row justify-content-center g-4';
+            } else if (avisAffiches.length === 2) {
+                container.className = 'row row-cols-1 row-cols-lg-2 justify-content-center g-4';
+            } else {
+                container.className = 'row row-cols-1 row-cols-lg-3 g-4';
+            }
+
+            container.innerHTML = avisAffiches.map(a => {
+                const stars = renderStars(a.note);
+                const prenom = a.prenom_client || 'Anonyme';
+                const initiale = a.nom_client ? a.nom_client.charAt(0).toUpperCase() + '.' : '';
+                return `
+                    <div class="col text-center">
+                        <div class="avis">
+                            <div class="stars-color">${stars}</div>
+                            <p>"${a.commentaire}"</p>
+                            <div class="autheur">— ${prenom} ${initiale}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        })
+        .catch(() => {
+            document.getElementById('avis-accueil').innerHTML = `
+                <div class="col-12 text-center">
+                    <p class="text-center text-danger">Impossible de charger les avis.</p>
                 </div>
             `;
-        }).join('');
-
-    } catch {
-        document.getElementById('avis-accueil').innerHTML = `
-            <div class="col-12 text-center">
-                <p class="text-center text-danger">Impossible de charger les avis.</p>
-            </div>
-        `;
-    }
+        });
 }
-
 
 init();
