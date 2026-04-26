@@ -760,9 +760,9 @@ async function chargerMenusPourFiltre() {
         const menus = data.menus || [];
 
         // Garder l'option "Tous les menus"
-        select.innerHTML = '<option value="">Tous les menus</option>';
+        select.innerHTML = '<option value="">Tous les menus </option>';
         menus.forEach(m => {
-            select.innerHTML += `<option value="${m.menu_id}">${m.menu_titre}</option>`;
+            select.innerHTML += `<option value="${m.menu_id}">${m.menu_titre} </option>`;
         });
 
     } catch (err) {

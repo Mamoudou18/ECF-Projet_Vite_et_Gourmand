@@ -1,4 +1,3 @@
-@import url(https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css);
 @import 'custom';
 
 * {
@@ -54,20 +53,10 @@ body{
                 transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#main-page.page-exit {
-    opacity: 0;
-    transform: translateY(20px);
-}
-
+#main-page.page-exit,
 #main-page.page-enter {
     opacity: 0;
     transform: translateY(20px);
-}
-
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 main{
@@ -85,37 +74,43 @@ main{
     background: linear-gradient(135deg, $primary, $accent);;
     border-color: $white-primary !important;
     color: $white-primary;
-    padding: 1rem 2.5rem;
+    padding: 0.7rem 1.5rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 50px;
+    border-radius: $radius-btn;
     transition: all 0.3s;
 }
 .btn-primary{
     background-color: $primary;
     border-color: $accent !important;
     color: $white-primary;
-    padding: 1rem 2.5rem;
+    padding: 0.7rem 1.5rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 50px;
+    border-radius: $radius-btn;
     transition: all 0.3s;
 }
 
 //Bouton menu accueil
-.btn-home-menu{
-  background: linear-gradient(135deg, $primary, $accent);
-  color: $white-primary;
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-radius: 50px;
-  transition: all 0.3s;
+.btn-home-menu {
+    background: linear-gradient(135deg, $primary, $accent);
+    color: $white-primary;
+    padding: 0.7rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: $radius-btn;
+    transition: all 0.3s;
+
+    &:hover {
+        color: $primary;
+    }
 }
 
 .bg-accent{
     color: $white-primary;
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
+    border-radius: $radius-btn;
+    padding: 0.6rem 1.5rem;
 }
 
 .bg-badgeStock{
@@ -160,6 +155,7 @@ footer.footer {
   bottom: 0;
   position: absolute;
   width: 100%;
+  min-height: 265px;
 
   h3 {
     color: $white-primary;
@@ -182,15 +178,6 @@ footer.footer {
   margin: 0.5rem 0;
   border-color: rgba(255,255,255,0.2);
 }
-
-#footerHoraires {
-    min-height: 120px;
-}
-
-.copy-right {
-  font-size: 1rem;
-}
-
 
 @media (max-width: 768px) {
   footer.footer {
@@ -219,6 +206,7 @@ footer.footer {
 }
 
 .copy-right{
+    font-size: 1rem;
     color: rgb(255, 242.6, 205.4) !important;
 }
 
@@ -314,33 +302,33 @@ footer.footer {
   .btn-primary,
   .btn-accent,
   .btn-home-menu {
-    padding: 0.8rem 1.5rem;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
   }
 }
 
 
-  li{
+li{
     color: $primary;
     list-style: none;
-  }
+}
 
   /* Animation card */
-  .card {
-    height: 250px;
+.card {
     width: 100%;
     align-content: normal;
     opacity: 85%;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     transition: all 0.3s;
-    height: 100%;
+    height: 100%;  // ← garder seulement celle-ci
     text-align: center;
     padding: 2rem;
+}
 
-  }
-  .card:hover{
+.card:hover{
     transform: translateY(-10px);
-  }
+}
+
   .feature-icon{
     color: $white-primary;
     background: linear-gradient(135deg, $primary, $accent);
@@ -356,7 +344,7 @@ footer.footer {
 
   /* Avis */
 .avis{
-  border-radius: 15px;
+  border-radius: $radius-btn;
   background: $white-primary;
   padding: 2rem;
   height: 100%;
@@ -364,7 +352,7 @@ footer.footer {
 }
 .avis p {
     font-style: italic;
-    color: #495057;
+    color: $text-muted-color;
     margin-bottom:  1rem;
 }
 
@@ -387,21 +375,18 @@ footer.footer {
     margin-bottom: 3rem;
     text-align: center;
     color: $primary;
-}
 
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: $primary;
-    border-radius: 2px;
-}
-.btn-home-menu:hover{
-    color: $primary;
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: $primary;
+        border-radius: 2px;
+    }
 }
 
 // Page menu global
@@ -416,7 +401,7 @@ footer.footer {
     color: $white-secondary;
     padding: 3rem 0;
     margin-bottom: 2rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
@@ -435,7 +420,7 @@ footer.footer {
 /* Sidebar Filtres */
 .filters-sidebar {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     position: sticky;
@@ -471,16 +456,9 @@ footer.footer {
     gap: 0.5rem;
 }
 
-.form-label {
-    font-weight: 500;
-    color: $primary;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
 .form-control, .form-select {
     border: 2px solid $primary;
-    border-radius: 10px;
+    border-radius: radius-md;
     padding: 0.6rem 0.8rem;
     transition: all 0.3s;
 }
@@ -516,7 +494,7 @@ footer.footer {
 
 .filter-buttons .btn {
     flex: 1;
-    border-radius: 10px;
+    border-radius: $radius-md;
     font-weight: 100;
 }
 
@@ -546,7 +524,7 @@ footer.footer {
 .results-header {
     background: $white-primary;
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     margin-bottom: 1.5rem;
     box-shadow: 0 2px 10px $primary;
     display: flex;
@@ -559,7 +537,6 @@ footer.footer {
 .results-count {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--dark);
 }
 
 .results-count span {
@@ -575,7 +552,7 @@ footer.footer {
 /* Cards Menus */
 .menu-card {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     overflow: hidden;
     box-shadow: 0 2px 15px $primary;
     transition: all 0.3s;
@@ -616,7 +593,7 @@ footer.footer {
     background: linear-gradient(135deg, $primary, $accent);
     color: $white-primary;
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -628,7 +605,7 @@ footer.footer {
     background: $white-secondary;
     color: $primary;
     padding: 0.4rem 0.8rem;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     font-size: 0.85rem;
     font-weight: 600;
     display: flex;
@@ -660,7 +637,7 @@ footer.footer {
     background: $primary;
     color: $white-primary;
     padding: 0.3rem 0.8rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     font-size: 0.85rem;
     font-weight: 600;
     margin-bottom: 0.8rem;
@@ -731,7 +708,7 @@ footer.footer {
     color: $white-primary;
     border: none;
     padding: 0.6rem 1.5rem;
-    border-radius: 25px;
+    border-radius: $radius-btn;
     font-weight: 600;
     transition: all 0.3s;
 }
@@ -745,7 +722,7 @@ footer.footer {
 .pagination-container {
     background: $white-primary;
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     margin-top: 2rem;
     box-shadow: 0 2px 10px $primary;
         }
@@ -755,7 +732,7 @@ footer.footer {
     color: $primary;
     border: none;
     padding: 0.6rem 1.5rem;
-    border-radius: 10px;
+    border-radius: $radius-md;
     font-weight: 600;
     transition: all 0.3s;
 }
@@ -770,7 +747,7 @@ footer.footer {
 .no-results {
     background: $white-primary;
     padding: 3rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     text-align: center;
     box-shadow: 0 2px 10px $primary;
 }
@@ -782,7 +759,6 @@ footer.footer {
 }
 
 .no-results h4 {
-    color: var(--dark);
     margin-bottom: 0.5rem;
 }
 
@@ -844,7 +820,7 @@ footer.footer {
     background: $white-primary;
     height: 300px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: $radius-md;
     cursor: pointer;
     transition: transform 0.3s;
 }
@@ -852,7 +828,7 @@ footer.footer {
 .gallery-img {
     height: 400px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: $radius-md;
     cursor: pointer;
     transition: transform 0.3s;
 }
@@ -913,7 +889,7 @@ footer.footer {
 }
 
 .conditions-box {
-    background: #fff3cd;
+    background: $warning-light;
     border-left: 4px solid $primary;
     padding: 1.5rem;
     border-radius: 5px;
@@ -923,7 +899,7 @@ footer.footer {
     background: $white-primary;
     color: $primary;
     padding: 2rem;
-    border-radius: 10px;
+    border-radius: $radius-md;
     top: 80px;
 }
 
@@ -931,10 +907,10 @@ footer.footer {
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
     color: $white-primary;
     border: none;
-    padding: 1rem 2rem;
+    padding: 0.7rem 1.5rem;
     font-size: 1rem;
     font-weight: 700;
-    border-radius: 50px;
+    border-radius: $radius-btn;
     transition: all 0.3s;
 }
 
@@ -959,7 +935,7 @@ footer.footer {
 
 .register-card {
     background: $white-primary;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     box-shadow: 0 20px 60px $primary;
 overflow: hidden;
 }
@@ -985,15 +961,9 @@ overflow: hidden;
     padding: 2.5rem;
 }
 
-.form-label {
-    font-weight: 600;
-    color: $primary;
-    margin-bottom: 0.5rem;
-}
-
 .form-control {
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
     padding: 0.75rem 1rem;
     transition: all 0.3s;
 }
@@ -1005,35 +975,35 @@ overflow: hidden;
 
 .input-group-text {
     background: $secondary;
-    border: 2px solid #e0e0e0;
+    border: 2px solid $border-color;
     border-right: none;
-    border-radius: 10px 0 0 10px;
+    border-radius: $radius-md 0 0 $radius-md;
     color: $primary;
 }
 
 .input-group .form-control {
     border-left: none;
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 $radius-md $radius-md 0;
 }
 
 .password-toggle {
     cursor: pointer;
     background: $secondary;
     color: $primary;
-    border: 2px solid #e0e0e0;
+    border: 2px solid $border-color;
     border-left: none;
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 $radius-md $radius-md 0;
     padding: 0.75rem 1rem;
     transition: all 0.3s;
 }
 
 .password-toggle:hover {
-    background: #e0e0e0;
+    background: $border-color;
 }
 
 .password-strength {
     height: 4px;
-    background: #e0e0e0;
+    background: $border-color;
     border-radius: 2px;
     margin-top: 0.5rem;
     overflow: hidden;
@@ -1085,14 +1055,15 @@ overflow: hidden;
 }
 
 .btn-register,
-.btn-login {
+.btn-login,
+.btn-contact {
     background: linear-gradient(135deg, $primary, $accent);
     color: $white-primary;
     border: none;
-    padding: 0.875rem;
+    padding: 0.5rem;
     font-size: 1.1rem;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: $radius-btn;
     transition: all 0.3s;
     width: 100%;
 }
@@ -1123,7 +1094,7 @@ overflow: hidden;
     left: 0;
     width: 100%;
     height: 1px;
-    background: #e0e0e0;
+    background: $border-color;
 }
 
 .divider span {
@@ -1147,7 +1118,7 @@ overflow: hidden;
  }
 
 .alert {
-    border-radius: 10px;
+    border-radius: $radius-md;
     border: none;
 }
 
@@ -1173,7 +1144,7 @@ overflow: hidden;
 }
  .commande-card {
     background: $white-primary;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     overflow: hidden;
 }
@@ -1198,7 +1169,7 @@ overflow: hidden;
 .menu-recap {
     background: linear-gradient(135deg, $accent 0%, $secondary 100%);
     color: $primary;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -1221,7 +1192,7 @@ overflow: hidden;
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(10px);
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     border: 1px solid rgba(255,255,255,0.2);
 }
 
@@ -1268,7 +1239,7 @@ overflow: hidden;
     background: rgba(255,255,255,0.3);
     backdrop-filter: blur(10px);
     padding: 1rem;
-    border-radius: 10px;
+    border-radius: $radius-md;
     text-align: center;
     border: 1px solid rgba(255,255,255,0.3);
 }
@@ -1301,15 +1272,15 @@ overflow: hidden;
     background: rgba(220, 53, 69, 0.2);
     color: $white-primary;
     padding: 0.25rem 0.75rem;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     font-size: 0.85rem;
     border: 1px solid rgba(220, 53, 69, 0.5);
 }
 
 .conditions-important {
-    background: #fff3cd;
-    border: 3px solid var(--warning);
-    border-radius: 15px;
+    background: $warning-light;
+    border: 3px solid $primary;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     margin: 1.5rem 0;
 }
@@ -1337,7 +1308,7 @@ overflow: hidden;
 /* SECTIONS FORMULAIRE */
 .section-card {
     background: $white-secondary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-left: 5px solid $primary;
@@ -1352,14 +1323,9 @@ overflow: hidden;
     gap: 0.5rem;
 }
 
-.form-label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
 .form-control, .form-select {
     border: 2px solid $secondary;
-    border-radius: 10px;
+    border-radius: $radius-md;
     padding: 0.75rem;
     transition: all 0.3s;
 }
@@ -1382,7 +1348,7 @@ overflow: hidden;
     gap: 2rem;
     background: $white-primary;
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: $radius-md;
     border: 3px solid $secondary;
     margin: 1rem 0;
 }
@@ -1424,7 +1390,7 @@ overflow: hidden;
 /* RÉCAPITULATIF PRIX */
 .price-card {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     border: 3px solid $secondary;
     box-shadow: 0 5px 20px $primary
@@ -1434,7 +1400,7 @@ overflow: hidden;
     display: flex;
     justify-content: space-between;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-color;
     font-size: 1rem;
 }
 
@@ -1448,17 +1414,13 @@ overflow: hidden;
     border-top: 3px solid $secondary;
 }
 
-.price-line.discount {
-    color: var(--success);
-}
-
 /* BOUTON VALIDATION */
 .btn-submit {
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
     color: $white-primary;
     border: none;
-    padding: 1.25rem 3rem;
-    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border-radius: $radius-btn;
     font-size: 1.25rem;
     font-weight: 700;
     transition: all 0.3s;
@@ -1475,8 +1437,8 @@ overflow: hidden;
 .btn-danger{
     color: $white-primary;
     border: none;
-    padding: 1.25rem 3rem;
-    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border-radius: $radius-btn;
     font-size: 1.25rem;
     font-weight: 700;
     transition: all 0.3s;
@@ -1492,7 +1454,7 @@ overflow: hidden;
 .delivery-info {
     background: #d1ecf1;
     border: 2px solid #bee5eb;
-    border-radius: 10px;
+    border-radius: $radius-md;
     padding: 1rem;
     margin-top: 1rem;
 }
@@ -1501,7 +1463,7 @@ overflow: hidden;
     background: #d4edda;
     border: 2px solid #c3e6cb;
     color: #155724;
-    border-radius: 10px;
+    border-radius: $radius-md;
     padding: 1rem;
     margin-bottom: 1rem;
     display: flex;
@@ -1510,7 +1472,7 @@ overflow: hidden;
 }
 
 .edit-address-link {
-    color: var(--primary);
+    color: $primary;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
@@ -1590,7 +1552,7 @@ overflow: hidden;
 .user-info-card {
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     display: flex;
     align-items: center;
@@ -1630,7 +1592,7 @@ overflow: hidden;
 //Menu latéral
 .sidebar {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     box-shadow: 0 5px 20px $primary;
     padding: 1.5rem;
     position: sticky; //fixier le menu latéral
@@ -1662,7 +1624,7 @@ overflow: hidden;
     padding: 0.875rem 1rem;
     color: $primary;
     text-decoration: none;
-    border-radius: 10px;
+    border-radius: $radius-md;
     transition: all 0.3s;
     font-weight: 500;
 }
@@ -1682,7 +1644,7 @@ overflow: hidden;
 //Contenu principal
 .content-card {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     box-shadow: 0 5px 20px $primary;
     padding: 2rem;
     margin-bottom: 2rem;
@@ -1722,7 +1684,7 @@ overflow: hidden;
     background: linear-gradient(135deg, $accent, #e6c14a);
     color: $primary;
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     text-align: center;
     transition: all 0.3s;
 }
@@ -1752,7 +1714,7 @@ overflow: hidden;
 //Commandes
 .order-card {
     border: 2px solid $secondary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     transition: all 0.3s;
@@ -1780,7 +1742,7 @@ overflow: hidden;
 
 .order-status {
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     font-weight: 600;
     font-size: 0.875rem;
 }
@@ -1854,27 +1816,31 @@ overflow: hidden;
 .form-label {
     font-weight: 600;
     color: $primary;
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
-.form-control,
-.form-select {
+.form-control, .form-select {
     border: 2px solid $secondary;
-    border-radius: 10px;
+    border-radius: $radius-md;
     padding: 0.75rem 1rem;
     transition: all 0.3s;
-}
 
-.form-control:focus,
-.form-select:focus {
-    border-color: $primary;
-    box-shadow: 0 0 0 0.2rem $primary;
+    &:focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 0.2rem $primary;
+    }
+
+    &:read-only {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
 }
 
 /* Avis */
 .review-card {
     background: $white-secondary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -1909,7 +1875,7 @@ overflow: hidden;
 }
 
 #confirmActionModal .modal-footer .btn {
-    border-radius: 10px;
+    border-radius: $radius-md;
     min-width: 140px;
 }
 
@@ -1919,7 +1885,7 @@ overflow: hidden;
 /* Sidebar */
 .dashboard-sidebar {
     background: $white-primary;
-    border-radius: 15px;
+    border-radius: $radius-btn;
     padding: 1.5rem;
     box-shadow: 0 5px 15px $primary;
     position: sticky;
@@ -1950,7 +1916,7 @@ overflow: hidden;
 /* Status badges */
 .badge-status {
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: $radius-pill;
     font-weight: 600;
     font-size: 0.85rem;
     display: inline-block;
@@ -1960,7 +1926,7 @@ overflow: hidden;
 .filters-section {
     background: $white-secondary;
     padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: $radius-md;
     margin-bottom: 2rem;
 }
 
@@ -1974,20 +1940,20 @@ overflow: hidden;
 
 /* Modal */
 .modal-content {
-    border-radius: 15px;
+    border-radius: $radius-btn;
     border: none;
 }
 
 .modal-header {
     color: $white-primary;
     background: linear-gradient(135deg, $primary 0%, $accent 100%);
-    border-radius: 15px 15px 0 0;
+    border-radius: $radius-btn $radius-btn 0 0;
 }
 
 
 /* Alert messages */
 .alert-custom {
-    border-radius: 10px;
+    border-radius: $radius-md;
     border: none;
     padding: 1rem 1.5rem;
     margin-bottom: 1rem;
@@ -2005,7 +1971,7 @@ overflow: hidden;
     align-items: center;
     padding: 1rem;
     background: $white-secondary;
-    border-radius: 10px;
+    border-radius: $radius-md;
     border-left: 4px solid $primary;
 }
 
@@ -2069,7 +2035,7 @@ overflow: hidden;
 
 /* Style personnalisé des toasts */
 .toast {
-    border-radius: 10px;
+    border-radius: $radius-md;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-size: 0.95rem;
 }
