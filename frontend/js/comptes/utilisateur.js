@@ -917,7 +917,7 @@ function afficherSuiviCommande(historique) {
             <div class="d-flex mb-4 ${isLast ? '' : ''}">
                 <div class="me-3 text-center" style="min-width: 40px;">
                     <i class="bi ${config.icon}" style="font-size: 1.5rem; color: ${config.color};"></i>
-                    ${!isLast ? `<div class="bg-accent" style="width: 2px; height: 30px; margin: 5px auto;"></div>` : ''}
+                    ${!isLast ? `<div class="bg-accent" style="width: 2px; height: 30px; margin: 5px auto; padding: 0;"></div>` : ''}
                 </div>
                 <div>
                     <h6 class="mb-1 fw-bold" style="color: ${config.color};">
