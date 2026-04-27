@@ -1533,8 +1533,9 @@ overflow: hidden;
 }
 
 //Google maps
-#googleMap{
-    height: 1015px;
+#googleMap {
+    height: 100%;
+    min-height: 400px;
     width: 100%;
     margin-bottom: 1.5rem;
 }
