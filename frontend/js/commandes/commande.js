@@ -595,7 +595,7 @@ async function checkModification() {
         calculatePrice();
 
         //Modifier les titres dans le header
-        document.querySelector('.commande-header h2').innerHTML = '<i class="bi bi-pencil-square"></i> Modifier ma commande';
+        document.querySelector('.commande-header h1').innerHTML = '<i class="bi bi-pencil-square"></i> Modifier ma commande';
         document.querySelector('.commande-header p').textContent = 'Modifiez les détails de votre commande';
 
         // Modifier le titre et le bouton pour indiquer une modification
