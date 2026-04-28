@@ -12816,8 +12816,10 @@ li {
 }
 
 .plat-card {
-  background: #E5DFCE;
+  background: #F0EFEA;
   color: black;
+  border: 1px solid #6B5847;
+  border-radius: 15px;
   transition: all 0.3s;
 }
 
@@ -14034,4 +14036,8 @@ li {
 /* Numérotation des articles */
 .main-cgv section h2::before, .main-cgv section .h2::before {
   content: "📄 ";
+}
+
+.text-accent {
+  color: #d4af37;
 }/*# sourceMappingURL=main.css.map */

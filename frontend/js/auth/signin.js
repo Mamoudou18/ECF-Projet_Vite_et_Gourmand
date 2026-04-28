@@ -123,10 +123,11 @@ async function handleLogin(event) {
             setTimeout(() => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect');
+                const section = urlParams.get('section');
 
                 // Si un redirect est explicitement demandé dans l'URL, on l'utilise en priorité
                 if (redirect) {
-                    window.location.href = redirect;
+                    window.location.href = section ? `${redirect}#${section}` : redirect;
                 } else {
                     // Sinon, redirection selon le rôle
                     const role = userData.role;

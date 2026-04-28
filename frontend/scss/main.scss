@@ -868,8 +868,10 @@ li{
 }
 
 .plat-card {
-    background: $secondary;
+    background: $white-secondary;
     color: black;
+    border: 1px solid $primary;
+    border-radius: $radius-btn;
     transition: all 0.3s;
 }
 
@@ -2111,4 +2113,8 @@ overflow: hidden;
 /* Numérotation des articles */
 .main-cgv section h2::before {
     content: "📄 ";
+}
+
+.text-accent {
+    color: $accent;
 }

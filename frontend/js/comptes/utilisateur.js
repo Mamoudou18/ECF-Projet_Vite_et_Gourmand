@@ -36,6 +36,21 @@ export async function init() {
     loadAvis();
 
     // Redirection via hash
+
+    const currentUser = getStorage();
+
+    if (!currentUser) {
+        const loginLink = document.querySelector('#connexionModal a[href="/signin"]');
+        if (loginLink) {
+            const currentHash = window.location.hash.replace('#', '') || 'dashboard-section';
+            loginLink.href = `/signin?redirect=/utilisateur&section=${currentHash}`;
+        }
+        const modal = new bootstrap.Modal(document.getElementById('connexionModal'));
+        modal.show();
+        return;
+    }
+
+    // Redirection via hash
     const hash = window.location.hash.replace('#', '');
     if (hash) {
         const link = document.querySelector(`.sidebar-menu a[data-section="${hash}"]`);
@@ -43,6 +58,7 @@ export async function init() {
             showSection(hash, link);
         }
     }
+
 }
 
 // initiliser les écouteurs d'évèenement
