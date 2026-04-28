@@ -218,7 +218,7 @@ function displayMenuDetail(menu) {
     function renderAllergenes(allergenes) {
         if (allergenes && allergenes.trim()) {
             return `
-                <div class="alert alert-warning py-2 mb-0">
+                <div class="alert text-black py-2 mb-0" style=" background: #fff3cd;">
                     <small>
                         <i class="bi bi-exclamation-triangle-fill"></i>
                         <strong>Allergènes:</strong> ${escapeHTML(allergenes)}
@@ -282,7 +282,7 @@ function displayMenuDetail(menu) {
     const compoHTML = maxLength === 0
         ? `<div class="alert alert-info"><i class="bi bi-info-circle"></i> Aucun plat dans ce menu</div>`
         : `
-            <div class="card card-composition shadow-sm mb-4">
+            <div class="card card-composition shadow-sm mb-4 h-100">
                 <div class="card-header">
                     <h2><i class="bi bi-list-ul"></i> Composition du menu</h2>
                 </div>
@@ -319,7 +319,7 @@ function displayMenuDetail(menu) {
     const prixTotal = prixBase * menu.nb_personnes_min;
 
     const prixHTML = `
-        <div class="card card-composition shadow-sm mb-4">
+        <div class="card card-composition shadow-sm mb-4 h-100">
             <div class="card-header">
                 <h2><i class="bi bi-tag"></i> Tarif & Commande</h2>
             </div>

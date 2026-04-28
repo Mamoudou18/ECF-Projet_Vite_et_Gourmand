@@ -10,6 +10,7 @@ let deliveryCost = 0;
 let delaiJours = 7; 
 let map, directionsService, directionsRenderer;
 let autocompleteInstance = null;
+const adresseDepart = "1 Place de la République, 33000 Bordeaux, France";
 
 let joursFermes = [];
 
@@ -122,7 +123,6 @@ async function initGoogleMaps() {
       document.getElementById('villeLivraison').value = ville;
 
       // calcul itinéraire pour les frais de livraison hors bordeaux
-      const adresseDepart = "1 Place de la République, 33000 Bordeaux, France";
       calculerItineraire(adresseDepart, place.geometry.location);
     });
 
@@ -172,6 +172,9 @@ function copieAdressePostale(e){
     document.getElementById('codePostalLivraison').value = document.getElementById('codePostalClient').value;
     document.getElementById('villeLivraison').value = document.getElementById('villeClient').value;
     calculerFraisManuel();
+
+    const adresseArrivee = `${document.getElementById('adressePostale').value},${document.getElementById('villeClient').value},France`;
+    calculerItineraire(adresseDepart, adresseArrivee);
 }
 
 //calcul manuel de frais
@@ -591,11 +594,13 @@ async function checkModification() {
         }
 
         // Recalculer les frais
+        const adressePrestation = document.getElementById('adresseLivraison').value;
+        calculerItineraire(adresseDepart, adressePrestation);
         calculerFraisManuel();
         calculatePrice();
 
         //Modifier les titres dans le header
-        document.querySelector('.commande-header h2').innerHTML = '<i class="bi bi-pencil-square"></i> Modifier ma commande';
+        document.querySelector('.commande-header h1').innerHTML = '<i class="bi bi-pencil-square"></i> Modifier ma commande';
         document.querySelector('.commande-header p').textContent = 'Modifiez les détails de votre commande';
 
         // Modifier le titre et le bouton pour indiquer une modification

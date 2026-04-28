@@ -868,8 +868,10 @@ li{
 }
 
 .plat-card {
-    background: $secondary;
+    background: $white-secondary;
     color: black;
+    border: 1px solid $primary;
+    border-radius: $radius-btn;
     transition: all 0.3s;
 }
 
@@ -1533,8 +1535,9 @@ overflow: hidden;
 }
 
 //Google maps
-#googleMap{
-    height: 1015px;
+#googleMap {
+    height: 100%;
+    min-height: 400px;
     width: 100%;
     margin-bottom: 1.5rem;
 }
@@ -2110,4 +2113,8 @@ overflow: hidden;
 /* Numérotation des articles */
 .main-cgv section h2::before {
     content: "📄 ";
+}
+
+.text-accent {
+    color: $accent;
 }

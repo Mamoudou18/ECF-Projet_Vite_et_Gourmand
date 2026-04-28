@@ -395,3 +395,34 @@
 
 </section>
 
+<!-- Modal de redirection connexion -->
+<div class="modal fade" id="connexionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-accent">
+                <h5 class="modal-title w-100 text-center">
+                    <i class="bi bi-lock-fill"></i> Connexion requise
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <i class="bi bi-person-lock text-accent" style="font-size: 5rem;"></i>
+                </div>
+                <h6 class="mb-2">Vous devez être connecté pour commander un menu</h6>
+                <p class="text-muted small">Connectez-vous ou créez un compte pour passer commande</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left"></i> Annuler
+                </button>
+                <a href="/signin" class="btn bg-accent">
+                    <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                </a>
+                <a href="/signup" class="btn btn-secondary">
+                        <i class="bi bi-person-plus"></i> Créer un compte
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
