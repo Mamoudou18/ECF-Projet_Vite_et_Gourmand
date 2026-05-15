@@ -6,7 +6,7 @@ Développée dans le cadre de mon projet de formation Développeur Web et web mo
 
 # 🛠️ Stack Technique
 
-* Front : HTML/CSSS (Bootstrap), JavaScript
+* Front : HTML/CSS (Bootstrap), JavaScript
 * Back-end : PHP (avec utilisation de PDO)
 * Base de données relationnelle : MySQL
 * Base de données non relationnelle (NoSQL) : MongoDB
@@ -14,9 +14,9 @@ Développée dans le cadre de mon projet de formation Développeur Web et web mo
 * Déploiement :  Heroku
 
 # ⚙️  Prérequis
-Avant de commancer l'install de ce projet en local, assurez-vous d'avoir installé : 
+Avant de commencer l'install de ce projet en local, assurez-vous d'avoir installé : 
 * Docker & Docker Compose voir https://www.docker.com/
-* un repertoire Git voir https://git-scm.com/
+* un Git voir https://git-scm.com/
 * Composer pour installer les dépendances PHP voir https://getcomposer.org/doc/
 * Node js pour l'installation de bootstrap et la compilation de scss voir : https://nodejs.org/fr/download et https://getbootstrap.com/docs/5.0/getting-started/download/
 
@@ -29,7 +29,7 @@ Avant de commancer l'install de ce projet en local, assurez-vous d'avoir install
 
 2. Configurer les variables d'environnement
     * créer un fichier .env
-    * copier les paramètres ci-dessous et remprlir les valeurs manquantes:
+    * copier les paramètres ci-dessous et remplir les valeurs manquantes:
 
         # Base de données
             DB_HOST=mysql
@@ -77,18 +77,18 @@ Avant de commancer l'install de ce projet en local, assurez-vous d'avoir install
 
     * cd frontend
     * npm install
-    * télécharger l'extention :  live Sass Compiler ou npm run scss
+    * télécharger l'extention vs code :  live Sass Compiler
 
-5. Installer via Docker : Nginx, MySQL, MongoDB, Mongo Express, PHP, PhpMyAdmin
+5. Installer via Docker Compose : Nginx, MySQL, MongoDB, Mongo Express, PHP, PhpMyAdmin
 
-    * docker-compose build
-    * docker-compose up -d
+    * docker-compose up -d --build
+    * vérifier avec docker ps que tout tourne correctement
 
 
 # 🌐 Accès à l'application
 
 *   Service URL Application (Front) http://localhost:3000 
-    * installer l'extension PHP Server pour lancer le front en local
+*   Installer l'extension VS Code PHP Server pour servir le front sur le port 3000
 *   API (Back) http://localhost/api/* 
 *   phpMyAdmin http://localhost:8080
 
