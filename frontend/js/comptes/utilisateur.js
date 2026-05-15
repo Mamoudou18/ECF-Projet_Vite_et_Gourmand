@@ -201,7 +201,7 @@ function updateDasboardHeader(){
     }
 
     // Nom
-    const nom = document.querySelector('.user-details h3');
+    const nom = document.querySelector('.user-details h1');
     if(nom) nom.textContent = `Bienvenue, ${user.prenom} ${user.nom}`;
 
     // Email
