@@ -116,7 +116,7 @@ function displayMenus() {
                                 <span class="menu-price-value">${menu.prix_base} €</span>
                             </div>
                             <a href="/detail?id=${menu.id}" class="btn btn-detail">
-                                Voir détail <i class="bi bi-arrow-right"></i>
+                                Voir le détail <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
