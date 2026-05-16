@@ -13,8 +13,13 @@ import { API_BASE } from "../config.js";
 let cachedCommandes = null;
 
 async function getCommandes(userId) {
+    const user = getStorage();
+    if(!user) return;
+
     if (cachedCommandes) return cachedCommandes;
-    const response = await fetch(`${API_BASE}/commande/user-commande?id=${userId}`);
+    const response = await fetch(`${API_BASE}/commande/user-commande?id=${userId}`,
+        {headers: {'Authorization': `Bearer ${user.api_token}`}}
+    );
     if (!response.ok) return [];
     const data = await response.json();
     cachedCommandes = Array.isArray(data.commandes) ? data.commandes : [];
@@ -287,7 +292,8 @@ function formModifyProfilUser(e){
     const { nom, prenom, telephone, adresse, code_postal, ville } = updateUser;
 
     const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Content-Type", "application/json",);
+    myHeaders.append("Authorization", `Bearer ${user.api_token}`);
 
     const raw = JSON.stringify({
         nom,
@@ -380,7 +386,7 @@ async function handleInitPassword(event) {
     try {
         const response = await fetch(`${API_BASE}/auth/password?id=${user.id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({ old_password, new_password, confirm_password })
         });
 
@@ -609,7 +615,7 @@ document.addEventListener('click', (e) => {
     annulerCommande(btn.dataset.id, btn.dataset.numero);
 });
 
- async function annulerCommande (id, numero_commande) {
+async function annulerCommande (id, numero_commande) {
     const confirmed = await showConfirm({
         title: 'Annuler la commande ?',
         message: 'Votre commande sera définitivement annulée.',
@@ -622,11 +628,12 @@ document.addEventListener('click', (e) => {
     if (!confirmed) return;
 
     const user = getStorage();
+    if(!user) return;
 
     try {
         const response = await fetch(`${API_BASE}/commande/annule-commande?id=${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({
                 motif_annulation: "Commande annulée par le client depuis son espace",
                 modifie_par: user.id,
@@ -650,7 +657,12 @@ document.addEventListener('click', (e) => {
 
 window.modifierCommande = async function(id) {
     try {
-        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
+        const user = getStorage();
+        if(!user) return;
+
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`,
+            { headers: {'Authorization': `Bearer ${user.api_token}`}}
+        );
 
         const data = await response.json();
 
@@ -683,8 +695,13 @@ document.addEventListener('click', (e) => {
 };
 
 window.voirDetail = async function(id) {
+    const user = getStorage();
+    if(!user) return;
+
     try {
-        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`,
+            { headers: { 'Authorization': `Bearer ${user.api_token}` }}
+        );
         const data = await response.json();
 
         if (data.success) {
@@ -706,6 +723,8 @@ document.addEventListener('click', (e) => {
 });
 
 async function recommander (id, numero_commande) {
+    const user = getStorage();
+    if(!user) return;
 
     const confirmed = await showConfirm({
         title: 'Recommander ?',
@@ -719,7 +738,9 @@ async function recommander (id, numero_commande) {
     if (!confirmed) return;
 
     try {
-        const detailRes = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`);
+        const detailRes = await fetch(`${API_BASE}/commande/detail-commande?id=${id}`,
+            { headers : { 'Authorization': `Bearer ${user.api_token}` }}
+        );
         const detailData = await detailRes.json();
 
         if (!detailData.success) {
@@ -751,7 +772,7 @@ async function recommander (id, numero_commande) {
 
         const createRes = await fetch(`${API_BASE}/commande/create-commande`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify(lisOld)
         });
 
@@ -774,7 +795,12 @@ async function recommander (id, numero_commande) {
 // Charger le suivi d'une commande
 async function loadSuiviCommande(id, numero_commande) {
     try {
-        const response = await fetch(`${API_BASE}/commande/historique?id=${id}`);
+        const user = getStorage();
+        if(!user) return;
+
+        const response = await fetch(`${API_BASE}/commande/historique?id=${id}`,
+            { headers: { 'Authorization': `Bearer ${user.api_token}` }}
+        );
         const data = await response.json();
 
         if (data.success) {
@@ -955,7 +981,9 @@ async function loadAvis() {
     if (!user) return;
 
     try {
-        const responseAvis = await fetch(`${API_BASE}/avis/user?user_id=${user.id}`);
+        const responseAvis = await fetch(`${API_BASE}/avis/user?user_id=${user.id}`, 
+            { headers: { 'Authorization': `Bearer ${user.api_token}` }}
+        );
         if (!responseAvis.ok) return;
         const avis = await responseAvis.json();
         const listeAvis = Array.isArray(avis.avis) ? avis.avis : [];
@@ -1143,7 +1171,7 @@ window.envoyerAvis = async function() {
     try {
         const response = await fetch(`${API_BASE}/avis/create`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({
                 user_id: user.id,
                 id_commande: parseInt(id_commande),

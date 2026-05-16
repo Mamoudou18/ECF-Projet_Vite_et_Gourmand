@@ -335,6 +335,7 @@ async function loadMenuCommande() {
     loader.style.display = 'block';
 
     try {
+
         const response = await fetch(`${API_BASE}/menu/detail?id=${menuId}`);
 
         if (!response.ok) {
@@ -542,7 +543,12 @@ async function checkModification() {
     if (!modifierId) return;
 
     try {
-        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${modifierId}`);
+        const user = getStorage();
+        if(!user) return;
+
+        const response = await fetch(`${API_BASE}/commande/detail-commande?id=${modifierId}`,
+            { headers: {'Authorization': `Bearer ${user.api_token}`}}
+        );
         const data = await response.json();
 
         if (!data.success || !data.commande) {
@@ -724,9 +730,14 @@ async function formCommandeMenu(e) {
     const method = modifierId ? "PUT" : "POST";
 
     try {
+        const user = getStorage();
+        if (!user) return;
         const response = await fetch(url, {
             method,
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${user.api_token}`
+             },
             body: JSON.stringify(commande),
         });
         const result = await response.json();

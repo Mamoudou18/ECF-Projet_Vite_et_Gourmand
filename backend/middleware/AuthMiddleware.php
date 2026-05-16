@@ -1,7 +1,7 @@
 <?php
 class AuthMiddleware
 {
-    private $userModel;
+    private User $userModel;
 
     public function __construct()
     {

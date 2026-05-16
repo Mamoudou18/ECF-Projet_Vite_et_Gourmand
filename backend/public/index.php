@@ -173,6 +173,10 @@ switch ($ressource) {
 
             // Nouvelle route:  user
             case 'user':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     // Vérification que la méthode login existe
                     if (method_exists($controller, 'updateUser')) {
@@ -196,6 +200,10 @@ switch ($ressource) {
 
             //Nouvelle route:passeword
             case 'password':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     // Vérification que la méthode login existe
                     if (method_exists($controller, 'updatePassword')) {
@@ -331,6 +339,10 @@ switch ($ressource) {
                 break;
 
             case 'create':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'POST') {
                     if (method_exists($controller, 'create')) {
                         $controller->create();
@@ -352,6 +364,10 @@ switch ($ressource) {
                 break;
 
             case 'update':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     if (method_exists($controller, 'update')) {
                         $controller->update();
@@ -373,6 +389,10 @@ switch ($ressource) {
                 break;
 
             case 'toggle':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PATCH') {
                     if (method_exists($controller, 'toggle')) {
                         $controller->toggle();
@@ -394,6 +414,10 @@ switch ($ressource) {
                 break;
 
             case 'delete':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'DELETE') {
                     if (method_exists($controller, 'delete')) {
                         $controller->delete();
@@ -442,6 +466,10 @@ switch ($ressource) {
         switch ($action) {
 
             case 'affiche':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'afficheCommande')) {
                         $controller->afficheCommande();
@@ -463,6 +491,10 @@ switch ($ressource) {
                 break;
 
             case 'detail-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'detailCommande')) {
                         $controller->detailCommande();
@@ -484,6 +516,10 @@ switch ($ressource) {
                 break;
 
             case 'create-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'POST') {
                     if (method_exists($controller, 'createCommande')) {
                         $controller->createCommande();
@@ -505,6 +541,10 @@ switch ($ressource) {
                 break;
 
             case 'update-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     if (method_exists($controller, 'updateCommande')) {
                         $controller->updateCommande();
@@ -527,6 +567,10 @@ switch ($ressource) {
 
 
             case 'user-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getByUser')) {
                         $controller->getByUser();
@@ -548,6 +592,10 @@ switch ($ressource) {
                 break;
 
             case 'change-statut':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     if (method_exists($controller, 'changerStatutCommande')) {
                         $controller->changerStatutCommande();
@@ -569,6 +617,10 @@ switch ($ressource) {
                 break;
 
             case 'delete-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'DELETE') {
                     if (method_exists($controller, 'deleteCommande')) {
                         $controller->deleteCommande();
@@ -590,6 +642,10 @@ switch ($ressource) {
                 break;
 
             case 'annule-commande':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     if (method_exists($controller, 'annulerCommande')) {
                         $controller->annulerCommande();
@@ -611,6 +667,10 @@ switch ($ressource) {
                 break;
 
             case 'historique':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'historiqueCommande')) {
                         $controller->historiqueCommande();
@@ -659,6 +719,10 @@ switch ($ressource) {
         switch ($action) {
 
             case 'create':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'POST') {
                     if (method_exists($controller, 'creerAvis')) {
                         $controller->creerAvis();
@@ -680,6 +744,10 @@ switch ($ressource) {
                 break;
 
             case 'user':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getAvisByUser')) {
                         $controller->getAvisByUser();
@@ -722,6 +790,10 @@ switch ($ressource) {
                 break;
 
             case 'list':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getAllAvis')) {
                         $controller->getAllAvis();
@@ -743,6 +815,10 @@ switch ($ressource) {
                 break;
 
             case 'moderer':
+                require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                $middleware = new AuthMiddleware();
+                $middleware->handle();
+
                 if ($method === 'PUT') {
                     if (method_exists($controller, 'modererAvis')) {
                         $id = $_GET['id'] ?? null;
@@ -918,6 +994,10 @@ switch ($ressource) {
         switch ($action) {
 
             case 'sync':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+
                 if ($method === 'POST') {
                     if (method_exists($controller, 'sync')) {
                         $controller->sync();
@@ -939,6 +1019,10 @@ switch ($ressource) {
                 break;
 
             case 'dashboard':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getDashboard')) {
                         $controller->getDashboard();
@@ -960,6 +1044,10 @@ switch ($ressource) {
                 break;
 
             case 'commandes-par-menu':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+                                    
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getCommandesParMenu')) {
                         $controller->getCommandesParMenu();
@@ -981,6 +1069,10 @@ switch ($ressource) {
                 break;
 
             case 'chiffre-affaires':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getChiffreAffaires')) {
                         $controller->getChiffreAffaires();
@@ -1002,6 +1094,10 @@ switch ($ressource) {
                 break;
 
             case 'top-clients':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getTopClients')) {
                         $controller->getTopClients();
@@ -1023,6 +1119,10 @@ switch ($ressource) {
                 break;
 
             case 'menus':
+                    require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+                    $middleware = new AuthMiddleware();
+                    $middleware->handle();
+
                 if ($method === 'GET') {
                     if (method_exists($controller, 'getMenusDisponibles')) {
                         $controller->getMenusDisponibles();

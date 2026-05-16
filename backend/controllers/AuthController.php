@@ -73,7 +73,6 @@ class AuthController
         }
     }
 
-
     /**
      * Connexion d'un utilisateur avec rate limiting
      */
@@ -152,10 +151,23 @@ class AuthController
      * Mise à jour d'un utilisateur
      */
     public function updateUser(): void{
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : null; // ou depuis l'URL /api/utilisateurs/5
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
         if (!$id) {
             $this->response->error('ID invalide.', 400);
+            return;
+        }
+
+        if ($id != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
             return;
         }
 
@@ -201,6 +213,14 @@ class AuthController
      */
     public function updatePassword(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware) 
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+                
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (!is_array($data) || empty($data)) {
@@ -220,6 +240,11 @@ class AuthController
 
         if (!$id) {
             $this->response->error('ID manquant.', 400);
+            return;
+        }
+
+        if ($id != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
             return;
         }
 
@@ -424,11 +449,11 @@ class AuthController
 
     public function getUsers(): void
     {
-        $admin = $_REQUEST['auth_user'];
+        // Vérifier que c'est un admin (via le middleware)        
+        $currentUser = $_REQUEST['auth_user'] ?? null;
 
-        if ($admin['role'] !== 'admin') {
-            http_response_code(403);
-            echo json_encode(['message' => 'Accès refusé']);
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
             return;
         }
 

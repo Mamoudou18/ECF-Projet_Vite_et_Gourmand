@@ -61,8 +61,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // GET /api/commande/affiche
     // ─────────────────────────────────────────
+
     public function afficheCommande(): void
     {
+        // Vérifier que c'est un admin ou un employe (via le middleware)  
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $commandes = $this->commande->getAllCommande();
         $this->response->success([
             'commandes' => $commandes,
@@ -73,16 +82,31 @@ class CommandeController
     // ─────────────────────────────────────────
     // GET /api/commande/detail-commande?id={id}
     // ─────────────────────────────────────────
+
     public function detailCommande(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID manquant ou invalide.', 400);
             return;
         }
-
+    
         $commande = $this->findCommandeOrFail($id);
         if (!$commande) return;
+
+        // Vérification : la commande appartient au user connecté (sauf admin/employe)
+        if ($commande['user_id'] != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
 
         $this->response->success(['commande' => $commande]);
     }
@@ -90,11 +114,25 @@ class CommandeController
     // ─────────────────────────────────────────
     // GET /api/commande/user-commande?id={user_id}
     // ─────────────────────────────────────────
+
     public function getByUser(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $userId = $this->getId();
         if (!$userId) {
             $this->response->error('User ID manquant.', 400);
+            return;
+        }
+
+        if ($userId != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
             return;
         }
 
@@ -114,6 +152,14 @@ class CommandeController
 
     public function createCommande(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $data = $this->getJsonBody();
         if (!$data) {
             $this->response->error('Données invalides.', 400);
@@ -215,8 +261,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // PUT /api/commande/update-commande?id={id}
     // ─────────────────────────────────────────
+
     public function updateCommande(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID invalide.', 400);
@@ -225,6 +280,12 @@ class CommandeController
 
         $commande = $this->findCommandeOrFail($id);
         if (!$commande) return;
+
+        // Vérification : la commande appartient au user connecté (sauf admin/employe)
+        if ($commande['user_id'] != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
 
         // Vérifier que la commande est encore modifiable (en_attente)
         if ($commande['statut'] !== 'en_attente') {
@@ -261,8 +322,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // PUT /api/commande/change-statut?id={id}
     // ─────────────────────────────────────────
+
     public function changerStatutCommande(): void
     {
+        // Vérifier que c'est un admin/employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID invalide.', 400);
@@ -352,8 +422,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // DELETE /api/commande/delete-commande?id={id}
     // ─────────────────────────────────────────
+
     public function deleteCommande(): void
     {
+        // Vérifier que c'est un admin/employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+    
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID invalide.', 400);
@@ -380,8 +459,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // PUT /api/commande/annule-commande?id={id}
     // ─────────────────────────────────────────
+
     public function annulerCommande(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID invalide.', 400);
@@ -390,6 +478,12 @@ class CommandeController
 
         $commande = $this->findCommandeOrFail($id);
         if (!$commande) return;
+
+        // Vérification : la commande appartient au user connecté (sauf admin/employe)
+        if ($commande['user_id'] != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
 
         if ($commande['statut'] === 'annulee') {
             $this->response->error('Cette commande est déjà annulée.', 400);
@@ -442,8 +536,17 @@ class CommandeController
     // ─────────────────────────────────────────
     // GET /api/commande/historique?id={id}
     // ─────────────────────────────────────────
+
     public function historiqueCommande(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+                
         $id = $this->getId();
         if (!$id) {
             $this->response->error('ID invalide.', 400);

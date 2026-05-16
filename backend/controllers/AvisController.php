@@ -24,6 +24,14 @@ class AvisController
 
     public function creerAvis(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $data = json_decode(file_get_contents('php://input'), true);
 
         $errors = $this->validator->validateAvis($data);
@@ -69,9 +77,22 @@ class AvisController
 
     public function getAvisByUser(): void
     {
+        // Vérifier que c'est un admin/employe/utilisateur (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe', 'utilisateur'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+                
         $idUser = (int) ($_GET['user_id'] ?? 0);
         if (!$idUser) {
             $this->response->error('user_id requis', 400);
+            return;
+        }
+
+        if ($idUser != $currentUser['id'] && !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
             return;
         }
 
@@ -85,12 +106,28 @@ class AvisController
 
     public function getAllAvis(): void
     {
+        // Vérifier que c'est un admin/employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $statut = $_GET['statut'] ?? null;
         $this->response->success(['avis' => $this->avis->getAllAvis($statut)]);
     }
 
     public function modererAvis(string $id): void
     {
+        // Vérifier que c'est un admin/employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $data = json_decode(file_get_contents('php://input'), true);
 
         $errors = $this->validator->validateModerationAvis($data);
