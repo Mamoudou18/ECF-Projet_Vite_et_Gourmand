@@ -116,7 +116,7 @@ function displayMenus() {
                                 <span class="menu-price-value">${menu.prix_base} €</span>
                             </div>
                             <a href="/detail?id=${menu.id}" class="btn btn-detail">
-                                Voir détail <i class="bi bi-arrow-right"></i>
+                                Voir le détail <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -187,14 +187,21 @@ function applyFilters() {
     // Thèmes
     const selectedThemes = Array.from(document.querySelectorAll('.theme-filter:checked')).map(cb => cb.value);
     if (selectedThemes.length > 0) {
-        filteredMenus = filteredMenus.filter(m => selectedThemes.includes(m.themes));
+        filteredMenus = filteredMenus.filter(m => {
+            const themes = m.themes ? m.themes.split(',').map(t => t.trim()) : [];
+            return selectedThemes.some(t => themes.includes(t));
+        });
     }
 
     // Régimes
     const selectedRegimes = Array.from(document.querySelectorAll('.regime-filter:checked')).map(cb => cb.value);
     if (selectedRegimes.length > 0) {
-        filteredMenus = filteredMenus.filter(m => selectedRegimes.includes(m.regimes));
+        filteredMenus = filteredMenus.filter(m => {
+            const regimes = m.regimes ? m.regimes.split(',').map(r => r.trim()) : [];
+            return selectedRegimes.some(r => regimes.includes(r));
+        });
     }
+
 
     // Nombre de personnes
     const minPersonsFilter = document.getElementById('minPersonsFilter').value;

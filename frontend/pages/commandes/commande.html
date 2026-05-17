@@ -266,6 +266,15 @@
                                 </label>
                             </div>
 
+                            <!-- OPTIONS SUPPLÉMENTAIRES -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-chat-left-text"></i> Commentaire (optionnel)
+                                </label>
+                                <textarea class="form-control" id="commentaire" rows="4" 
+                                    placeholder="Informations particulières, allergies non mentionnées, demandes spéciales..."></textarea>
+                            </div>
+
                             <div id="deliveryInfo" class="delivery-info" style="display: none;">
                                 <strong><i class="bi bi-truck"></i> Frais de livraison : <span id="deliveryPrice">0,00 €</span></strong>
                                 <p class="mb-0 mt-2" id="deliveryDetails"></p>
@@ -278,18 +287,6 @@
                         </div>
                     </div>
 
-
-                </div>
-                <!-- OPTIONS SUPPLÉMENTAIRES -->
-                <div class="section-card">
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-chat-left-text"></i> Commentaire (optionnel)
-                        </label>
-                        <textarea class="form-control" id="commentaire" rows="4" 
-                            placeholder="Informations particulières, allergies non mentionnées, demandes spéciales..."></textarea>
-                    </div>
                 </div>
 
                 <!-- Récapitulatif prix -->
@@ -318,12 +315,10 @@
                         <strong id="recapDelivery">0,00 €</strong>
                     </div>
 
-                    <div class="price-line">
+                    <div class="price-line mb-4">
                         <span>TOTAL TTC</span>
                         <strong id="recapTotal">0,00 €</strong>
                     </div>
-
-                    <hr class="my-4">
 
                     <!-- CGV -->
                     <div class="form-check mb-3">

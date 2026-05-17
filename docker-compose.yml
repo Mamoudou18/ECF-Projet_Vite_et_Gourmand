@@ -59,6 +59,7 @@ services:
     restart: always
     volumes:
       - ./backend:/var/www/html/backend
+      - /var/www/html/backend/vendor 
       - ./frontend:/var/www/html/frontend
       - ./.env:/var/www/html/.env
       - ./backend/public/uploads:/var/www/html/backend/public/uploads

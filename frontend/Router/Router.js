@@ -1,3 +1,5 @@
+import { getRole, isConnected } from "../js/script.js";
+import { showToast } from "../js/utils/util.js";
 import Route from "./Route.js";
 import { allRoutes, websitename } from "./allRoutes.js";
 
@@ -22,6 +24,29 @@ const LoadContentPage = async () => {
     // Affiche le loader immédiatement
     const loaderTimeout= setTimeout(showLoader,200);
 
+    // Vérification des droits d'accès aux pages
+    const allRolesArray = actualRoute.authorize;
+    if (allRolesArray.length > 0) {
+        if (allRolesArray.includes("disconnected")) {
+        if (isConnected()) 
+            window.location.replace("/"); // silencieux, cas normal
+
+        } else if (allRolesArray.includes("connected")) {
+            if (!isConnected()) {
+                showToast("Connectez-vous pour accéder à cette page", "warning");
+                setTimeout(() => window.location.replace("/signin"), 500);
+            }
+
+        } else {
+            const roleUser = getRole();
+            if (!allRolesArray.includes(roleUser)) {
+                showToast("Vous n'avez pas les droits nécessaires", "danger");
+                setTimeout(() => window.location.replace("/"), 500);
+            }
+        }
+
+    }
+    
     // Lance le fetch en parallèle de l'animation
     const fetchPromise = fetch(actualRoute.pathHtml).then(res => res.text());
 

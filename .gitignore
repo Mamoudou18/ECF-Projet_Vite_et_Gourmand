@@ -2,12 +2,6 @@
 .env
 .env.production
 
-# Base de données
-*.sql
-database
-database/db.sql
-
-
 # Logs
 *.log
 docker/nginx/logs/

@@ -1,5 +1,6 @@
 import {showToast } from "../utils/util.js";
 import { API_BASE } from "../config.js";
+import { getStorage } from "../script.js";
 
 const btnAjouterMenu = document.getElementById("btnAjouterMenu");
 const btnSave = document.getElementById("btnSave");
@@ -312,6 +313,9 @@ function sectionPlat(type, label, icon) {
 }
 
 function enregistrer() {
+    const user = getStorage();
+    if(!user) return;
+
     const menus = document.querySelectorAll("#menusContainer .menu");
     if (menus.length === 0) return showToast('Ajoutez au moins un menu.', 'warning');
 
@@ -392,7 +396,7 @@ function enregistrer() {
         if (editId) fd.append('_method', 'PUT');
 
         promises.push(
-            fetch(url, { method, body: fd })
+            fetch(url, { method, body: fd, headers :{ 'Authorization': `Bearer ${user.api_token}` } })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {

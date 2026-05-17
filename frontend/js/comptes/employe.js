@@ -69,6 +69,9 @@ function initModalListeners() {
 
     const btnModif = document.getElementById('btnConfirmModification');
     if (btnModif) btnModif.addEventListener('click', handleConfirmModification);
+
+    const confirmToggleBtn = document.getElementById('confirmToggleBtn');
+    if (confirmToggleBtn) confirmToggleBtn.addEventListener('click', handleConfirmToggle);
 }
 
 // ===================== NAVIGATION =====================
@@ -93,7 +96,12 @@ function showSection(sectionId, clickedLink) {
 // ===================== CHARGEMENT COMMANDES =====================
 async function loadOrders() {
     try {
-        const response = await fetch(`${API_BASE}/commande/affiche`);
+        const user = getStorage();
+        if(!user) return;
+
+        const response = await fetch(`${API_BASE}/commande/affiche`,{
+            headers: {'Authorization': `Bearer ${user.api_token}`}
+        });
         const data = await response.json();
         if (data.success) {
             orders = data.commandes;
@@ -369,9 +377,11 @@ async function handleConfirmStatus() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Traitement...';
 
     try {
+        if(!user) return;
+
         const response = await fetch(`${API_BASE}/commande/change-statut?id=${orderId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({ modifie_par: user.id, statut: newStatus })
         });
         const data = await response.json();
@@ -429,9 +439,11 @@ async function handleConfirmCancel() {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Annulation...';
 
     try {
+        if(!user) return;
+
         const response = await fetch(`${API_BASE}/commande/annule-commande?id=${orderId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({
                 motif_annulation: reason.value.trim(),
                 mode_contact: contactMode ? contactMode.value : null,
@@ -629,6 +641,9 @@ function loadRecentActivity() {
 
 //Sidebar badges
 function loadSidebarBadges() {
+    const user = getStorage();
+    if(!user) return;
+
     const actives = orders.filter(c =>
         !['terminee', 'annulee'].includes(c.statut)
     ).length;
@@ -636,7 +651,9 @@ function loadSidebarBadges() {
     if (badge) badge.textContent = actives;
 
     // Badge avis en attente
-    fetch(`${API_BASE}/avis/list`)
+    fetch(`${API_BASE}/avis/list`, {
+        headers: {'Authorization': `Bearer ${user.api_token}`}
+})
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -851,7 +868,7 @@ function displayEmployeeMenus(menus) {
                                     <li><a class="dropdown-item text-primary btn-edit-menu" href="#" data-id="${menu.id}">
                                         <i class="bi bi-pencil"></i> Modifier</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger btn-toggle-menu" href="#" data-id="${menu.id}">
+                                    <li><a class="dropdown-item text-danger btn-toggle-menu" href="#" data-id="${menu.id}" data-nom="${menu.titre}">
                                         <i class="bi bi-trash"></i> Désactiver</a></li>
                                 </ul>
                             </div>
@@ -919,22 +936,45 @@ function updateEmployeeMenusCount(totalPages) {
 }
 
 // désactiver un menu
-async function toggleMenu(id) {
-    if (!confirm('Désactiver ce menu ?')) return;
+function openToggleMenuModal(id, nom) {
+    document.getElementById('toggleMenuNom').textContent = nom;
+    document.getElementById('confirmToggleBtn').setAttribute('data-menu-id', id);
+    new bootstrap.Modal(document.getElementById('toggleMenuModal')).show();
+}
+
+async function handleConfirmToggle() {
+    const user = getStorage();
+    const btn = document.getElementById('confirmToggleBtn');
+    const id = btn.getAttribute('data-menu-id');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Désactivation...';
+
     try {
-        const response = await fetch(`${API_BASE}/menu/toggle?id=${id}`, { method: 'PATCH' });
+        if (!user) return;
+
+        const response = await fetch(`${API_BASE}/menu/toggle?id=${id}`, {
+            method: 'PATCH',
+            headers: { 'Authorization': `Bearer ${user.api_token}` }
+        });
         const data = await response.json();
+
         if (data.success) {
+            showToast('Menu désactivé !', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('toggleMenuModal')).hide();
             allEmployeeMenus = allEmployeeMenus.filter(m => m.id != id);
             applyFilters();
-            showToast('Menu désactivé !', 'success');
         } else {
             showToast(data.message || 'Erreur', 'danger');
         }
     } catch (error) {
         showToast('Erreur réseau', 'danger');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-eye-slash"></i> Désactiver';
     }
 }
+
 
 // utilitaires
 function capitalize(str) {
@@ -950,10 +990,10 @@ document.addEventListener('click', function (e) {
     }
 
     const toggleBtn = e.target.closest('.btn-toggle-menu');
-    if (toggleBtn) {
-        e.preventDefault();
-        toggleMenu(toggleBtn.dataset.id);
-    }
+        if (toggleBtn) {
+            e.preventDefault();
+            openToggleMenuModal(toggleBtn.dataset.id, toggleBtn.dataset.nom);
+        }
 });
 
 // eventListener sur les filtres
@@ -989,7 +1029,12 @@ document.getElementById('btnCreerMenu')?.addEventListener('click', () => {
 // chargement
 async function loadAvis() {
     try {
-        const r = await fetch(`${API_BASE}/avis/list`);
+        const user = getStorage();
+        if(!user) return;
+
+        const r = await fetch(`${API_BASE}/avis/list`,
+            {headers: {'Authorization': `Bearer ${user.api_token}`}}
+        );
         const data = await r.json();
         if (!data.success) return;
 
@@ -1068,9 +1113,12 @@ function renderAvisCard(avis, type) {
 // Modération des avis
 async function modererAvis(id, statut) {
     try {
+        const user = getStorage();
+        if(!user) return;
+
         const r = await fetch(`${API_BASE}/avis/moderer?id=${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({ statut: statut })
         });
         const data = await r.json();
@@ -1195,10 +1243,7 @@ document.getElementById('horairesForm')?.addEventListener('submit', async functi
         
         const response = await fetch(`${API_BASE}/horaires/horaire-update`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.api_token}`
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.api_token}` },
             body: JSON.stringify({ horaires })
         });
         const data = await response.json();

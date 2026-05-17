@@ -78,6 +78,14 @@ class MenuController
 
     public function create(): void
     {
+        // Vérifier que c'est un admin ou un employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $data  = $_POST;
         $files = $_FILES;
 
@@ -188,7 +196,14 @@ class MenuController
 
     public function update(): void
     {
-        
+        // Vérifier que c'est un admin ou un employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
         if (!$id) {
@@ -377,6 +392,14 @@ class MenuController
 
     public function toggle(): void
     {
+        // Vérifier que c'est un admin ou un employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
         if (!$id) {
@@ -410,6 +433,14 @@ class MenuController
 
     public function delete(): void
     {
+        // Vérifier que c'est un admin ou un employe (via le middleware)
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || !in_array($currentUser['role'], ['admin', 'employe'])) {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
         if (!$id) {

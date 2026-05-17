@@ -23,6 +23,14 @@ class StatsController
      */
     public function sync(): void
     {
+        // Vérifier que c'est un admin (via le middleware)        
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $count = $this->stats->syncFromMySQL($this->pdo);
         $this->response->success([
             'message' => "Synchronisation terminée",
@@ -35,6 +43,14 @@ class StatsController
      */
     public function getDashboard(): void
     {
+        // Vérifier que c'est un admin (via le middleware)        
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $this->response->success($this->stats->getDashboard());
     }
 
@@ -43,6 +59,14 @@ class StatsController
      */
     public function getCommandesParMenu(): void
     {
+        // Vérifier que c'est un admin (via le middleware)          
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $dateDebut = $_GET['date_debut'] ?? null;
         $dateFin   = $_GET['date_fin'] ?? null;
 
@@ -56,6 +80,14 @@ class StatsController
      */
     public function getChiffreAffaires(): void
     {
+        // Vérifier que c'est un admin (via le middleware)          
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $menuId    = isset($_GET['menu_id']) ? (int) $_GET['menu_id'] : null;
         $dateDebut = $_GET['date_debut'] ?? null;
         $dateFin   = $_GET['date_fin'] ?? null;
@@ -70,6 +102,21 @@ class StatsController
      */
     public function getTopClients(): void
     {
+        // Vérifier que c'est un admin (via le middleware)          
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $limit = (int) ($_GET['limit'] ?? 10);
         $this->response->success(['top_clients' => $this->stats->getTopClients($limit)]);
     }
@@ -79,6 +126,14 @@ class StatsController
      */
     public function getMenusDisponibles(): void
     {
+        // Vérifier que c'est un admin (via le middleware)         
+        $currentUser = $_REQUEST['auth_user'] ?? null;
+
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            $this->response->error('Accès refusé.', 403);
+            return;
+        }
+
         $this->response->success([
             'menus' => $this->stats->getMenusDisponibles()
         ]);
