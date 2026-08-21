@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/Menu.php';
 require_once __DIR__ . '/../utils/ValidationService.php';
 require_once __DIR__ . '/../utils/ResponseService.php';
+require_once __DIR__ . '/../utils/MenuFilterBuilder.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Cloudinary
@@ -37,17 +38,64 @@ class MenuController
     }
 
     // ─────────────────────────────────────────
-    // GET /api/menus
+    // GET /api/menu
     // ─────────────────────────────────────────
 
-    public function list(): void
-    {
-        $menus = $this->menu->getTous();
-        $this->response->success([
-            'menus' => $menus,
-            'total' => count($menus)
-        ]);
+public function list(): void
+{
+    $page = (int) ($_GET['page'] ?? 1);
+    $perPage = (int) ($_GET['perPage'] ?? 3);
+
+    $filters = [];
+
+    if (isset($_GET['minPrice']) && is_numeric($_GET['minPrice'])) {
+        $filters['minPrice'] = $_GET['minPrice'];
     }
+
+    if (isset($_GET['maxPrice']) && is_numeric($_GET['maxPrice'])) {
+        $filters['maxPrice'] = $_GET['maxPrice'];
+    }
+
+    if (isset($_GET['minPersons']) && is_numeric($_GET['minPersons'])) {
+        $filters['minPersons'] = $_GET['minPersons'];
+    }
+
+    // titre=... côté frontend (recherche texte)
+    if (isset($_GET['titre']) && is_string($_GET['titre']) && trim($_GET['titre']) !== '') {
+        $filters['titre'] = trim($_GET['titre']);
+    }
+
+    // stock=ok|low|0 côté frontend
+    if (isset($_GET['stock']) && is_string($_GET['stock']) && $_GET['stock'] !== '') {
+        $allowedStock = ['ok', 'low', '0'];
+        if (in_array($_GET['stock'], $allowedStock, true)) {
+            $filters['stock'] = $_GET['stock'];
+        }
+    }
+
+    // themes[]=noel&themes[]=paques côté frontend
+    if (isset($_GET['themes']) && is_array($_GET['themes'])) {
+        $filters['themes'] = array_values(array_filter($_GET['themes'], 'is_string'));
+    }
+
+    if (isset($_GET['regimes']) && is_array($_GET['regimes'])) {
+        $filters['regimes'] = array_values(array_filter($_GET['regimes'], 'is_string'));
+    }
+
+    if (isset($_GET['sort']) && is_string($_GET['sort'])) {
+        $filters['sort'] = $_GET['sort'];
+    }
+
+    $result = $this->menu->getPaginatedMenus($page, $perPage, $filters);
+
+    $this->response->success([
+        'menus' => $result['data'],
+        'total' => $result['pagination']['total'],
+        'page' => $result['pagination']['page'],
+        'perPage' => $result['pagination']['perPage'],
+        'totalPages' => $result['pagination']['totalPages'],
+    ]);
+}                                     
 
     // ─────────────────────────────────────────
     // GET /api/menus?id={id}

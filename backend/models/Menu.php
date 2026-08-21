@@ -3,10 +3,12 @@
 class Menu
 {
     private PDO $pdo;
+    private MenuFilterBuilder $menuFilterBuilder;
 
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->menuFilterBuilder = new MenuFilterBuilder();
     }
 
     // ── CREATE ─────────────────────────────────────────────
@@ -165,11 +167,104 @@ class Menu
 
     // ── READ ───────────────────────────────────────────────
 
-    public function getTous(): array
+    // Pagination 
+
+    public function countAll(array $filters = []): int
     {
-        return $this->pdo->query("SELECT * FROM vue_menus_complets WHERE is_active=1 ORDER BY id DESC")
-            ->fetchAll(PDO::FETCH_ASSOC);
+        [$where, $params] = $this->menuFilterBuilder->build($filters);
+
+        $query = "SELECT COUNT(*) FROM vue_menus_complets $where";
+        $stm = $this->pdo->prepare($query);
+        $stm->execute($params);
+
+        return (int) $stm->fetchColumn();
     }
+
+    public function getPaginated(int $page, int $perPage, array $filters = [], string $orderBy = 'id DESC'): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        [$where, $params] = $this->menuFilterBuilder->build($filters);
+
+        $query = "SELECT * FROM vue_menus_complets $where ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+
+        $stm = $this->pdo->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stm->bindValue($key, $value);
+        }
+
+        $stm->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stm->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+        $stm->execute();
+
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Fonction qui assemble tout + VALIDATIONS
+public function getPaginatedMenus(int $page, int $perPage, array $filters = []): array
+{
+    $page = max(1, $page);
+    $perPage = max(1, min(100, $perPage));
+
+    $cleanFilters = [];
+
+    if (isset($filters['minPrice']) && $filters['minPrice'] !== '') {
+        $cleanFilters['minPrice'] = (float) $filters['minPrice'];
+    }
+    if (isset($filters['maxPrice']) && $filters['maxPrice'] !== '') {
+        $cleanFilters['maxPrice'] = (float) $filters['maxPrice'];
+    }
+    if (isset($filters['minPersons']) && $filters['minPersons'] !== '') {
+        $cleanFilters['minPersons'] = (int) $filters['minPersons'];
+    }
+    if (!empty($filters['titre'])) {
+        $cleanFilters['titre'] = trim((string) $filters['titre']);
+    }
+    if (isset($filters['stock']) && $filters['stock'] !== '') {
+        $cleanFilters['stock'] = (string) $filters['stock'];
+    }
+    if (!empty($filters['themes']) && is_array($filters['themes'])) {
+        $cleanFilters['themes'] = array_filter($filters['themes']);
+    }
+    if (!empty($filters['regimes']) && is_array($filters['regimes'])) {
+        $cleanFilters['regimes'] = array_filter($filters['regimes']);
+    }
+
+    // === Whitelist du tri (sécurité SQL obligatoire) ===
+    $allowedSorts = [
+        'id-desc'      => 'id DESC',
+        'id-asc'       => 'id ASC',
+        'prix-asc'     => 'prix_base ASC',
+        'prix-desc'    => 'prix_base DESC',
+        'titre-asc'    => 'titre ASC',
+        'titre-desc'   => 'titre DESC',
+        'stock-asc'    => 'stock ASC',
+        'stock-desc'   => 'stock DESC',
+    ];
+
+    $orderBy = 'id DESC'; // défaut
+    if (isset($filters['sort']) && array_key_exists($filters['sort'], $allowedSorts)) {
+        $orderBy = $allowedSorts[$filters['sort']];
+    }
+
+    $total = $this->countAll($cleanFilters);
+    $totalPages = $total > 0 ? (int) ceil($total / $perPage) : 1;
+    $page = min($page, $totalPages);
+
+    $menus = $this->getPaginated($page, $perPage, $cleanFilters, $orderBy);
+
+    return [
+        'data' => $menus,
+        'pagination' => [
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPages' => $totalPages,
+        ]
+    ];
+}
 
     public function getById(int $id): ?array
     {

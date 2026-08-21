@@ -7,9 +7,11 @@ let orders = [];
 let modificationOrderId = null;
 let modificationMenuId = null;
 let allEmployeeMenus = [];
+let empMenusTotal = 0;
 let filteredEmployeeMenus = []; 
 let empMenusCurrentPage = 1;
-const EMP_MENUS_PER_PAGE = 9;
+let empMenusTotalPages = 1;
+const EMP_MENUS_PER_PAGE = 3;
 
 // ===================== INIT =====================
 export async function init() {
@@ -27,12 +29,6 @@ export async function init() {
             showSection(hash, link);
         }
     }
-}
-
-// ===== INITIALISATION =====
-async function initEmployeeMenus() {
-    await loadAllEmployeeMenus();
-    applyFilters();
 }
 
 // ===================== EVENT LISTENERS =====================
@@ -724,8 +720,32 @@ function contactClient(orderId) {
 
 // ========== GESTION MENUS EMPLOYÉ ==========
 
-// chargement
-async function loadAllEmployeeMenus() {
+
+// CONSTRUCTION DES FILTRES ACTUELS 
+function getCurrentEmployeeFilters() {
+    const filters = {};
+
+    const titre = document.getElementById('filterTitre')?.value.trim();
+    const theme = document.getElementById('filterTheme')?.value;
+    const regime = document.getElementById('filterRegime')?.value;
+    const prixMax = document.getElementById('filterPrixMax')?.value;
+    const personnes = document.getElementById('filterPersonnes')?.value;
+    const stock = document.getElementById('filterStock')?.value;
+    const sort = document.getElementById('filterSort')?.value;
+
+    if (titre) filters.titre = titre;
+    if (theme) filters.themes = [theme];
+    if (regime) filters.regimes = [regime];
+    if (prixMax) filters.maxPrice = prixMax;
+    if (personnes) filters.minPersons = personnes;
+    if (stock) filters.stock = stock;
+    if (sort) filters.sort = sort;
+
+    return filters;
+}
+
+// ========== CHARGEMENT DEPUIS LE BACKEND ==========
+async function loadEmployeeMenus(page = 1) {
     const container = document.getElementById("employeeMenusGrid");
     container.innerHTML = `
         <div class="col-12 text-center py-5">
@@ -735,10 +755,32 @@ async function loadAllEmployeeMenus() {
     `;
 
     try {
-        const response = await fetch(`${API_BASE}/menu/list`);
+        const filters = getCurrentEmployeeFilters();
+        const params = new URLSearchParams();
+        params.append('page', page);
+        params.append('perPage', EMP_MENUS_PER_PAGE);
+
+        if (filters.titre) params.append('titre', filters.titre);
+        if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+        if (filters.minPersons) params.append('minPersons', filters.minPersons);
+        if (filters.stock) params.append('stock', filters.stock);
+        if (filters.sort) params.append('sort', filters.sort);
+        if (filters.themes) filters.themes.forEach(t => params.append('themes[]', t));
+        if (filters.regimes) filters.regimes.forEach(r => params.append('regimes[]', r));
+
+        const response = await fetch(`${API_BASE}/menu/list?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+
         const data = await response.json();
-        allEmployeeMenus = data.menus || [];
+
+        empMenusCurrentPage = data.page || page;
+        empMenusTotalPages = data.totalPages || 1;
+        empMenusTotal = data.total || 0;
+
+        displayEmployeeMenus(data.menus || []);
+        updateEmployeeMenusCount();
+        renderEmployeeMenusPagination();
+
     } catch (error) {
         console.error('Erreur:', error);
         container.innerHTML = `
@@ -752,60 +794,7 @@ async function loadAllEmployeeMenus() {
     }
 }
 
-// filtrage
-function applyFilters() {
-    const titre = document.getElementById('filterTitre')?.value.trim().toLowerCase() || '';
-    const theme = document.getElementById('filterTheme')?.value || '';
-    const regime = document.getElementById('filterRegime')?.value || '';
-    const prixMax = parseFloat(document.getElementById('filterPrixMax')?.value);
-    const personnes = parseInt(document.getElementById('filterPersonnes')?.value);
-    const stock = document.getElementById('filterStock')?.value || '';
-    const sort = document.getElementById('filterSort')?.value || 'id-desc';
-
-    filteredEmployeeMenus = allEmployeeMenus.filter(menu => {
-        if (titre && !menu.titre.toLowerCase().includes(titre)) return false;
-        if (theme && menu.themes?.toLowerCase() !== theme.toLowerCase()) return false;
-        if (regime && (!menu.regimes || !menu.regimes.toLowerCase().includes(regime.toLowerCase()))) return false;
-        if (!isNaN(prixMax) && menu.prix_base > prixMax) return false;
-        if (!isNaN(personnes) && menu.nb_personnes_min < personnes) return false;
-        if (stock === '0' && menu.stock !== 0) return false;
-        if (stock === 'low' && (menu.stock === 0 || menu.stock >= 10)) return false;
-        if (stock === 'ok' && menu.stock < 10) return false;
-        return true;
-    });
-
-    if (sort) {
-        const [field, order] = sort.split('-');
-        filteredEmployeeMenus.sort((a, b) => {
-            let valA, valB;
-            switch (field) {
-                case 'prix': valA = a.prix_base; valB = b.prix_base; break;
-                case 'titre': valA = a.titre.toLowerCase(); valB = b.titre.toLowerCase(); break;
-                case 'stock': valA = a.stock; valB = b.stock; break;
-                default: valA = a.id; valB = b.id; break;
-            }
-            if (valA < valB) return order === 'asc' ? -1 : 1;
-            if (valA > valB) return order === 'asc' ? 1 : -1;
-            return 0;
-        });
-    }
-
-    empMenusCurrentPage = 1;
-    renderCurrentPage();
-}
-
-// pagination / rendu
-function renderCurrentPage() {
-    const totalPages = Math.ceil(filteredEmployeeMenus.length / EMP_MENUS_PER_PAGE) || 1;
-    const start = (empMenusCurrentPage - 1) * EMP_MENUS_PER_PAGE;
-    const pageMenus = filteredEmployeeMenus.slice(start, start + EMP_MENUS_PER_PAGE);
-
-    displayEmployeeMenus(pageMenus);
-    updateEmployeeMenusCount(totalPages);
-    renderEmployeeMenusPagination(totalPages);
-}
-
-// affichage cartes
+// ========== AFFICHAGE CARTES ==========
 function displayEmployeeMenus(menus) {
     const container = document.getElementById("employeeMenusGrid");
     container.innerHTML = '';
@@ -826,9 +815,7 @@ function displayEmployeeMenus(menus) {
 
         const svgPlaceholder = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%20pour%20ce%20menu%3C%2Ftext%3E%3C%2Fsvg%3E"
 
-        const imagePrincipale = images.length > 0
-            ? images[0]
-            : svgPlaceholder;
+        const imagePrincipale = images.length > 0 ? images[0] : svgPlaceholder;
 
         let stockBadge;
         if (menu.stock === 0) {
@@ -887,12 +874,12 @@ function displayEmployeeMenus(menus) {
     });
 }
 
-// pagination
-function renderEmployeeMenusPagination(totalPages) {
+// ========== PAGINATION ==========
+function renderEmployeeMenusPagination() {
     const container = document.getElementById("employeeMenusPagination");
     container.innerHTML = '';
 
-    if (totalPages <= 1) return;
+    if (empMenusTotalPages <= 1) return;
 
     let html = '<nav><ul class="pagination pagination-sm">';
 
@@ -900,13 +887,13 @@ function renderEmployeeMenusPagination(totalPages) {
         <a class="page-link" href="#" data-page="${empMenusCurrentPage - 1}"><i class="bi bi-chevron-left"></i></a>
     </li>`;
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = 1; i <= empMenusTotalPages; i++) {
         html += `<li class="page-item ${i === empMenusCurrentPage ? 'active' : ''}">
             <a class="page-link" href="#" data-page="${i}">${i}</a>
         </li>`;
     }
 
-    html += `<li class="page-item ${empMenusCurrentPage === totalPages ? 'disabled' : ''}">
+    html += `<li class="page-item ${empMenusCurrentPage === empMenusTotalPages ? 'disabled' : ''}">
         <a class="page-link" href="#" data-page="${empMenusCurrentPage + 1}"><i class="bi bi-chevron-right"></i></a>
     </li>`;
 
@@ -917,25 +904,24 @@ function renderEmployeeMenusPagination(totalPages) {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const page = parseInt(link.dataset.page);
-            if (page >= 1 && page <= totalPages && page !== empMenusCurrentPage) {
-                empMenusCurrentPage = page;
-                renderCurrentPage();
+            if (page >= 1 && page <= empMenusTotalPages && page !== empMenusCurrentPage) {
+                loadEmployeeMenus(page);
                 document.getElementById('employeeMenusGrid').scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 }
 
-// compteur
-function updateEmployeeMenusCount(totalPages) {
+// ========== COMPTEUR ==========
+function updateEmployeeMenusCount() {
     document.getElementById("employeeMenusCount").innerHTML =
-        `<i class="bi bi-card-text"></i> ${filteredEmployeeMenus.length} menu(s)`;
+        `<i class="bi bi-card-text"></i> ${empMenusTotal} menu(s)`;
 
     document.getElementById("employeeMenusPageInfo").textContent =
-        totalPages > 1 ? `Page ${empMenusCurrentPage} sur ${totalPages}` : '';
+        empMenusTotalPages > 1 ? `Page ${empMenusCurrentPage} sur ${empMenusTotalPages}` : '';
 }
 
-// désactiver un menu
+// ========== DÉSACTIVER UN MENU ==========
 function openToggleMenuModal(id, nom) {
     document.getElementById('toggleMenuNom').textContent = nom;
     document.getElementById('confirmToggleBtn').setAttribute('data-menu-id', id);
@@ -962,8 +948,7 @@ async function handleConfirmToggle() {
         if (data.success) {
             showToast('Menu désactivé !', 'success');
             bootstrap.Modal.getInstance(document.getElementById('toggleMenuModal')).hide();
-            allEmployeeMenus = allEmployeeMenus.filter(m => m.id != id);
-            applyFilters();
+            await loadEmployeeMenus(empMenusCurrentPage);
         } else {
             showToast(data.message || 'Erreur', 'danger');
         }
@@ -975,13 +960,12 @@ async function handleConfirmToggle() {
     }
 }
 
-
-// utilitaires
+// ========== UTILITAIRES ==========
 function capitalize(str) {
     return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
-// délégation d'évènements
+// ========== DÉLÉGATION D'ÉVÈNEMENTS ==========
 document.addEventListener('click', function (e) {
     const editBtn = e.target.closest('.btn-edit-menu');
     if (editBtn) {
@@ -990,13 +974,13 @@ document.addEventListener('click', function (e) {
     }
 
     const toggleBtn = e.target.closest('.btn-toggle-menu');
-        if (toggleBtn) {
-            e.preventDefault();
-            openToggleMenuModal(toggleBtn.dataset.id, toggleBtn.dataset.nom);
-        }
+    if (toggleBtn) {
+        e.preventDefault();
+        openToggleMenuModal(toggleBtn.dataset.id, toggleBtn.dataset.nom);
+    }
 });
 
-// eventListener sur les filtres
+// ========== EVENTLISTENERS SUR LES FILTRES ==========
 document.getElementById('btnResetFilters')?.addEventListener('click', () => {
     document.getElementById('filterTitre').value = '';
     document.getElementById('filterTheme').value = '';
@@ -1005,24 +989,31 @@ document.getElementById('btnResetFilters')?.addEventListener('click', () => {
     document.getElementById('filterPersonnes').value = '';
     document.getElementById('filterStock').value = '';
     document.getElementById('filterSort').value = 'id-desc';
-    applyFilters();
+    loadEmployeeMenus(1);
 });
 
 let searchTimeout;
 document.getElementById('filterTitre')?.addEventListener('input', () => {
     clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(applyFilters, 300);
+    searchTimeout = setTimeout(() => loadEmployeeMenus(1), 300);
 });
 
 ['filterTheme', 'filterRegime', 'filterPrixMax', 'filterPersonnes', 'filterStock', 'filterSort'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', applyFilters);
+    document.getElementById(id)?.addEventListener('change', () => loadEmployeeMenus(1));
 });
-
-document.getElementById('menus')?.addEventListener('click', initEmployeeMenus);
 
 document.getElementById('btnCreerMenu')?.addEventListener('click', () => {
     window.location.href = '/edit-menu';
 });
+
+// ========== INITIALISATION ==========
+async function initEmployeeMenus() {
+    await loadEmployeeMenus(1);
+}
+
+document.getElementById('menus')?.addEventListener('click', initEmployeeMenus);
+
+initEmployeeMenus();
 
 // ==================== AVIS ====================
 

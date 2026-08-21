@@ -1,55 +1,116 @@
 import { API_BASE } from "../config.js";
 
 // ========== VARIABLES GLOBALES ==========
-let menus = []
-let filteredMenus = [];
+let menus = [];
 let currentPage = 1;
-const itemsPerPage = 6;
+let totalPages = 1;
+const itemsPerPage = 3;
 
 // ========== INITIALISATION ==========
 async function init() {
-    await loadMenus();
+    await loadMenus(1);
     displayMenus();
-    updateResultsCount();
 }
 
 init();
 
-//chargement des menus depuis le json
-async function loadMenus() {
+// ========== CONSTRUCTION DES FILTRES ACTUELS ==========
+function getCurrentFilters() {
+    const filters = {};
+
+    const minPriceInputEl = document.getElementById("minPriceInput");
+    const maxPriceInputEl = document.getElementById("maxPriceInput");
+    const minPersonsFilterEl = document.getElementById("minPersonsFilter");
+    const sortSelectEl = document.getElementById("sortSelect");
+
+    const minPriceInput = minPriceInputEl ? minPriceInputEl.value : "";
+    const maxPriceInput = maxPriceInputEl ? maxPriceInputEl.value : "";
+    const minPersonsFilter = minPersonsFilterEl ? minPersonsFilterEl.value : "";
+    const sortValue = sortSelectEl ? sortSelectEl.value : "";
+
+    if (minPriceInput && Number(minPriceInput) > 0) {
+        filters.minPrice = minPriceInput;
+    }
+    if (maxPriceInput && Number(maxPriceInput) < 1000) {
+        filters.maxPrice = maxPriceInput;
+    }
+    if (minPersonsFilter) filters.minPersons = minPersonsFilter;
+
+    const selectedThemes = Array.from(document.querySelectorAll('.theme-filter:checked')).map(cb => cb.value);
+    if (selectedThemes.length > 0) filters.themes = selectedThemes;
+
+    const selectedRegimes = Array.from(document.querySelectorAll('.regime-filter:checked')).map(cb => cb.value);
+    if (selectedRegimes.length > 0) filters.regimes = selectedRegimes;
+
+    if (sortValue && sortValue !== 'default') filters.sort = sortValue;
+
+    return filters;
+}
+
+// ========== CHARGEMENT DES MENUS ==========
+async function loadMenus(page = 1) {
     try {
-        const response = await fetch(`${API_BASE}/menu/list`);
+        const filters = getCurrentFilters();
+        const params = new URLSearchParams();
+        params.append('page', page);
+        params.append('perPage', itemsPerPage);
+
+        if (filters.minPrice) params.append('minPrice', filters.minPrice);
+        if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+        if (filters.minPersons) params.append('minPersons', filters.minPersons);
+        if (filters.sort) params.append('sort', filters.sort);
+        if (filters.themes) filters.themes.forEach(t => params.append('themes[]', t));
+        if (filters.regimes) filters.regimes.forEach(r => params.append('regimes[]', r));
+
+        const response = await fetch(`${API_BASE}/menu/list?${params.toString()}`);
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-        const data = await response.json();
+        const json = await response.json();
+        const data = json.data ?? json;
+
         menus = data.menus;
-        filteredMenus = [...menus];
-        console.log(filteredMenus);
+        currentPage = data.page;
+        totalPages = data.totalPages;
+
+        updateResultsCount(data.total);
+
     } catch (error) {
-        console.error('Erreur de chargment des menus:', error);
-        document.getElementById("menusGrid").innerHTML=`
+        console.error('Erreur de chargement des menus:', error);
+        document.getElementById("menusGrid").innerHTML = `
             <div class="col-12">
                 <div class="alert alert-danger">
                     Erreur lors du chargement des menus. Veillez réessayer.
                 </div>
             </div>
-        `;   
+        `;
     }
 }
 
-// Update slider display
-document.getElementById("maxPrice").addEventListener('input', function() {
-    document.getElementById("maxPriceDisplay").textContent = this.value + ' €';
+// ========== SYNCHRONISATION SLIDER / INPUT MAX PRICE ==========
+const maxPriceSlider = document.getElementById("maxPrice");
+const maxPriceInputEl = document.getElementById("maxPriceInput");
+const maxPriceDisplay = document.getElementById("maxPriceDisplay");
+
+// Quand on bouge le slider → on remplit l'input
+maxPriceSlider.addEventListener('input', function() {
+    maxPriceDisplay.textContent = this.value + ' €';
+    maxPriceInputEl.value = this.value;
+});
+
+// Quand on tape dans l'input → on remet le slider à jour (cohérence visuelle)
+maxPriceInputEl.addEventListener('input', function() {
+    if (this.value) {
+        maxPriceSlider.value = this.value;
+        maxPriceDisplay.textContent = this.value + ' €';
+    }
 });
 
 // ========== AFFICHAGE DES MENUS ==========
 function displayMenus() {
     const container = document.getElementById("menusGrid");
-    //mise à jour du compteur
-    updateResultsCount();
-
     container.innerHTML = '';
-    if (filteredMenus.length === 0) {
+
+    if (menus.length === 0) {
         container.innerHTML = `
             <div class="col-12">
                 <div class="no-results">
@@ -62,30 +123,16 @@ function displayMenus() {
                 </div>
             </div>
         `;
-        document.getElementById("pagination-container").style.display="none";
-        document.getElementById("resetFiltersBtn").addEventListener("click", function(e){
-            if(e.target.id ==="resetFiltersBtn"){
-                e.preventDefault();
-                resetFilters();
-            }
-        });
-
+        document.getElementById("pagination-container").style.display = "none";
         return;
     }
 
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const paginatedMenus = filteredMenus.slice(start, end);
-
-    paginatedMenus.forEach(menu => {
+    menus.forEach(menu => {
         const stockClass = menu.stock < 10 ? 'low' : '';
         const stockIcon = menu.stock < 10 ? 'exclamation-triangle' : 'check-circle';
 
-        // Extraire la première image
         const images = menu.images ? menu.images.split(',').map(img => img.trim()) : [];
-
-        const svgPlaceholder = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%20pour%20ce%20menu%3C%2Ftext%3E%3C%2Fsvg%3E"
-    
+        const svgPlaceholder = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%3E%3Crect%20fill%3D%22%236c757d%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22white%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%20font-size%3D%2218%22%3EPas%20d%27image%20pour%20ce%20menu%3C%2Ftext%3E%3C%2Fsvg%3E";
         const imagePrincipale = images.length > 0 ? images[0] : svgPlaceholder;
 
         container.innerHTML += `
@@ -124,15 +171,23 @@ function displayMenus() {
             </div>
         `;
     });
+
     document.getElementById("pagination-container").style.display = "block";
     updatePagination();
 }
+
+// ========== DÉLÉGATION D'ÉVÉNEMENT POUR LE BOUTON RESET (dans la grille) ==========
+document.getElementById("menusGrid").addEventListener("click", (e) => {
+    if (e.target.closest("#resetFiltersBtn")) {
+        e.preventDefault();
+        resetFilters();
+    }
+});
 
 // -----------------------
 // Pagination
 // -----------------------
 function updatePagination() {
-    const totalPages = Math.max(1,Math.ceil(filteredMenus.length / itemsPerPage));
     document.getElementById("page-info").textContent =
         `Page ${currentPage} sur ${totalPages}`;
 
@@ -140,128 +195,94 @@ function updatePagination() {
     document.getElementById("next-page").disabled = currentPage === totalPages;
 }
 
-document.getElementById("prev-page").addEventListener("click", () => {
+document.getElementById("prev-page").addEventListener("click", async () => {
     if (currentPage > 1) {
-        currentPage--;
+        await loadMenus(currentPage - 1);
         displayMenus();
-        updatePagination();
     }
 });
 
-document.getElementById("next-page").addEventListener("click", () => {
-    const totalPages = Math.ceil(filteredMenus.length / itemsPerPage);
+document.getElementById("next-page").addEventListener("click", async () => {
     if (currentPage < totalPages) {
-        currentPage++;
+        await loadMenus(currentPage + 1);
         displayMenus();
-        updatePagination();
     }
 });
+
 // ========== FILTRES ==========
 const submitButtons = [...document.querySelectorAll("button[type='submit']")];
-const applyBtn = submitButtons.find(b => b.textContent.includes("Appliquer"));
 const resetBtn = submitButtons.find(b => b.textContent.includes("Réinitialiser"));
 
-applyBtn?.addEventListener("click", e => {
-    e.preventDefault(); applyFilters();
-});
-
 resetBtn?.addEventListener("click", e => {
-    e.preventDefault(); resetFilters();
+    e.preventDefault();
+    resetFilters();
 });
 
-function applyFilters() {
+async function applyFilters() {
+    const min = Number(document.getElementById("minPriceInput").value) || 0;
+    const max = Number(document.getElementById("maxPriceInput").value) || 1000;
 
-    filteredMenus = [...menus];
-
-    // Prix
-    const maxPrice = parseFloat(document.getElementById("maxPrice").value);
-    const minPriceInput = parseFloat(document.getElementById("minPriceInput").value) || 0;
-    const maxPriceInput = parseFloat(document.getElementById("maxPriceInput").value) || 999999;
-
-    filteredMenus = filteredMenus.filter(m => 
-        m.prix_base <= maxPrice && 
-        m.prix_base >= minPriceInput && 
-        m.prix_base <= maxPriceInput
-    );
-
-    // Thèmes
-    const selectedThemes = Array.from(document.querySelectorAll('.theme-filter:checked')).map(cb => cb.value);
-    if (selectedThemes.length > 0) {
-        filteredMenus = filteredMenus.filter(m => {
-            const themes = m.themes ? m.themes.split(',').map(t => t.trim()) : [];
-            return selectedThemes.some(t => themes.includes(t));
-        });
+    if (min > max) {
+        alert("Le prix minimum ne peut pas dépasser le prix maximum.");
+        return;
     }
 
-    // Régimes
-    const selectedRegimes = Array.from(document.querySelectorAll('.regime-filter:checked')).map(cb => cb.value);
-    if (selectedRegimes.length > 0) {
-        filteredMenus = filteredMenus.filter(m => {
-            const regimes = m.regimes ? m.regimes.split(',').map(r => r.trim()) : [];
-            return selectedRegimes.some(r => regimes.includes(r));
-        });
-    }
-
-
-    // Nombre de personnes
-    const minPersonsFilter = document.getElementById('minPersonsFilter').value;
-    if (minPersonsFilter) {
-        filteredMenus = filteredMenus.filter(m => m.nb_personnes_min >= parseInt(minPersonsFilter));
-    }
-
-    currentPage = 1;
+    await loadMenus(1); // toujours repartir de la page 1 quand on filtre
     displayMenus();
 }
 
-function resetFilters() {
-    // Réinitialiser tous les champs
+// ========== DEBOUNCE (pour éviter trop d'appels API sur les inputs texte/number) ==========
+function debounce(fn, delay = 400) {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+    };
+}
+
+const debouncedApplyFilters = debounce(applyFilters, 400);
+
+// ========== APPLICATION AUTOMATIQUE DES FILTRES ==========
+
+// Prix min/max (input texte) → debounce car l'utilisateur tape
+document.getElementById("minPriceInput").addEventListener("input", debouncedApplyFilters);
+document.getElementById("maxPriceInput").addEventListener("input", debouncedApplyFilters);
+
+// Slider prix max → debounce
+document.getElementById("maxPrice").addEventListener("input", debouncedApplyFilters);
+
+document.getElementById("minPersonsFilter").addEventListener("change", applyFilters);
+
+document.querySelectorAll('.theme-filter').forEach(cb => {
+    cb.addEventListener("change", applyFilters);
+});
+document.querySelectorAll('.regime-filter').forEach(cb => {
+    cb.addEventListener("change", applyFilters);
+});
+
+async function resetFilters() {
     document.getElementById("maxPrice").value = 1000;
-    document.getElementById("maxPriceDisplay").textContent = '500 €';
+    document.getElementById("maxPriceDisplay").textContent = '1000 €';
     document.getElementById("minPriceInput").value = 0;
     document.getElementById("maxPriceInput").value = 1000;
     document.getElementById("minPersonsFilter").value = '';
-    
+
     document.querySelectorAll('.theme-filter').forEach(cb => cb.checked = false);
     document.querySelectorAll('.regime-filter').forEach(cb => cb.checked = false);
     document.getElementById("sortSelect").value = 'default';
 
-    filteredMenus = [...menus];
-    currentPage = 1;
-    
+    await loadMenus(1);
     displayMenus();
-    updateResultsCount();
 }
 
-// ========== TRI ========== 
+// ========== TRI ==========
 const sortSelect = document.getElementById("sortSelect");
-sortSelect.addEventListener("change", function sortMenus(){
-
-    //mise à jour du compteur 
-
-    const sortValue = document.getElementById("sortSelect").value;
-    switch(sortValue) {
-        case 'price-asc':
-            filteredMenus.sort((a, b) => a.prix_base - b.prix_base);
-            break;
-        case 'price-desc':
-            filteredMenus.sort((a, b) => b.prix_base - a.prix_base);
-            break;
-        case 'persons-asc':
-            filteredMenus.sort((a, b) => a.nb_personnes_min - b.nb_personnes_min);
-            break;
-        case 'persons-desc':
-            filteredMenus.sort((a, b) => b.nb_personnes_min - a.nb_personnes_min);
-            break;
-        default:
-            // Retour à l'ordre original
-            filteredMenus = [...menus].filter(m => filteredMenus.some(fm => fm.id === m.id));
-    }
-
-    currentPage = 1;
+sortSelect.addEventListener("change", async () => {
+    await loadMenus(1); // le tri repart aussi de la page 1
     displayMenus();
 });
 
 // ========== COMPTEUR RÉSULTATS ==========
-function updateResultsCount() {
-    document.getElementById("resultsCount").textContent = filteredMenus.length;
+function updateResultsCount(total) {
+    document.getElementById("resultsCount").textContent = total;
 }

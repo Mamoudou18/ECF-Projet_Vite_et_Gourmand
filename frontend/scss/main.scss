@@ -498,18 +498,6 @@ li{
     font-weight: 100;
 }
 
-.btn-filter {
-    background: linear-gradient(135deg, $primary 0%, $accent 100%);
-    color: $white-primary;
-    border: none;
-    transition: all 0.3s;
-}
-
-.btn-filter:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px $primary;
-}
-
 .btn-reset {
     background: linear-gradient(135deg, $secondary 0%, $white-secondary 100%);
     color: black !important;
