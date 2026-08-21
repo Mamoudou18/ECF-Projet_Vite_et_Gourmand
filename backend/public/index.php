@@ -99,7 +99,8 @@ if ($ressource === 'test' || $uri === '/api/' || $uri === '/api') {
             'GET /api/stats/top-menus'                          => 'Liste des menus les plus commandés',
             'GET /api/horaires/horaire-list'                    => 'Liste des horaires',
             'PUT /api/horaires/horaire-update'                  => 'Mise à jours des horaires d\'ouverture',
-            ' POST /api/contact/demande-create'                 => 'Prise de contact client',
+            'POST /api/contact/demande-create'                 => 'Prise de contact client',
+            'GET /api/config/maps-key'                         => 'Appel api google maps', 
 
         ]
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -1303,12 +1304,25 @@ switch ($ressource) {
         }
         break;
 
+    //API GOOGLE MAPS
+    case 'config':
+        require_once __DIR__ . '/../controllers/ConfigController.php';
+        $controller = new ConfigController();
+
+        if ($action === 'maps-key' && $method === 'GET') {
+            $controller->getMapsKey();
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Route non trouvée']);
+        }
+        break;    
+
     default:
         http_response_code(404);
         echo json_encode([
             'error' => 'Ressource non trouvée',
             'uri' => $uri,
             'ressource_demandee' => $ressource,
-            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats', 'horaires', 'contact']
+            'ressources_disponibles' => ['auth','menu', 'commande', 'avis', 'admin', 'stats', 'horaires', 'contact', 'config']
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }

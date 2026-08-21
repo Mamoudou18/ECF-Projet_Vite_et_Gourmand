@@ -1,5 +1,5 @@
 import { getStorage } from "../script.js";
-import {showToast } from "../utils/util.js";
+import { showToast } from "../utils/util.js";
 import { API_BASE } from "../config.js";
 
 //Variables globales
@@ -14,18 +14,73 @@ const adresseDepart = "1 Place de la République, 33000 Bordeaux, France";
 
 let joursFermes = [];
 
+// ============================================
+// CHARGEMENT DYNAMIQUE GOOGLE MAPS
+// ============================================
+let googleMapsLoaded = false;
+
+async function getGoogleMapsApiKey() {
+    const response = await fetch(`${API_BASE}/config/maps-key`);
+    if (!response.ok) {
+        throw new Error("Impossible de récupérer la clé API Maps");
+    }
+    const data = await response.json();
+    if (!data.key) {
+        throw new Error("Clé API Maps manquante côté serveur");
+    }
+    return data.key;
+}
+
+function loadGoogleMapsScript(apiKey) {
+    return new Promise((resolve, reject) => {
+        if (window.google && window.google.maps) {
+            googleMapsLoaded = true;
+            resolve();
+            return;
+        }
+
+        // Nom de callback unique pour éviter les collisions
+        const callbackName = '__googleMapsCallback_' + Date.now();
+        window[callbackName] = () => {
+            googleMapsLoaded = true;
+            delete window[callbackName];
+            resolve();
+        };
+
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async&callback=${callbackName}`;
+        script.async = true;
+        script.defer = true;
+
+        script.onerror = () => {
+            delete window[callbackName];
+            reject(new Error('Impossible de charger Google Maps'));
+        };
+
+        document.head.appendChild(script);
+    });
+}
+
 //Initialisation
 export async function init() {
     await loadMenuCommande();
     await loadHoraires();
     autoFillUserInfo();
-    await initGoogleMaps();
+
+    try {
+        const apiKey = await getGoogleMapsApiKey();
+        await loadGoogleMapsScript(apiKey);
+        await initGoogleMaps();
+    } catch (error) {
+        console.error('Google Maps non disponible:', error);
+        document.getElementById("googleMap").innerHTML = 
+            `<div class="alert alert-warning">Google Maps indisponible. Saisie manuelle activée.</div>`;
+        calculerFraisManuel();
+    }
 
     setupDateField();
-
-    initEventListeners(); //fonction pour initialiser les écouteurs d'évènements
-
-    await checkModification(); // On vérifie si c'est une modification
+    initEventListeners();
+    await checkModification();
 }
 
 //initialiser les écouteurs d'évènements
