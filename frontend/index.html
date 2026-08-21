@@ -1,30 +1,39 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <link rel="preload" as="image" href="images/bigtitle.webp" fetchpriority="high">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" as="image" href="images/bigtitle.webp" fetchpriority="high">
 
-    <meta name="description" content="Vite & Gourmand, restaurant à Bordeaux. Découvrez nos menus, commander en ligne pour vos évènements et consultez les avis de nos clients.">
+    <meta name="description" content="Vite & Gourmand, restaurant à Bordeaux. Découvrez nos menus, commandez en ligne pour vos évènements et consultez les avis de nos clients.">
     <meta name="keywords" content="restaurant, Bordeaux, menu, commande, livraison, avis Vite et Gourmand">
     <meta name="author" content="Vite & Gourmand">
-
+    <link rel="canonical" href="https://vite-et-gourmand.fr">
 
     <meta property="og:title" content="Vite & Gourmand">
-    <meta property="og:description" content="Restaurant à Bordeaux - Découvrez nos menus et commander en ligne pour vous évènements.">
+    <meta property="og:description" content="Restaurant à Bordeaux - Découvrez nos menus et commandez en ligne pour vos évènements.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://vite-et-gourmand.fr">
     <meta property="og:image" content="https://vite-et-gourmand.fr/images/logo.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="Vite & Gourmand">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vite & Gourmand">
+    <meta name="twitter:description" content="Restaurant à Bordeaux - Découvrez nos menus et commandez en ligne.">
+    <meta name="twitter:image" content="https://vite-et-gourmand.fr/images/logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://maps.googleapis.com">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Poppins:wght@300;400;600&display=swap" media="print" onload="this.media='all'">
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Poppins:wght@300;400;600&display=swap">
     </noscript>
+
     <link rel="icon" type="image/png" href="/images/favicon/favicon.png" />
-    <!-- Pour les raccourcis sur smartphone (Apple/Android) : -->
     <link rel="apple-touch-icon" href="/images/favicon/favicon.png" />
 
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" 
@@ -34,16 +43,13 @@
     </noscript>
 
     <link rel="stylesheet" href="./scss/main.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script type="module" src="/js/script.js"></script>
     <script type="module" src="/Router/Router.js"></script>
-    <script>
-        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t.toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({key: "AIzaSyC6i1IKZS8oMpCw9r3a-N28w4XspQAFb_g"});
-    </script>
 
     <title>Vite & Gourmand</title>
 </head>
+
 <body>
     
     <div id="loader" class="loader hidden">
