@@ -104,6 +104,7 @@ services:
     image: phpmyadmin:5.2-apache
     container_name: phpmyadmin
     restart: "no"
+    profiles: ["tools"]
     environment:
       PMA_HOST: mysql
       PMA_USER: root
@@ -123,6 +124,7 @@ services:
     image: mongo-express:1.0
     container_name: mongo-express
     restart: "no"
+    profiles: ["tools"]
     ports:
       - "8082:8081"
     environment:
